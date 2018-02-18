@@ -1,0 +1,51 @@
+--> Pipeline afmaken
+--> CMA_ES background process + Queue dat CMA_ES koppeld
+--> Auto encoder features
+--> Cascade trainer
+
+FIXES
+- Oppervlakte wegdoen bij snelheid
+- name mapping maken
+- TQDM's adden
+
+- Anomaliteiten:
+--> boven een bepaalde hoogte
+--> stoel
+--> onder een bepaalde hoogte
+--> springen           (conflicten)
+--> elkaar vasthouden
+--> voorwerp naar camera wijzen
+--> Object vasthouden (ter grote van ipad achtig iets) (veel conflicten)
+--> gooien met iets
+--> iets pakken van de muren vd bank
+--> tegen de muur lopen (sneaky lopen)
+--> achteruit binnen wandelen
+--> met 2 binnen wandelen een gaat naar buiten
+--> benen hoog optrekken
+--> vallen
+--> iets aan het tapijt doen
+--> items die op de grond liggen vervangen met meegenomen items
+--> friemelen onder de camerad
+--> ladder actie
+--> dashing movements
+
+
+--> speed inrekenen? Veel voorbeelden met high speed
+
+Video:
+- Diegene met frame length tussen 3-5 lijken gewoon ruis te zijn, mag ik die deleten?
+
+
+TODO:
+- andere laptop opzetten
+- github opzetten
+- visualizer fixen
+- bayesian opt fixen (baseline)
+- spatio temporal ding bouwen
+
+
+
+
+
+
+
