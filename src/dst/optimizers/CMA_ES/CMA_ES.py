@@ -50,20 +50,17 @@ class CMA_ES(AUC):
         print('df_falsev :',len(self.df_false_val))
         print('df_true :',len(self.df_true))
 
-        self.df_true      = apply_by_multiprocessing(self.df_true, self._get_error_f, axis=1, workers=4)
-        self.df_true.drop(columns = ['data_y','data_X'],inplace = True)
         self.df_true      = apply_by_multiprocessing(self.df_true, self._get_error_m, axis=1, workers=4)
+        self.df_true.drop(columns = ['data_y','data_X'],inplace = True)
 
 
-        self.df_false     = apply_by_multiprocessing(self.df_false, self._get_error_f,  axis=1, workers=4)
+        self.df_false     = apply_by_multiprocessing(self.df_false, self._get_error_m,  axis=1, workers=4)
         self.df_false.drop(columns = ['data_y','data_X'],inplace = True)
-        self.df_false      = apply_by_multiprocessing(self.df_false, self._get_error_m, axis=1, workers=4)
 
 
 
-        self.df_false_val = apply_by_multiprocessing(self.df_false_val, self._get_error_f,  axis=1, workers=4)
+        self.df_false_val = apply_by_multiprocessing(self.df_false_val, self._get_error_m,  axis=1, workers=4)
         self.df_false_val.drop(columns = ['data_y','data_X'],inplace = True)
-        self.df_false_val      = apply_by_multiprocessing(self.df_false_val, self._get_error_m, axis=1, workers=4)
 
 
 
@@ -187,12 +184,13 @@ class CMA_ES(AUC):
         return AUC,FPR,TPR
 
 
-    def _get_error_f(self, row):
+    def _get_error_m(self, row):
         y   = row['data_y']
         y_p = row['data_y_p']
 
 
-        row['error_f'] = np.square(y - y_p)
+        e_f = np.square(y - y_p)
+        row['error_m'] = np.mean(e_f,axis = 1)
 
         return row
 
@@ -217,14 +215,11 @@ class CMA_ES(AUC):
 
         return row
 
-    def _get_error_m(self,row):
-        row['error_m'] = np.mean(row['error_f'],axis = 1)
 
-        return row
 
     def _get_loss(self,row):
 
-        row['loss'] = np.mean(row['error_f'])
+        row['loss'] = np.mean(row['error_m'])
 
         return row
 

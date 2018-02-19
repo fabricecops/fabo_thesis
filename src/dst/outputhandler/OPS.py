@@ -4,8 +4,7 @@ import os
 import pandas as pd
 import matplotlib.pyplot as plt
 plt.style.use('ggplot')
-from src.dst.helper.apply_mp import MP
-
+import numpy as np
 
 class OPS():
 
@@ -34,8 +33,8 @@ class OPS():
             os.mkdir(dir_)
 
 
-        df_p_t = dict_data['df_true'][['data_y_p','error_tm']]
-        df_p_f = dict_data['df_false'][['data_y_p','error_tm']]
+        df_p_t = dict_data['df_true'][['error_tm']]
+        df_p_f = dict_data['df_false'][['error_tm']]
 
 
         dict_p = {
@@ -44,12 +43,10 @@ class OPS():
             }
 
         path_p = dir_+ '/pred.p'
-        path_s = dir_+ '/stats.p'
         pickle_save(path_p, dict_p)
-        pickle_save(path_s,dict_data)
 
         path = dict_data['path_o'] + 'hist.csv'
-        df = pd.DataFrame([dict_data])[['AUC_min','AUC_max','train_f','val_f','val_t','val_std_t','val_std_f','train_std','AUC_v']]
+        df = pd.DataFrame([dict_data])[['AUC_min','AUC_max','train_f','val_f','val_t','val_std_t','val_std_f','train_std','AUC_v','TPR_v','FPR_v','TPR','FPR']]
         if(epoch == 0):
             df.to_csv(path)
         else:
@@ -139,6 +136,20 @@ class OPS():
         ax2.hist(dict_data['df_false_val']['error_tm'], label='False', color='green', alpha=0.5, bins=50)
         plt.legend()
         plt.savefig(dir + '/AUC_val.png')
+
+
+        if(dict_data['AUC_v'] == min(np.array(df['AUC_v']))):
+            df_p_t = dict_data['df_true'][['error_tm','data_y_p']]
+            df_p_f = dict_data['df_false'][['error_tm','data_y_p']]
+
+            dict_p = {
+                'df_y_t': df_p_t,
+                'df_y_f': df_p_f
+            }
+
+            path_p = dict_data['path_o'] + '/pred.p'
+            pickle_save(path_p, dict_p)
+
 
 
 

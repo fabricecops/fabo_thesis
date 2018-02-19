@@ -26,10 +26,6 @@ class model_mng():
         self.dict_data = None
         self.Queue_o   = queue.Queue()
 
-
-
-
-
     def main(self):
         for i in range(self.dict_c['epochs']):
 

@@ -22,6 +22,7 @@ class data_manager(pipe_line_data):
         self.scaler_v     = None
 
         path,_,_          = self._return_path_dict_data(dict_c)
+
         self.Series_data  = pickle_load(path,self.main_data_conf, ())
 
 
@@ -35,8 +36,11 @@ class data_manager(pipe_line_data):
     def main_data_conf(self,*args):
         path_df,path_sc_p,path_sc_v = self.return_path_pd(self.dict_c)
 
-
         self.df           = pickle_load(path_df,self.peak_derivation, ())
+        self.df           = self.df[self.df['countFrames']>5]
+
+
+
         self.len_df       = len(self.df)
 
         self.scaler_p     = pickle_load(path_sc_p,self._train_scaler, self.df['data_p'])
@@ -44,7 +48,7 @@ class data_manager(pipe_line_data):
 
 
 
-        self.df =  apply_by_multiprocessing(self.df, self._configure_data_movie, axis=1, workers=4)
+        self.df =  apply_by_multiprocessing(self.df, self._configure_data_movie, axis=1, workers=6        )
         self.df =  self.df[self.df['data_X'] != '']
         self.df =  self.df[self.df['data_y'] != '']
         self.count_t = len(self.df)

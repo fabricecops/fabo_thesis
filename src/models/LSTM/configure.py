@@ -51,19 +51,19 @@ def return_dict_bounds():
         'lr'               : 0.0001,
 
         ##### model definition  #####
-        'window'           : 5,
+        'window'           : 0,
         'time_dim'         : 10,
         'pred_seq'         : True,
         'dropout'          : 0.03,
         'hidden'           : 500,
-        'stateful'         : False,
+        'stateful'         : True,
 
 
         ##### fit                    #####
-        'val_split'        : 0.13,
+        'val_split'        : 0.15,
         'verbose'          : 1,
         'epochs'           : 10000,
-        'batch_size'       : 64,
+        'batch_size'       : 1,
 
 
         #### data gathering statefull ####

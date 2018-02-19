@@ -4,6 +4,7 @@ import shutil
 import cv2
 from tqdm import tqdm
 
+print(os.getcwd())
 from src.dst.helper.apply_mp import *
 
 class get_df():
@@ -13,6 +14,8 @@ class get_df():
 
     def get_df_data(self,list_names):
         list_data = []
+
+        array_f   = []
 
         count_unlabeled_data = 0
         count_labeled_data = 0
@@ -42,11 +45,14 @@ class get_df():
                     count_movie += 1
                     count_unlabeled_data += 1
 
-                list_data.append(dict_)
+                if(dict_['frames'] not in array_f):
+                    array_f.append(dict_['frames'])
+                    list_data.append(dict_)
 
         df_data = pd.DataFrame(list_data, columns=['label', 'count', 'frames', 'name', 'movieID'])
 
         df_data = df_data.apply(self.apply_countFrames, axis=1)
+        df_data = df_data[df_data['countFrames']>5]
 
         return df_data
 
@@ -108,8 +114,6 @@ class BGS():
             for j in range(len(df_data['frames'].iloc[i])):
                 src      = self.path + name + '/raw/' + df_data.iloc[i]['frames'][j]
                 image    = cv2.imread(src, -1)
-                print(src)
-                print(image.shape)
                 mask     = self._calc_mask(BGI, image)
                 img_BGI  = np.multiply(image, mask)
 

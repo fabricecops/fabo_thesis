@@ -11,7 +11,6 @@ class pipe_line_data():
 
         self.dict_c     = dict_c
         self.path       = dict_c['path_data']
-        print(self.path)
         self.list_names = os.listdir(self.path)
 
     def peak_derivation(self,*args):
@@ -24,14 +23,13 @@ class pipe_line_data():
 
         # # # movie pictures to interim stage
         print('MOVING PICTURES')
-        MV = pp.Move_p()
-        df = MV.move_pictures(df)
-        # pickle_save('./data/processed/df/df_1.p', df)
+        # MV = pp.Move_p()
+        # df = MV.move_p    ictures(df)
 
         # apply background subtraction
         print('BGS')
-        bgs = pp.BGS(self.dict_c)
-        bgs.main(df)
+        # bgs = pp.BGS(self.dict_c)
+        # bgs.main(df)
 
         # get min_max heigth
         # path_i = './data/interim/BGS/bit_8/'

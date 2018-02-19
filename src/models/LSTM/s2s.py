@@ -1,4 +1,5 @@
 from keras.layers.recurrent import LSTM
+from keras.layers import Dense,RepeatVector
 from keras.models import Sequential
 
 from src.models.LSTM.data_manager import data_manager
@@ -53,7 +54,7 @@ class LSTM_(model, data_manager):
 
     def predict(self):
         df_true      = self.df_t.apply(self._predict, axis=1)
-        df_false     = self.df_f_train.sample(300).apply(self._predict, axis=1)
+        df_false     = self.df_f_train.sample(500).apply(self._predict, axis=1)
         df_f_val     = self.df_f_val.apply(self._predict, axis=1)
 
         dict_data    = {
@@ -89,19 +90,39 @@ class LSTM_(model, data_manager):
 
     def _create_model_stateful(self):
 
-        model = Sequential()
-        model.add(LSTM(self.dimension,   return_sequences        = self.dict_c['pred_seq'],
-                                          stateful               = True,
-                                          batch_input_shape      = self.input_shape))
-        model.add(LSTM(self.dimension,    return_sequences=self.dict_c['pred_seq'],
-                       stateful=True,
-                       batch_input_shape=self.input_shape))
+        hidden1 = 500
+        hidden2 = 400
 
+        model = Sequential()
+        ##Encoder
+        model.add(LSTM(hidden1,
+               batch_input_shape = self.input_shape,
+               return_sequences  = False,
+               stateful          = True
+                   ))
+        model.add(Dense(hidden2))
+
+
+
+        model.add(RepeatVector(self.input_shape[1]))
+
+
+
+        input_s_dec = (1,self.input_shape[1],hidden2)
+
+        model.add(LSTM(self.dimension,
+                    batch_input_shape  = input_s_dec,
+                    return_sequences   = True,
+                    stateful           = True))
 
         optimizer  = self.conf_optimizer()
         model.compile(optimizer, 'mse')
 
         return model
+
+
+
+
 
     def _fit_unstateful(self):
 
