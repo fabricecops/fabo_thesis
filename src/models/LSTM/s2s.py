@@ -54,7 +54,7 @@ class LSTM_(model, data_manager):
 
     def predict(self):
         df_true      = self.df_t.apply(self._predict, axis=1)
-        df_false     = self.df_f_train.sample(500).apply(self._predict, axis=1)
+        df_false     = self.df_f_train.sample(800).apply(self._predict, axis=1)
         df_f_val     = self.df_f_val.apply(self._predict, axis=1)
 
         dict_data    = {
@@ -90,28 +90,44 @@ class LSTM_(model, data_manager):
 
     def _create_model_stateful(self):
 
-        hidden1 = 500
+        hidden1 = 250
         hidden2 = 400
-
+        hidden3 = 400
         model = Sequential()
         ##Encoder
         model.add(LSTM(hidden1,
                batch_input_shape = self.input_shape,
+               return_sequences  = True,
+               stateful          = True
+                   ))
+
+
+        input_l2 = (1,self.input_shape[1],hidden1)
+
+        model.add(LSTM(hidden2,
+               batch_input_shape = input_l2,
                return_sequences  = False,
                stateful          = True
                    ))
-        model.add(Dense(hidden2))
 
+        model.add(Dense(hidden3))
 
 
         model.add(RepeatVector(self.input_shape[1]))
 
 
 
-        input_s_dec = (1,self.input_shape[1],hidden2)
+        input_d1 = (1,self.input_shape[1],hidden3)
+
+        model.add(LSTM(hidden2,
+                    batch_input_shape  = input_d1,
+                    return_sequences   = True,
+                    stateful           = True))
+
+        input_d2 = (1,self.input_shape[1],hidden2)
 
         model.add(LSTM(self.dimension,
-                    batch_input_shape  = input_s_dec,
+                    batch_input_shape  = input_d2,
                     return_sequences   = True,
                     stateful           = True))
 

@@ -25,7 +25,6 @@ class data_manager(pipe_line_data):
 
         self.Series_data  = pickle_load(path,self.main_data_conf, ())
 
-
         self.df_f_train   = self.Series_data[self.dict_c['train']]
         self.df_f_val     = self.Series_data[self.dict_c['val']]
         self.df_t         = self.Series_data[self.dict_c['anomaly']]
