@@ -35,11 +35,13 @@ class OPS():
 
         df_p_t = dict_data['df_true'][['error_tm']]
         df_p_f = dict_data['df_false'][['error_tm']]
+        df_p_fv= dict_data['df_false_val'][['error_tm']]
 
 
         dict_p = {
-                'df_y_t': df_p_t,
-                'df_y_f': df_p_f
+                'df_y_t' : df_p_t,
+                'df_y_f' : df_p_f,
+                'df_y_fv': df_p_fv
             }
 
         path_p = dir_+ '/pred.p'
@@ -118,8 +120,8 @@ class OPS():
         plt.ylabel('TPR')
 
         ax2 = plt.subplot(122)
-        ax2.hist(dict_data['df_true']['error_tm'], label = 'True', color = 'red', alpha = 0.5 , bins = 50)
-        ax2.hist(dict_data['df_false']['error_tm'],label = 'False',color = 'green', alpha = 0.5,bins = 50)
+        ax2.hist(dict_data['df_true']['error_tm'], label = 'True', color = 'red', alpha = 0.5 , bins = 50, range=(-2,5))
+        ax2.hist(dict_data['df_false']['error_tm'],label = 'False',color = 'green', alpha = 0.5,bins = 50, range=(-2,5))
         plt.legend()
         plt.savefig(dir + '/AUC.png')
 
@@ -132,8 +134,8 @@ class OPS():
         plt.ylabel('TPR')
 
         ax2 = plt.subplot(122)
-        ax2.hist(dict_data['df_true']['error_tm'], label='True', color='red', alpha=0.5, bins=50)
-        ax2.hist(dict_data['df_false_val']['error_tm'], label='False', color='green', alpha=0.5, bins=50)
+        ax2.hist(dict_data['df_true']['error_tm'], label='True', color='red', alpha=0.5, bins=50,range=(-2,5))
+        ax2.hist(dict_data['df_false_val']['error_tm'], label='False', color='green', alpha=0.5, bins=50,range=(-2,5))
         plt.legend()
         plt.savefig(dir + '/AUC_val.png')
 

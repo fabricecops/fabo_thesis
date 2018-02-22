@@ -261,7 +261,7 @@ class path_Generation():
     def _get_points_movie(self, row):
 
         data_movie_p  = np.zeros((len(row['frames']), len(self.resolution) * self.nr_contours* self.nr_features))
-        data_movie_v  = np.zeros((len(row['frames']), len(self.resolution) * self.nr_contours * self.nr_features))
+        data_movie_v  = np.zeros((len(row['frames']), len(self.resolution) * self.nr_contours *( self.nr_features-1)))
 
 
 
@@ -270,21 +270,18 @@ class path_Generation():
             path           = 'data/interim/BGS/bit_8/' + frame
             image          = cv2.imread(path, -1)
             frame_pt       = np.zeros(len(self.resolution) * self.nr_contours * self.nr_features)
-            frame_vt       = np.zeros(len(self.resolution) * self.nr_contours * self.nr_features)
+            frame_vt       = np.zeros(len(self.resolution) * self.nr_contours * (self.nr_features-1))
 
             for i, heigth in enumerate(self.resolution):
 
                 data,sliced_frame = self._slice_frame(image, heigth,j)
                 data_pos,data_v   = self.track_points.main_tracker(j,heigth,data)
-                # print()
-                # print(data_pos)
-                # print(data_v)
-                # print(data_v.shape)
-                # print(data_pos.shape)
+
 
                 if (len(data) != 0):
                     frame_pt[self.nr_features * self.nr_contours* i:self.nr_features * self.nr_contours * i + self.nr_features * self.nr_contours] = data_pos
-                    frame_vt[self.nr_features * self.nr_contours* i:self.nr_features * self.nr_contours * i + self.nr_features * self.nr_contours] = data_v
+                    frame_vt[(self.nr_features-1) * self.nr_contours* i:(self.nr_features-1) * self.nr_contours * i + (self.nr_features-1)* self.nr_contours] = data_v
+
 
             data_movie_p[j, :] = frame_pt
             data_movie_v[j, :] = frame_vt
@@ -383,7 +380,9 @@ class tracker():
             if (frame_index != self.track_frame[heigth]):
                 self.previous_f[heigth] = tmp
 
-            data_v = data_pos
+            index  = [i+2 for i in range(0,len(data_pos)-1,3)]
+            data_v = np.copy(data_pos)
+            data_v = np.delete(data_v,index)
 
         if (frame_index != 0):
             data_pos = self._configure_position(data_pos, frame_index, heigth)
@@ -516,7 +515,9 @@ class tracker():
                 data[3 * i + 1] = data[3 * i + 1] - self.state[heigth][3 * i + 1] + 0.1
                 data[3 * i + 2] = data[3 * i + 2] - self.state[heigth][3 * i + 2]
 
+        index = [i + 2 for i in range(0, len(data) - 1, 3)]
         data_v = np.copy(data)
+        data_v = np.delete(data_v, index)
 
         for i in range(self.nr_contours):
             X = data[3 * i]
@@ -525,11 +526,11 @@ class tracker():
                 if (X != 0 and y != 0):
 
                     if (frame_index != self.track_frame):
-                        data_v[3 * i] = data_v[3 * i] - self.change[heigth][3 * i]
-                        data_v[3 * i + 1] = data_v[3 * i + 1] - self.change[heigth][3 * i + 1]
+                        data_v[2 * i] = data_v[2 * i] - self.change[heigth][3 * i]
+                        data_v[2 * i + 1] = data_v[2 * i + 1] - self.change[heigth][3 * i + 1]
                     else:
-                        data_v[3 * i] = data_v[3 * i] - self.change_copy[heigth][3 * i]
-                        data_v[3 * i + 1] = data_v[3 * i + 1] - self.change_copy[heigth][3 * i + 1]
+                        data_v[2 * i] = data_v[2 * i] - self.change_copy[heigth][3 * i]
+                        data_v[2 * i + 1] = data_v[2 * i + 1] - self.change_copy[heigth][3 * i + 1]
 
             if (self.track_frame != frame_index):
                 self.change[heigth][3 * i] = data[3 * i]

@@ -19,10 +19,10 @@ def return_dict_bounds():
         'nr_features'      : 3,
 
         ## Peak derivation #############
-        'resolution'       : 6,
+        'resolution'       : 4,
         'area'             : 200,
-        'min_h'            : 0,
-        'max_h'            : 140,
+        'min_h'            : 10,
+        'max_h'            : 150,
 
         #### Data manager  #########
         'mode_data'        : ['p'],
@@ -33,7 +33,7 @@ def return_dict_bounds():
         ###### CMA_ES    ######
         'verbose_CMA'      : 1,
         'verbose_CMA_log'  : 0,
-        'evals'            : 20000,
+        'evals'            : 1000,
         'bounds'           : [-100,100],
         'sigma'            : 0.5,
         'progress_ST'      : 0.3,
@@ -48,7 +48,7 @@ def return_dict_bounds():
 
         #### optimizer         #####
         'optimizer'        : 'adam',
-        'lr'               : 0.0001,
+        'lr'               : 0.00001,
 
         ##### model definition  #####
         'window'           : 0,
@@ -56,14 +56,14 @@ def return_dict_bounds():
         'pred_seq'         : True,
         'dropout'          : 0.03,
         'hidden'           : 500,
-        'stateful'         : True,
+        'stateful'         : False,
 
 
         ##### fit                    #####
         'val_split'        : 0.15,
-        'verbose'          : 1,
+        'verbose'          : 2,
         'epochs'           : 10000,
-        'batch_size'       : 1,
+        'batch_size'       : 128,
 
 
         #### data gathering statefull ####

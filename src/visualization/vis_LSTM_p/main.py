@@ -31,6 +31,8 @@ class main_visualize(conf_data,plot_Tool,Path_gen):
         self.threshold       = 0.
         self.track_threshold = None
 
+        self.plot_mode   = 'error_t'
+
     def play_videos(self):
         i     = 0
         j     = 0
@@ -62,11 +64,14 @@ class main_visualize(conf_data,plot_Tool,Path_gen):
 
     def _write_auc(self,frame,i):
         AUC = self.AUC
-        # string_TN, string_TP = self.get_rates(self.threshold)
-        string_TN, string_TP = 5,6
+
+
+        string_TP            = str(len(self.df_true[self.df_true['error_tm']>self.threshold]))+'/'+str(len(self.df_true))
+        string_TN            = str(len(self.df_false[self.df_false['error_tm']<=self.threshold]))+'/'+str(len(self.df_false))
+
+
         error = self.df.iloc[i]['error_tm']
 
-        print(str(error))
 
         if (error > self.threshold):
             p = 'Anomaly'
@@ -76,7 +81,7 @@ class main_visualize(conf_data,plot_Tool,Path_gen):
         string = 'AUC: '+str(round(np.abs(AUC),2))+\
                  ' TH: '+str(round(self.threshold,3))+\
                  ' TF: '+str(string_TN)+\
-                 ' TN: '+  str(string_TP)+\
+                 ' TP: '+  str(string_TP)+\
                  ' Prediction: '+p+\
                  ' E: '+str(error)
 
@@ -177,12 +182,20 @@ class main_visualize(conf_data,plot_Tool,Path_gen):
     def _get_plot(self,i,j,feature):
 
 
-        output_A, pred_A, error_A = self.conf_pred_feat(i,feature)
-        output_y, pred_y, error_y = self.conf_pred_feat(i,feature+1)
-        output_x, pred_x, error_x = self.conf_pred_feat(i,feature+2)
+        if(self.plot_mode == 'feature'):
+
+            output_A, pred_A, error_A = self.conf_pred_feat(i,feature)
+            output_y, pred_y, error_y = self.conf_pred_feat(i,feature+1)
+            output_x, pred_x, error_x = self.conf_pred_feat(i,feature+2)
 
 
-        img = self.plot_3(j,feature, output_A, pred_A, error_A,output_y, pred_y, error_y,output_x, pred_x, error_x)
+            img = self.plot_3(j,feature, output_A, pred_A, error_A,output_y, pred_y, error_y,output_x, pred_x, error_x)
+
+        else:
+            img = self.get_plot_error(self.df_true,self.df_false)
+
+
+
         return img
 
     def _choose_feature(self):
@@ -271,7 +284,7 @@ class main_visualize(conf_data,plot_Tool,Path_gen):
 if __name__ == '__main__':
 
 
-    path  = 'models/LSTM/stateful/0/'
+    path  = 'models/LSTM/stateful/8/'
     epoch = 0
 
 

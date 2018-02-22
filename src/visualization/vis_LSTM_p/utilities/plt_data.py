@@ -67,6 +67,27 @@ class plot_Tool():
 
         return image
 
+    def get_plot_error(self,df_true,df_false):
+
+
+        fig = plt.figure(figsize=(16, 4))
+
+        ax2 = plt.subplot(121)
+        ax2.hist(df_true['error_tm'], label='True', color='red', alpha=0.5, bins=50, range=(0, 1))
+        ax2.hist(df_false['error_tm'], label='False', color='green', alpha=0.5, bins=50, range=(0, 1))
+        plt.legend()
+        ax2 = plt.subplot(122)
+        # ax2.hist(df_true['error_tm'], label='True', color='red', alpha=0.5, bins=50, range=(0, 10))
+        ax2.hist(df_false['error_tm'], label='False', color='green', alpha=0.5, bins=50, range=(0, 10))
+        plt.legend()
+        fig.canvas.draw()
+        image = np.array(fig.canvas.renderer._renderer)
+        plt.close()
+
+        image = cv2.resize(image, (960, 240))
+        image = cv2.cvtColor(image, cv2.COLOR_RGBA2RGB)
+
+        return image
 
     def _config_f(self,feature):
 

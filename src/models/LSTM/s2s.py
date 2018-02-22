@@ -54,7 +54,7 @@ class LSTM_(model, data_manager):
 
     def predict(self):
         df_true      = self.df_t.apply(self._predict, axis=1)
-        df_false     = self.df_f_train.sample(800).apply(self._predict, axis=1)
+        df_false     = self.df_f_train.sample(500).apply(self._predict, axis=1)
         df_f_val     = self.df_f_val.apply(self._predict, axis=1)
 
         dict_data    = {
@@ -72,15 +72,38 @@ class LSTM_(model, data_manager):
     def _create_model_unstateful(self):
         model = Sequential()
 
-        model.add(LSTM(400, return_sequences        = self.dict_c['pred_seq'],
-                                              stateful         = False,
-                                              input_shape      = self.input_shape))
-        model.add(LSTM(300, return_sequences        = self.dict_c['pred_seq'],
-                                              stateful         = False,
-                                              input_shape      = self.input_shape))
-        model.add(LSTM(self.dimension, return_sequences        = self.dict_c['pred_seq'],
-                                              stateful         = False,
-                                              input_shape      = self.input_shape))
+        hidden1 = 300
+        hidden2 = 350
+        hidden3 = 400
+
+        model.add(LSTM(hidden1,
+               input_shape       = self.input_shape,
+               return_sequences  = True,
+               stateful          = False
+                   ))
+
+
+        model.add(LSTM(hidden2,
+               return_sequences  = False,
+               stateful          = False
+                   ))
+
+        model.add(Dense(hidden3))
+
+
+        model.add(RepeatVector(self.input_shape[0]))
+
+
+
+        model.add(LSTM(hidden2,
+                    return_sequences   = True,
+                    stateful           = False))
+
+
+        model.add(LSTM(self.dimension,
+                    return_sequences   = True,
+                    stateful           = False))
+
         # model.add(TimeDistributed(Dense(self.output_dim)))
 
         optimizer = self.conf_optimizer()
@@ -90,8 +113,8 @@ class LSTM_(model, data_manager):
 
     def _create_model_stateful(self):
 
-        hidden1 = 250
-        hidden2 = 400
+        hidden1 = 300
+        hidden2 = 350
         hidden3 = 400
         model = Sequential()
         ##Encoder
@@ -206,8 +229,13 @@ class LSTM_(model, data_manager):
 
         if(self.dict_c['stateful'] == False):
             _, path_tr, path_v = self._return_path_dict_data(self.dict_c)
-            self.X_train,self.y_train  = pickle_load(path_tr,self.main_data_conf_stateless,'train')
-            self.X_val,self.y_val      = pickle_load(path_tr,self.main_data_conf_stateless,'val')
+            self.X_train,self.y_train  = self.main_data_conf_stateless('train')
+            self.X_val,self.y_val      = self.main_data_conf_stateless('val')
+
+            print('XXXXXXXXX')
+            print(len(self.X_val),len(self.X_train))
+            print('XXXXXXX')
+
 
     def _predict(self, row):
 

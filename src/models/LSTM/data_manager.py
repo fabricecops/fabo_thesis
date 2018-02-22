@@ -25,9 +25,18 @@ class data_manager(pipe_line_data):
 
         self.Series_data  = pickle_load(path,self.main_data_conf, ())
 
-        self.df_f_train   = self.Series_data[self.dict_c['train']]
-        self.df_f_val     = self.Series_data[self.dict_c['val']]
-        self.df_t         = self.Series_data[self.dict_c['anomaly']]
+        self.df_f      = self.Series_data['df_f']
+        self.df_t      = self.Series_data['df_t']
+
+        self.df_t = shuffle(self.df_t)
+        self.df_f = shuffle(self.df_f)
+
+        val_samples    = int(len( self.df_f )*self.dict_c['val_split'])
+
+        self.df_f_val   = self.df_f.iloc[0:val_samples]
+        self.df_f_train = self.df_f.iloc[val_samples:len(self.df_f)]
+        self.df_t       = shuffle(self.df_t)
+
 
 
         print(len(self.df_f_train),len(self.df_f_val),len(self.df_t ))
@@ -58,14 +67,9 @@ class data_manager(pipe_line_data):
         df_t = shuffle(self.df[self.df['label'] == True])
         df_f = shuffle(self.df[self.df['label'] == False])
 
-        val_samples    = int(len(df_f)*self.dict_c['val_split'])
-        df_f_val  = df_f.iloc[0:val_samples]
-        df_f_tr   = df_f.iloc[val_samples:len(df_f)]
-
 
         dict_ = {
-                 'df_f_tr' : df_f_tr,
-                 'df_f_val': df_f_val,
+                 'df_f' :    df_f,
                  'df_t'    : df_t
 
         }
@@ -74,14 +78,11 @@ class data_manager(pipe_line_data):
         return Series
 
     def main_data_conf_stateless(self,mode):
-        mode = mode[0]
 
         if (mode == 'val'):
             df = self.df_f_val
         else:
             df = self.df_f_train
-
-
 
         X = np.concatenate(np.array(df['data_X']), axis = 0)
         y = np.concatenate(np.array(df['data_y']), axis = 0)
@@ -124,11 +125,13 @@ class data_manager(pipe_line_data):
 
             elif(mode=='v'):
                 if (bool_ == False):
+
                     data  = self._transform_scaler(row['data_v'],mode)
                     bool_ = True
                 else:
+
                     tmp   = self._transform_scaler(row['data_v'],mode)
-                    data = np.concatenate((data,tmp), axis=0)
+                    data = np.concatenate((data,tmp), axis=1)
 
         return data
 
@@ -252,3 +255,5 @@ class data_manager(pipe_line_data):
 
         return path_df,path_ut_tr,path_ut_va
 
+    def return_df(self):
+        return self.df_f,self.df_f_val,self.df_t

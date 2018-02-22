@@ -16,6 +16,42 @@
 #            stateful=True))
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#
+#
+#
+# model = Sequential()
+#
+# model.add(LSTM(400, return_sequences=self.dict_c['pred_seq'],
+#                stateful=False,
+#                input_shape=self.input_shape))
+# model.add(LSTM(300, return_sequences=self.dict_c['pred_seq'],
+#                stateful=False,
+#                input_shape=self.input_shape))
+# model.add(LSTM(self.dimension, return_sequences=self.dict_c['pred_seq'],
+#                stateful=False,
+#                input_shape=self.input_shape))
+#
+
+
+
  # model = Sequential()
  # model.add(LSTM(self.dimension, return_sequences=self.dict_c['pred_seq'],
  #                stateful=True,

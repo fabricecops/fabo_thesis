@@ -2,7 +2,7 @@ from src.dst.helper.apply_mp import *
 import cma
 from src.dst.metrics.AUC import AUC
 import functools
-
+from keras.losses import mean_squared_error as mse
 class CMA_ES(AUC):
 
 
@@ -41,9 +41,6 @@ class CMA_ES(AUC):
         self.AUC_max   = 0
         self.AUC_min   = 100
 
-        # print(self.df_true.columns)
-        # print(self.df_false.columns)
-        # print(self.df_false_val.columns)
 
         print('df_false :',len(self.df_false))
         print('df_falsev :',len(self.df_false_val))
@@ -52,13 +49,19 @@ class CMA_ES(AUC):
 
         array_t                             = zip(list(self.df_true['data_y']),list(self.df_true['data_y_p']))
         self.df_true['error_m']             = list(map(self._get_error_m,array_t))
+        array_t                             = zip(list(self.df_true['data_y']),list(self.df_true['data_y_p']))
+        val_t                               = list(map(self._get_error_mean,array_t))
         self.df_true.drop(columns = ['data_y','data_X'],inplace = True)
 
 
         array_f                             = zip(list(self.df_false['data_y']),list(self.df_false['data_y_p']))
+        train_f                             = list(map(self._get_error_mean,array_f))
+        array_f                             = zip(list(self.df_false['data_y']),list(self.df_false['data_y_p']))
         self.df_false['error_m']            = list(map(self._get_error_m,array_f))
         self.df_false.drop(columns = ['data_y','data_X'],inplace = True)
 
+        array_fv                            = zip(list(self.df_false_val['data_y']),list(self.df_false_val['data_y_p']))
+        val_f                               = list(map(self._get_error_mean,array_fv))
         array_fv                            = zip(list(self.df_false_val['data_y']),list(self.df_false_val['data_y_p']))
         self.df_false_val['error_m']        = list(map(self._get_error_m,array_fv))
         self.df_false_val.drop(columns      = ['data_y','data_X'],inplace = True)
@@ -67,32 +70,19 @@ class CMA_ES(AUC):
         result,AUC    = self._CMA_ES_()
         self.x        = result
 
-
-
         self.df_true['error_tm']      = np.array(list(map(functools.partial(self._get_error_max, x=result), np.array(self.df_true['error_m']))))
         self.df_false['error_tm']     = np.array(list(map(functools.partial(self._get_error_max, x=result), np.array(self.df_false['error_m']))))
         self.df_false_val['error_tm'] = np.array(list(map(functools.partial(self._get_error_max, x=result), np.array(self.df_false_val['error_m']))))
 
-
-
-
-        val_t        = apply_by_multiprocessing(self.df_true, self._get_loss, axis=1, workers=6)['loss']
-        val_f        = apply_by_multiprocessing(self.df_false_val, self._get_loss, axis=1, workers=6)['loss']
-
-
-        loss_f_t     = np.mean(train_loss)
-        loss_f_v     = np.mean(np.array(val_f))
-        loss_t       = np.mean(np.array(val_t))
+        loss_f_t     = np.mean(train_f)
+        loss_f_v     = np.mean(val_f)
+        loss_t       = np.mean(val_t)
 
         AUC_v,FPR_v,TPR_v = self._opt_function_val(result)
 
         loss_t_std      = np.std(val_t)
-        loss_f_t_std   = np.std(train_loss)
+        loss_f_t_std   = np.std(train_f)
         loss_f_v_std   = np.std(val_f)
-
-        # print(self.df_true.columns)
-        # print(self.df_false.columns)
-        # print(self.df_false_val.columns)
 
         dict_data   =  {'AUC_min'        : self.AUC_min,
                         'AUC_max'        : AUC,
@@ -181,44 +171,25 @@ class CMA_ES(AUC):
 
 
     def _get_error_m(self, row):
-        # y   = row['data_y']
-        # y_p = row['data_y_p']
+
         y     = row[0]
         y_p   = row[1]
 
-        e_f = np.mean(np.square(y - y_p),axis=1)
-        # row['error_m'] = np.mean(e_f,axis = 1)
+
+        e_f = np.mean(np.power((y - y_p),2),axis=1)
 
         return e_f
 
+    def _get_error_mean(self, row):
 
-    # def _get_error_f(self, row,x):
-    #     y   = row['data_y']
-    #     y_p = row['data_y_p']
-    #
-    #     e_f  = np.square(y - y_p)
-    #     e_tm = np.max(np.mean(np.dot(e_f,x),axis = 1))
-    #
-    #
-    #
-    #     row['error_f'] = e_tm
-    #
-    #     return row
+        y     = row[0]
+        y_p   = row[1]
 
-    def _get_error_tm(self,row,x):
-
-        e_tm            = np.max(np.dot(row['error_m'],x))
-        row['error_tm'] = e_tm
-
-        return row
+        e_f = np.mean(np.power((y - y_p), 2))
 
 
 
-    def _get_loss(self,row):
-
-        row['loss'] = np.mean(row['error_m'])
-
-        return row
+        return e_f
 
 
     def _get_error_max(self,e,x):
