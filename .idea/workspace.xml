@@ -2,19 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c452cadd-2f9a-4dbc-96c5-eb88182fb6f7" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.env" afterPath="$PROJECT_DIR$/.env" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/vcs.xml" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/dst/keras_model/callbacks.py" afterPath="$PROJECT_DIR$/src/dst/keras_model/callbacks.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/dst/optimizers/CMA_ES/CMA_ES.py" afterPath="$PROJECT_DIR$/src/dst/optimizers/CMA_ES/CMA_ES.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/dst/outputhandler/OPS.py" afterPath="$PROJECT_DIR$/src/dst/outputhandler/OPS.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/models/LSTM/configure.py" afterPath="$PROJECT_DIR$/src/models/LSTM/configure.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/models/LSTM/data_manager.py" afterPath="$PROJECT_DIR$/src/models/LSTM/data_manager.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/models/LSTM/main_LSTM.py" afterPath="$PROJECT_DIR$/src/models/LSTM/main_LSTM.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/models/LSTM/s2s.py" afterPath="$PROJECT_DIR$/src/models/LSTM/s2s.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/visualization/vis_LSTM_p/main.py" afterPath="$PROJECT_DIR$/src/visualization/vis_LSTM_p/main.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/visualization/vis_LSTM_p/utilities/conf_data.py" afterPath="$PROJECT_DIR$/src/visualization/vis_LSTM_p/utilities/conf_data.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/visualization/vis_LSTM_p/utilities/plt_data.py" afterPath="$PROJECT_DIR$/src/visualization/vis_LSTM_p/utilities/plt_data.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -564,6 +552,14 @@
       <option name="presentableId" value="Default" />
       <updated>1510496805696</updated>
     </task>
+    <task id="LOCAL-00001" summary="'model_save/NANs fixed'">
+      <created>1519400927561</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1519400927561</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -647,6 +643,8 @@
       <path value="$PROJECT_DIR$/Beeldverwerking/git" />
       <path value="$USER_HOME$/axel/tigrillo-rl-framework" />
     </ignored-roots>
+    <MESSAGE value="'model_save/NANs fixed'" />
+    <option name="LAST_COMMIT_MESSAGE" value="'model_save/NANs fixed'" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
