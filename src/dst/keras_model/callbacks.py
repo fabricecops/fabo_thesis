@@ -87,34 +87,3 @@ class Stop_reach_trehshold(Callback):
                 print()
                 print("Epoch %05d: early stopping THRESHOLD STOPPER" % epoch)
             self.model.stop_training = True
-
-class OPS_CB(Callback):
-
-    def __init__(self,path_o,
-                       model,
-                       df_true,
-                       df_false,
-                       dict_c,
-                       monitor = ['loss']
-                       ):
-        Callback.__init__(self)
-
-        self.monitor = monitor
-
-        self.OPS_    = OPS(path_o,
-                           model,
-                           df_true,
-                           df_false,
-                           dict_c,
-                           dict_c['batch_size'],
-                           None)
-
-
-
-
-
-
-    def on_epoch_end(self, epoch, logs={}):
-
-        train_loss = logs.get(self.monitor[0])
-        self.OPS_.main_OPS_nmp(epoch,train_loss)

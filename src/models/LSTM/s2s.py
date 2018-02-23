@@ -54,7 +54,7 @@ class LSTM_(model, data_manager):
 
     def predict(self):
         df_true      = self.df_t.apply(self._predict, axis=1)
-        df_false     = self.df_f_train.sample(500).apply(self._predict, axis=1)
+        df_false     = self.df_f_train.sample(90).apply(self._predict, axis=1)
         df_f_val     = self.df_f_val.apply(self._predict, axis=1)
 
         dict_data    = {
@@ -67,7 +67,7 @@ class LSTM_(model, data_manager):
                         'batch_size'  : self.dict_c['batch_size']
         }
 
-        return dict_data
+        return dict_data,self.model
 
     def _create_model_unstateful(self):
         model = Sequential()

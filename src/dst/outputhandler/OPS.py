@@ -1,5 +1,4 @@
 from src.dst.outputhandler.pickle import pickle_save
-from src.dst.optimizers.CMA_ES.CMA_ES import CMA_ES
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -12,17 +11,14 @@ class OPS():
         self.verbose_AUC = dict_c['verbose_AUC']
 
 
-    def write_output(self,dict_data,epoch):
-        self._save_output(dict_data,epoch)
 
-    def main_OPS(self,dict_data,epoch):
-        dir_,df = self._save_prediction(dict_data,epoch)
+    def main_OPS(self,dict_data,epoch,model_s):
+        dir_,df = self._save_prediction(dict_data,epoch,model_s)
         self._save_plots(dict_data,dir_)
         self._verbose(epoch, df)
 
 
-
-    def _save_prediction(self,dict_data,epoch):
+    def _save_prediction(self,dict_data,epoch, model_s):
         string = 'epoch_'+str(epoch)
 
         dir_   = dict_data['path_o'] + 'predictions/'
@@ -37,15 +33,19 @@ class OPS():
         df_p_f = dict_data['df_false'][['error_tm']]
         df_p_fv= dict_data['df_false_val'][['error_tm']]
 
-
         dict_p = {
                 'df_y_t' : df_p_t,
                 'df_y_f' : df_p_f,
-                'df_y_fv': df_p_fv
+                'df_y_fv': df_p_fv,
+                'x'      : dict_data['x']
             }
 
         path_p = dir_+ '/pred.p'
         pickle_save(path_p, dict_p)
+
+        path_m = dir_ +'/model.h5'
+        model_s.save(path_m)
+
 
         path = dict_data['path_o'] + 'hist.csv'
         df = pd.DataFrame([dict_data])[['AUC_min','AUC_max','train_f','val_f','val_t','val_std_t','val_std_f','train_std','AUC_v','TPR_v','FPR_v','TPR','FPR']]
@@ -56,18 +56,19 @@ class OPS():
 
         return dir_,df
 
-    def _save_output(self,dict_data,epoch):
-        if (epoch == 0):
-            df_o_t = dict_data['df_true'][['frames', 'name', 'label', 'data_X', 'data_y']]
-            df_o_f = dict_data['df_false'][['frames', 'name', 'label', 'data_X', 'data_y']]
+    def _save_output(self,dict_data):
+        df_o_t = dict_data['df_true'][['frames', 'name', 'label', 'data_X', 'data_y']]
+        df_o_f = dict_data['df_false'][['frames', 'name', 'label', 'data_X', 'data_y']]
 
-            dict_o = {
-                'df_o_t': df_o_t,
-                'df_o_f': df_o_f
-            }
+        dict_o = {
+            'df_o_t': df_o_t,
+            'df_o_f': df_o_f
+        }
 
-            path_o = dict_data['path_o'] + 'output.p'
-            pickle_save(path_o, dict_o)
+
+        path_o = dict_data['path_o'] + 'output.p'
+        pickle_save(path_o, dict_o)
+
 
 
     def _verbose(self,epoch,df):
@@ -140,17 +141,20 @@ class OPS():
         plt.savefig(dir + '/AUC_val.png')
 
 
-        if(dict_data['AUC_v'] == min(np.array(df['AUC_v']))):
+        if(dict_data['AUC_v'] == max(np.array(df['AUC_v']))):
             df_p_t = dict_data['df_true'][['error_tm','data_y_p']]
             df_p_f = dict_data['df_false'][['error_tm','data_y_p']]
 
+
             dict_p = {
                 'df_y_t': df_p_t,
-                'df_y_f': df_p_f
+                'df_y_f': df_p_f,
+                'x'     : dict_data['x']
             }
 
             path_p = dict_data['path_o'] + '/pred.p'
             pickle_save(path_p, dict_p)
+
 
 
 

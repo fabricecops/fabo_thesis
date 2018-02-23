@@ -284,7 +284,7 @@ class main_visualize(conf_data,plot_Tool,Path_gen):
 if __name__ == '__main__':
 
 
-    path  = 'models/LSTM/stateful/8/'
+    path  = 'models/LSTM/stateful/1/'
     epoch = 0
 
 

@@ -11,9 +11,6 @@ import time
 
 import threading
 import queue
-
-
-
 class model_mng():
 
     def __init__(self,dict_c):
@@ -29,7 +26,7 @@ class model_mng():
     def main(self):
         for i in range(self.dict_c['epochs']):
 
-            dict_data            = self.process_LSTM()
+            dict_data,model_s    = self.process_LSTM()
 
             if(i != 0):
                 while p.is_alive():
@@ -37,7 +34,7 @@ class model_mng():
 
                 p.terminate()
 
-            p = mp.Process(target=self.process_output, args= (i,dict_data))
+            p = mp.Process(target=self.process_output, args= (i,dict_data,model_s))
             p.daemon = False
             p.start()
 
@@ -46,21 +43,20 @@ class model_mng():
     def process_LSTM(self):
 
         loss                = self.model.fit()
-        dict_data           = self.model.predict()
+        dict_data,model_s   = self.model.predict()
         dict_data['losses'] = loss
 
-        return dict_data
+        return dict_data,model_s
 
-    def process_output(self,i,dict_data):
+    def process_output(self,i,dict_data,model_s):
 
-            self.OPS.write_output(dict_data,i)
-
+            self.OPS._save_output(dict_data)
 
             CMA_ES_    = CMA_ES(self.dict_c)
             dict_data2 = CMA_ES_.main_CMA_ES(dict_data,i)
             dict_data2['path_o'] = dict_data['path_o']
 
-            self.OPS.main_OPS(dict_data2, i)
+            self.OPS.main_OPS(dict_data2, i,model_s)
 
 
 

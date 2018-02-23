@@ -69,7 +69,6 @@ class plot_Tool():
 
     def get_plot_error(self,df_true,df_false):
 
-
         fig = plt.figure(figsize=(16, 4))
 
         ax2 = plt.subplot(121)

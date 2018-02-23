@@ -74,6 +74,9 @@ class CMA_ES(AUC):
         self.df_false['error_tm']     = np.array(list(map(functools.partial(self._get_error_max, x=result), np.array(self.df_false['error_m']))))
         self.df_false_val['error_tm'] = np.array(list(map(functools.partial(self._get_error_max, x=result), np.array(self.df_false_val['error_m']))))
 
+
+
+
         loss_f_t     = np.mean(train_f)
         loss_f_v     = np.mean(val_f)
         loss_t       = np.mean(val_t)
