@@ -5,7 +5,7 @@ import sys
 load_dotenv(find_dotenv())
 PATH_P     = os.environ['PATH_P']
 
-
+print(os.listdir('/'))
 os.chdir(PATH_P)
 sys.path.insert(0, PATH_P)
 
