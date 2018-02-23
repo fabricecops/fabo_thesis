@@ -11,6 +11,7 @@ import time
 
 import threading
 import queue
+
 class model_mng():
 
     def __init__(self,dict_c):
@@ -65,9 +66,6 @@ if __name__ == '__main__':
     dict_c, bounds = return_dict_bounds()
 
     mm    = model_mng(dict_c).main()
-
-
-
 
     ##### train_BO_different_windows ####
     # dict_c, bounds = return_dict_bounds()

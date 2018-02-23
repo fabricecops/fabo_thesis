@@ -33,9 +33,9 @@ class data_manager(pipe_line_data):
 
         val_samples    = int(len( self.df_f )*self.dict_c['val_split'])
 
-        self.df_f_val   = self.df_f.iloc[0:val_samples].iloc[:10]
-        self.df_f_train = self.df_f.iloc[val_samples:len(self.df_f)].iloc[:100]
-        self.df_t       = self.df_t.iloc[:10]
+        self.df_f_val   = self.df_f.iloc[0:val_samples]
+        self.df_f_train = self.df_f.iloc[val_samples:len(self.df_f)]
+        self.df_t       = self.df_t
 
 
 

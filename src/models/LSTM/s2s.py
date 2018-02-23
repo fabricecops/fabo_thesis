@@ -54,7 +54,7 @@ class LSTM_(model, data_manager):
 
     def predict(self):
         df_true      = self.df_t.apply(self._predict, axis=1)
-        df_false     = self.df_f_train.sample(90).apply(self._predict, axis=1)
+        df_false     = self.df_f_train.sample(800).apply(self._predict, axis=1)
         df_f_val     = self.df_f_val.apply(self._predict, axis=1)
 
         dict_data    = {
@@ -232,9 +232,7 @@ class LSTM_(model, data_manager):
             self.X_train,self.y_train  = self.main_data_conf_stateless('train')
             self.X_val,self.y_val      = self.main_data_conf_stateless('val')
 
-            print('XXXXXXXXX')
-            print(len(self.X_val),len(self.X_train))
-            print('XXXXXXX')
+
 
 
     def _predict(self, row):
