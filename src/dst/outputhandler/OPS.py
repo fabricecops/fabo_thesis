@@ -12,21 +12,15 @@ class OPS():
 
 
 
-    def main_OPS(self,dict_data,epoch,model_s):
-        dir_,df = self._save_prediction(dict_data,epoch,model_s)
+    def main_OPS(self,dict_data,epoch):
+        dir_,df = self._save_prediction(dict_data,epoch)
         self._save_plots(dict_data,dir_)
         self._verbose(epoch, df)
 
 
-    def _save_prediction(self,dict_data,epoch, model_s):
+    def _save_prediction(self,dict_data,epoch):
         string = 'epoch_'+str(epoch)
-
-        dir_   = dict_data['path_o'] + 'predictions/'
-        if (os.path.exists(dir_)==False):
-            os.mkdir(dir_)
         dir_   = dict_data['path_o'] + 'predictions/'+string
-        if (os.path.exists(dir_)==False):
-            os.mkdir(dir_)
 
 
         df_p_t = dict_data['df_true'][['error_tm']]
@@ -43,8 +37,7 @@ class OPS():
         path_p = dir_+ '/pred.p'
         pickle_save(path_p, dict_p)
 
-        path_m = dir_ +'/model.h5'
-        model_s.save(path_m)
+
 
 
         path = dict_data['path_o'] + 'hist.csv'
@@ -56,18 +49,19 @@ class OPS():
 
         return dir_,df
 
-    def _save_output(self,dict_data):
-        df_o_t = dict_data['df_true'][['frames', 'name', 'label', 'data_X', 'data_y']]
-        df_o_f = dict_data['df_false'][['frames', 'name', 'label', 'data_X', 'data_y']]
+    def _save_output(self,dict_data,i):
+        if(i==0):
+            df_o_t = dict_data['df_true'][['frames', 'name', 'label', 'data_X', 'data_y']]
+            df_o_f = dict_data['df_false_T'][['frames', 'name', 'label', 'data_X', 'data_y']]
 
-        dict_o = {
-            'df_o_t': df_o_t,
-            'df_o_f': df_o_f
-        }
+            dict_o = {
+                'df_o_t': df_o_t,
+                'df_o_f': df_o_f
+            }
 
 
-        path_o = dict_data['path_o'] + 'output.p'
-        pickle_save(path_o, dict_o)
+            path_o = dict_data['path_o'] + 'output.p'
+            pickle_save(path_o, dict_o)
 
 
 

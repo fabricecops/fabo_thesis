@@ -70,6 +70,7 @@ class CMA_ES(AUC):
         result,AUC    = self._CMA_ES_()
         self.x        = result
 
+
         self.df_true['error_tm']      = np.array(list(map(functools.partial(self._get_error_max, x=result), np.array(self.df_true['error_m']))))
         self.df_false['error_tm']     = np.array(list(map(functools.partial(self._get_error_max, x=result), np.array(self.df_false['error_m']))))
         self.df_false_val['error_tm'] = np.array(list(map(functools.partial(self._get_error_max, x=result), np.array(self.df_false_val['error_m']))))
@@ -107,6 +108,7 @@ class CMA_ES(AUC):
                         'TPR_v'          : TPR_v,
                         'FPR_v'          : FPR_v
                         }
+        print('lol')
 
 
         return dict_data

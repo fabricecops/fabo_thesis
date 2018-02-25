@@ -27,7 +27,8 @@ class model_mng():
     def main(self):
         for i in range(self.dict_c['epochs']):
 
-            dict_data,model_s    = self.process_LSTM()
+            dict_data    = self.process_LSTM()
+            self._conf_FS(dict_data,i)
 
             if(i != 0):
                 while p.is_alive():
@@ -35,7 +36,7 @@ class model_mng():
 
                 p.terminate()
 
-            p = mp.Process(target=self.process_output, args= (i,dict_data,model_s))
+            p = mp.Process(target=self.process_output, args= (i,dict_data))
             p.daemon = False
             p.start()
 
@@ -44,20 +45,38 @@ class model_mng():
     def process_LSTM(self):
 
         loss                = self.model.fit()
-        dict_data,model_s   = self.model.predict()
+        dict_data   = self.model.predict()
         dict_data['losses'] = loss
 
-        return dict_data,model_s
+        return dict_data
 
-    def process_output(self,i,dict_data,model_s):
+    def process_output(self,i,dict_data):
 
-            self.OPS._save_output(dict_data)
+            self.OPS._save_output(dict_data,i)
 
             CMA_ES_    = CMA_ES(self.dict_c)
             dict_data2 = CMA_ES_.main_CMA_ES(dict_data,i)
+
+            dict_data2['model_s'] = dict_data['model']
+
             dict_data2['path_o'] = dict_data['path_o']
 
-            self.OPS.main_OPS(dict_data2, i,model_s)
+            self.OPS.main_OPS(dict_data2, i)
+
+    def _conf_FS(self,dict_data,epoch):
+        string = 'epoch_'+str(epoch)
+
+        dir_   = dict_data['path_o'] + 'predictions/'
+        if (os.path.exists(dir_)==False):
+            os.mkdir(dir_)
+        dir_   = dict_data['path_o'] + 'predictions/'+string
+        if (os.path.exists(dir_)==False):
+            os.mkdir(dir_)
+
+        dir_   = dict_data['path_o'] + 'predictions/'
+        path_m = dir_ +'/model.h5'
+
+        dict_data['model'].save(path_m)
 
 
 

@@ -62,12 +62,13 @@ class LSTM_(model, data_manager):
                         'model'       : self.model,
                         'df_true'     : df_true,
                         'df_false'    : df_false,
+                        'df_false_T'  : self.df_f_train,
                         'df_false_val': df_f_val,
                         'dict_c'      : self.dict_c,
                         'batch_size'  : self.dict_c['batch_size']
         }
 
-        return dict_data,self.model
+        return dict_data
 
     def _create_model_unstateful(self):
         model = Sequential()

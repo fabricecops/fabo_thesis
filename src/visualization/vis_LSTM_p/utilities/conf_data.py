@@ -65,8 +65,7 @@ class conf_data():
 
 
 
-        # self.df_false   = df_o_f.join(df_y_f).sort_values(by = 'error_tm')
-        self.df_false   = pd.concat([df_y_f,df_o_f], axis = 1)
+        self.df_false   = df_o_f.join(df_y_f, how = 'inner').sort_values(by = 'error_tm')
 
 
         self.x          = np.zeros(100)
