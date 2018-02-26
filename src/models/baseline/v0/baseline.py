@@ -1,7 +1,8 @@
+
+
 from src.models.LSTM.data_manager import data_manager
 from src.dst.optimizers.CMA_ES.CMA_ES import CMA_ES
 from src.models.baseline.v0.configure import return_dict_bounds
-import pandas as pd
 import numpy as np
 import functools
 import cma
@@ -25,15 +26,22 @@ class baseline(CMA_ES,data_manager):
         self.TPR      = None
 
         self.df_f,self.df_f_val,self.df_t = self.return_df()
+
+        self.df_f = self.df_f.iloc[0:3]
+        self.df_f_val = self.df_f_val.iloc[0:3]
+        self.df_t = self.df_t.iloc[0:3]
+
         self.configure_data()
 
 
 
     def main(self):
-        dimension      = self.df_true.iloc[0]['data_X'].shape[2]
 
+
+        dimension      = self.df_f.iloc[0].shape[1]
+        array          = np.zeros(dimension)
         es = cma.fmin(self._opt_function,
-                      np.zeros(dimension),
+                      array,
                       self.sigma,
                       {'bounds'              : self.bounds,
                       'maxfevals'            : self.evals,
@@ -44,8 +52,9 @@ class baseline(CMA_ES,data_manager):
 
     def _opt_function(self, x):
 
-        eval_true  = np.array(list(map(functools.partial(self._get_error_max, x=x), np.array(self.df_true['data_m']))))
-        eval_false = np.array(list(map(functools.partial(self._get_error_max, x=x), np.array(self.df_false['data_m']))))
+
+        eval_true  = np.array(list(map(functools.partial(self._get_error_max, x=x), np.array(self.df_t))))
+        eval_false = np.array(list(map(functools.partial(self._get_error_max, x=x), np.array(self.df_f))))
 
         AUC, FPR, TPR = self.get_AUC_score(eval_true, eval_false)
         if (AUC > self.AUC_max):
@@ -63,7 +72,6 @@ class baseline(CMA_ES,data_manager):
     def _get_error_m(self, row):
 
         e_f = np.mean(row, axis = 1)
-
         return e_f
 
 
@@ -88,14 +96,17 @@ class baseline(CMA_ES,data_manager):
         self.df_f_val = self.df_f_val['error_m']
         self.df_t     = self.df_t['error_m']
 
+
 if __name__ == '__main__':
 
     dict_c, _ = return_dict_bounds()
 
-    import os
 
 
-    baseline  = baseline(dict_c)
+    baseline_  = baseline(dict_c)
+
+    baseline_.main()
+
 
 
 

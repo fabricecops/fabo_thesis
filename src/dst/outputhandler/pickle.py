@@ -68,7 +68,7 @@ def pickle_load(path,func,*args):
     except:
         data =  func(args)
         with open(path, 'wb') as handle:
-            dill.dump(data, handle, protocol=pickle.HIGHEST_PROTOCOL)
+            dill.dump(data, handle)
 
     return data
 

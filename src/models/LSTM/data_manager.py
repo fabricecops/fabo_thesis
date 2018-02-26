@@ -256,4 +256,4 @@ class data_manager(pipe_line_data):
         return path_df,path_ut_tr,path_ut_va
 
     def return_df(self):
-        return self.df_f,self.df_f_val,self.df_t
+        return self.df_f_train,self.df_f_val,self.df_t

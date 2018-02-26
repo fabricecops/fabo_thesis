@@ -73,7 +73,7 @@ class model_mng():
         if (os.path.exists(dir_)==False):
             os.mkdir(dir_)
 
-        dir_   = dict_data['path_o'] + 'predictions/'
+        dir_   = dict_data['path_o'] + 'predictions/'+str(epoch)
         path_m = dir_ +'/model.h5'
 
         dict_data['model'].save(path_m)

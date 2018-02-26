@@ -19,7 +19,7 @@ def return_dict_bounds():
         'nr_features'      : 3,
 
         ## Peak derivation #############
-        'resolution'       : 4,
+        'resolution'       : 50,
         'area'             : 200,
         'min_h'            : 10,
         'max_h'            : 150,
