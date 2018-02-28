@@ -9,7 +9,9 @@ def pickle_save(path, data):
     with open(path, 'wb') as handle:
         dill.dump(data, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-
+def pickle_save_(path, data):
+    with open(path, 'wb') as handle:
+        dill.dump(data, handle)
 def return_conf_path(path, mode = 'pickle'):
     if(mode == 'pickle'):
         name = str(len(os.listdir(path))) + '.p'

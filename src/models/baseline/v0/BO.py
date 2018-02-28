@@ -1,15 +1,17 @@
 from src.models.baseline.v0.configure import return_dict_bounds
 from src.models.baseline.v0.baseline import baseline
+from src.dst.outputhandler.pickle import pickle_save_
 import numpy as np
 import gpflowopt
 import gpflow
 import matplotlib.pyplot as plt
-
+import os
 class BO():
 
     def __init__(self,dict_c):
         self.dict_c = dict_c
         self.domain = None
+        self.path   = None
         self._configure()
 
     def optimization(self):
@@ -36,21 +38,19 @@ class BO():
         # with optimizer.silent():
         result = optimizer.optimize([self.opt_function], n_iter=20)
 
-        # print(result)
-        # print(optimizer.acquisition.pareto.front.value)
+
 
         self.plot(hvpoi)
 
     def opt_function(self,X):
         for i,x in enumerate(X):
-            # try:
 
             self._configure_dict_c(x)
             BL                 = baseline(self.dict_c)
             y                  = BL.main()
 
-            # except Exception as e:
 
+            self.save_output(self.dict_c,y)
 
 
 
@@ -68,6 +68,14 @@ class BO():
         return array_y
 
     def _configure(self):
+        self.path   = './models/BO_BL/'
+        string = 'experiment_'+str(len(os.listdir(self.path)))
+        self.path   = self.path+string
+        if (os.path.exists(self.path)==False):
+            os.mkdir(self.path)
+
+
+
         ### sigma_CMA
         self.domain = gpflowopt.domain.ContinuousParameter('s_CMA',0,3)
         ### time dim
@@ -139,7 +147,34 @@ class BO():
         plt.title('Pareto set')
         plt.xlabel('Objective 1')
         plt.ylabel('Objective 2')
-        plt.show()
+        plt.savefig(self.path+'/paretofront.png')
+        pickle_save_(self.path+'/hvpoi.p',hvpoi)
+
+    def save_output(self,dict_c,y):
+
+
+
+        path_e = self.path +'/data'
+
+        if (os.path.exists(path_e) == False):
+            os.mkdir(path_e)
+
+
+        dict_c = {
+            'dict_c':dict_c,
+            'y'     : y
+        }
+
+
+        index = str(len(os.listdir(path_e)))+'.p'
+        path_g = path_e +'/'+index
+
+        pickle_save_(path_g,dict_c)
+
+
+
+
+
 
 
 if __name__ == '__main__':
