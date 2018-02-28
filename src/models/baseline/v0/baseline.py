@@ -40,6 +40,9 @@ class baseline(CMA_ES,data_manager):
 
         dimension      = self.df_f.iloc[0].shape[1]
         array          = np.zeros(dimension)
+
+        parameters     = dimension*self.dict_c['time_dim']
+
         es = cma.fmin(self._opt_function,
                       array,
                       self.sigma,
@@ -48,7 +51,7 @@ class baseline(CMA_ES,data_manager):
                        'verb_disp'           : self.verbose,
                        'verb_log'             :self.verbose_log })
 
-        return es[0],-es[1]
+        return -es[1],parameters
 
     def _opt_function(self, x):
 

@@ -234,7 +234,8 @@ class path_Generation():
 
 
     def main(self,*args):
-        self.df =  apply_by_multiprocessing(self.df, self._get_points_movie, axis=1, workers=8)
+        # self.df =  apply_by_multiprocessing(self.df, self._get_points_movie, axis=1, workers=8)
+        self.df = self.df.apply(self._get_points_movie, axis=1)
         return self.df
 
     def configure_frame(self,df,i,j,heigth):
@@ -533,6 +534,7 @@ class tracker():
                         data_v[2 * i + 1] = data_v[2 * i + 1] - self.change_copy[heigth][3 * i + 1]
 
             if (self.track_frame != frame_index):
+
                 self.change[heigth][3 * i] = data[3 * i]
                 self.change[heigth][3 * i + 1] = data[3 * i + 1]
                 self.change[heigth][3 * i + 2] = data[3 * i + 2]
@@ -543,8 +545,8 @@ class tracker():
     def _config_prev(self):
         for heigth in self.resolution:
             self.previous_f[heigth] = np.zeros((self.nr_contours,2))
-            self.state[heigth]      = np.zeros(self.nr_contours * self.nr_contours)
-            self.change[heigth]     = np.zeros(self.nr_contours * self.nr_contours)
+            self.state[heigth]      = np.zeros(self.nr_contours * 3)
+            self.change[heigth]     = np.zeros(self.nr_contours * 3)
 
             self.track_frame[heigth] = 10000
 

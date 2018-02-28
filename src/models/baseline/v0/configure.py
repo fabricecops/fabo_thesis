@@ -31,9 +31,9 @@ def return_dict_bounds():
         'anomaly'          : 'df_t',
 
         ###### CMA_ES    ######
-        'verbose_CMA'      : 1,
+        'verbose_CMA'      : 0,
         'verbose_CMA_log'  : 0,
-        'evals'            : 2000,
+        'evals'            : 100,
         'bounds'           : [-100,100],
         'sigma'            : 0.5,
         'progress_ST'      : 0.3,

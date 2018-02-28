@@ -14,7 +14,6 @@ def apply_by_multiprocessing(df, func, **kwargs):
     pool = Pool(processes=workers)
 
 
-
     result = pool.map(_apply_df, [(d, func, kwargs)
                                   for d in np.array_split(df, workers)])
     pool.close()
