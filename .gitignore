@@ -3,11 +3,11 @@
 
 models/LSTM/
 models/Results/
-models/BO_BL
+models/BO_BL/
 
 data/interim/
 data/processed/
 data/raw/
 
 plots/
-notebooks/S
+notebooks/

@@ -2,22 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c452cadd-2f9a-4dbc-96c5-eb88182fb6f7" name="Default" comment="">
-      <change beforePath="" afterPath="$PROJECT_DIR$/src/models/LSTM/outputhandler/__init__.py" />
       <change beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/src/data/dimensionality_reduction/HCF/main_HCR.py" afterPath="$PROJECT_DIR$/src/data/dimensionality_reduction/HCF/main_HCR.py" />
-      <change beforePath="$PROJECT_DIR$/src/dst/WIP/BO.py" afterPath="$PROJECT_DIR$/src/dst/WIP/BO.py" />
-      <change beforePath="$PROJECT_DIR$/src/dst/keras_model/callbacks.py" afterPath="$PROJECT_DIR$/src/dst/keras_model/callbacks.py" />
-      <change beforePath="$PROJECT_DIR$/src/dst/optimizers/CMA_ES/CMA_ES.py" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/dst/optimizers/CMA_ES/__init__.py" afterPath="$PROJECT_DIR$/src/dst/datamanager/__init__.py" />
-      <change beforePath="$PROJECT_DIR$/src/dst/optimizers/CMA_ES/unit.py" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/dst/optimizers/__init__.py" afterPath="$PROJECT_DIR$/src/models/LSTM/model_a/__init__.py" />
-      <change beforePath="$PROJECT_DIR$/src/dst/outputhandler/OPS.py" afterPath="$PROJECT_DIR$/src/models/LSTM/outputhandler/OPS.py" />
-      <change beforePath="$PROJECT_DIR$/src/models/LSTM/configure.py" afterPath="$PROJECT_DIR$/src/models/LSTM/configure.py" />
-      <change beforePath="$PROJECT_DIR$/src/models/LSTM/data_manager.py" afterPath="$PROJECT_DIR$/src/dst/datamanager/data_manager.py" />
-      <change beforePath="$PROJECT_DIR$/src/models/LSTM/main_LSTM.py" afterPath="$PROJECT_DIR$/src/models/LSTM/main_LSTM.py" />
-      <change beforePath="$PROJECT_DIR$/src/models/LSTM/s2s.py" afterPath="$PROJECT_DIR$/src/models/LSTM/model_a/s2s.py" />
-      <change beforePath="$PROJECT_DIR$/src/models/baseline/v0/baseline.py" afterPath="$PROJECT_DIR$/src/models/baseline/v0/baseline.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -73,8 +59,8 @@
       <file leaf-file-name=".gitignore" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/.gitignore">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="216">
-              <caret line="12" column="11" lean-forward="true" selection-start-line="12" selection-start-column="11" selection-end-line="12" selection-end-column="11" />
+            <state relative-caret-position="90">
+              <caret line="5" column="13" lean-forward="false" selection-start-line="5" selection-start-column="13" selection-end-line="5" selection-end-column="13" />
               <folding />
             </state>
           </provider>
@@ -565,7 +551,14 @@
       <option name="project" value="LOCAL" />
       <updated>1519403056769</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="lol">
+      <created>1520003274935</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1520003274935</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -966,8 +959,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="216">
-          <caret line="12" column="11" lean-forward="true" selection-start-line="12" selection-start-column="11" selection-end-line="12" selection-end-column="11" />
+        <state relative-caret-position="90">
+          <caret line="5" column="13" lean-forward="false" selection-start-line="5" selection-start-column="13" selection-end-line="5" selection-end-column="13" />
           <folding />
         </state>
       </provider>
