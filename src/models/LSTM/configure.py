@@ -33,7 +33,7 @@ def return_dict_bounds():
         ###### CMA_ES    ######
         'verbose_CMA'      : 1,
         'verbose_CMA_log'  : 0,
-        'evals'            : 35000,
+        'evals'            : 5,
         'bounds'           : [-100,100],
         'sigma'            : 0.5,
         'progress_ST'      : 0.3,
@@ -56,11 +56,13 @@ def return_dict_bounds():
         'pred_seq'         : True,
         'dropout'          : 0.03,
         'hidden'           : 500,
-        'stateful'         : True,
+        'stateful'         : False,
 
 
         ##### fit                    #####
-        'val_split'        : 0.15,
+        'val_split_f'        : 0.15,
+        'val_split_t'        : 0.20,
+
         'verbose'          : 2,
         'epochs'           : 10000,
         'batch_size'       : 1,

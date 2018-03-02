@@ -23,15 +23,17 @@ class OPS():
         dir_   = dict_data['path_o'] + 'predictions/'+string
 
 
-        df_p_t = dict_data['df_true'][['error_tm']]
-        df_p_f = dict_data['df_false'][['error_tm']]
-        df_p_fv= dict_data['df_false_val'][['error_tm']]
+        df_t_train = dict_data['df_t_train'][['error_tm']]
+        df_t_val   = dict_data['df_t_val'][['error_tm']]
+        df_f_train = dict_data['df_f_train'][['error_tm']]
+        df_f_val   = dict_data['df_f_val'][['error_tm']]
 
         dict_p = {
-                'df_y_t' : df_p_t,
-                'df_y_f' : df_p_f,
-                'df_y_fv': df_p_fv,
-                'x'      : dict_data['x']
+                'df_t_train': df_t_train,
+                'df_t_val'  : df_t_val,
+                'df_f_train': df_f_train,
+                'df_f_val'  : df_f_val,
+                'x'         : dict_data['x']
             }
 
         path_p = dir_+ '/pred.p'
@@ -136,13 +138,13 @@ class OPS():
 
 
         if(dict_data['AUC_v'] == max(np.array(df['AUC_v']))):
-            df_p_t = dict_data['df_true'][['error_tm','data_y_p']]
-            df_p_f = dict_data['df_false'][['error_tm','data_y_p']]
+            df_p_t = dict_data['df_t_val'][['error_tm','data_y_p']]
+            df_p_f = dict_data['df_f_val'][['error_tm','data_y_p']]
 
 
             dict_p = {
-                'df_y_t': df_p_t,
-                'df_y_f': df_p_f,
+                'df_t_val': df_p_t,
+                'df_f_val': df_p_f,
                 'x'     : dict_data['x']
             }
 

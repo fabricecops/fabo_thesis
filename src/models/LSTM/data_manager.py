@@ -31,15 +31,17 @@ class data_manager(pipe_line_data):
         self.df_t = shuffle(self.df_t)
         self.df_f = shuffle(self.df_f)
 
-        val_samples    = int(len( self.df_f )*self.dict_c['val_split'])
+        val_samples_f   = int(len( self.df_f )*self.dict_c['val_split_t'])
+        val_samples_t   = int(len( self.df_t )*self.dict_c['val_split_f'])
 
-        self.df_f_val   = self.df_f.iloc[0:val_samples]
-        self.df_f_train = self.df_f.iloc[val_samples:len(self.df_f)]
-        self.df_t       = self.df_t
+        self.df_f_val   = self.df_f.iloc[0:val_samples_f]
+        self.df_f_train = self.df_f.iloc[val_samples_f:len(self.df_f)]
+        self.df_t_val = self.df_f.iloc[0:val_samples_t]
+        self.df_t_train = self.df_f.iloc[val_samples_t:len(self.df_t)]
 
 
 
-        print(len(self.df_f_train),len(self.df_f_val),len(self.df_t ))
+        print(len(self.df_f_train),len(self.df_f_val),len(self.df_t_train),len(self.df_t_val ))
 
     def main_data_conf(self,*args):
         path_df,path_sc_p,path_sc_v = self.return_path_pd(self.dict_c)
@@ -242,7 +244,7 @@ class data_manager(pipe_line_data):
             pred_seq = 'F'
         time_dim = str(dict_c['time_dim'])
 
-        val_split = str(dict_c['val_split'])
+        val_split = str(dict_c['val_split_t'])
 
         path = path_dir  + '/W_'+window + '_T_'+ time_dim + '_PS_' + pred_seq +'_V_'+val_split+ '_M_'+string
 

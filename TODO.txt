@@ -1,7 +1,4 @@
---> Pipeline afmaken
---> CMA_ES background process + Queue dat CMA_ES koppeld
---> Auto encoder features
---> Cascade trainer
+
 
 FIXES
 - Oppervlakte wegdoen bij snelheid
@@ -36,23 +33,57 @@ Video:
 - Diegene met frame length tussen 3-5 lijken gewoon ruis te zijn, mag ik die deleten?
 
 
-TODO:
-- andere laptop opzetten
-- github opzetten
-- visualizer fixen
-- bayesian opt fixen (baseline)
-- spatio temporal ding bouwen
-
-
-
-
-
 ARTHUR
 + 15 + 11 - taxi - 4 (duvel - cola)
 LORAN
 15 - wiet - worstenbroodje
 FRE
 15
+
+
+TODO;
+setup:
+- The beast 17.10 fixen
+- code in een docker fixen
+- GPU aansturing fixen
+
+modelling:
+Hand crafted features:
+-BO_BL resultaten binnenhalen
+-BO_LSTM resultaten binnenhalen
+-statefull vs non statefull vergelijken
+-cascade systeem bouwen
+
+spatio temporele model trainen met BO
+
+
+Demo maken die realtime werkt.
+
+vragen:
+anomaliteiten in resultaten steken?
+
+visualizer:
+- add error plot
+- switch from error to features
+- switch from anam to normal
+
+
+Thesis schrijven
+
+
+
+VANDAAG:
+- pc fixen
+- money zaken regelen
+- inkijken taak supply chain
+- visualizer fixen
+- BO deployen
+- paar cases
+
+
+
+
+
 
 
 

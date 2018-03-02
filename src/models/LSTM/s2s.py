@@ -53,17 +53,20 @@ class LSTM_(model, data_manager):
         return hist
 
     def predict(self):
-        df_true      = self.df_t.apply(self._predict, axis=1)
-        df_false     = self.df_f_train.sample(800).apply(self._predict, axis=1)
+        df_t_train     = self.df_t_train.apply(self._predict, axis=1)
+        df_t_val     = self.df_t_val.apply(self._predict, axis=1)
+
+        df_f_train     = self.df_f_train.sample(10).apply(self._predict, axis=1)
         df_f_val     = self.df_f_val.apply(self._predict, axis=1)
 
         dict_data    = {
                         'path_o'      : self.path_gen,
                         'model'       : self.model,
-                        'df_true'     : df_true,
-                        'df_false'    : df_false,
-                        'df_false_T'  : self.df_f_train,
-                        'df_false_val': df_f_val,
+                        'df_t_train'  : df_t_train,
+                        'df_t_val'    : df_t_val,
+
+                        'df_f_train'  : df_f_train,
+                        'df_f_val  '  : df_f_val,
                         'dict_c'      : self.dict_c,
                         'batch_size'  : self.dict_c['batch_size']
         }
