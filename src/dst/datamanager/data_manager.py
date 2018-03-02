@@ -34,10 +34,10 @@ class data_manager(pipe_line_data):
         val_samples_f   = int(len( self.df_f )*self.dict_c['val_split_t'])
         val_samples_t   = int(len( self.df_t )*self.dict_c['val_split_f'])
 
-        self.df_f_val   = self.df_f.iloc[0:val_samples_f]
-        self.df_f_train = self.df_f.iloc[val_samples_f:len(self.df_f)]
-        self.df_t_val = self.df_f.iloc[0:val_samples_t]
-        self.df_t_train = self.df_f.iloc[val_samples_t:len(self.df_t)]
+        self.df_f_val   = self.df_f.iloc[0:val_samples_f].iloc[0:5]
+        self.df_f_train = self.df_f.iloc[val_samples_f:len(self.df_f)].iloc[0:5]
+        self.df_t_val = self.df_f.iloc[0:val_samples_t].iloc[0:5]
+        self.df_t_train = self.df_f.iloc[val_samples_t:len(self.df_t)].iloc[0:5]
 
 
 
@@ -258,4 +258,4 @@ class data_manager(pipe_line_data):
         return path_df,path_ut_tr,path_ut_va
 
     def return_df(self):
-        return self.df_f_train,self.df_f_val,self.df_t
+        return self.df_f,self.df_t

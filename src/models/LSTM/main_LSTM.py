@@ -1,15 +1,13 @@
 
 import os
-from src.models.LSTM.s2s import LSTM_
-from src.dst.outputhandler.OPS import OPS
-from src.dst.optimizers.CMA_ES.unit import unit
-from src.dst.optimizers.CMA_ES.CMA_ES import CMA_ES
+from src.models.LSTM.model_a.s2s import LSTM_
+from src.models.LSTM.outputhandler.OPS import OPS
+from src.models.LSTM.optimizers.CMA_ES.CMA_ES import CMA_ES
 
 from src.models.LSTM.configure import return_dict_bounds
 from pathos.helpers import mp
 import time
 
-import threading
 import queue
 
 class model_mng():
@@ -58,8 +56,7 @@ class model_mng():
             dict_data2 = CMA_ES_.main_CMA_ES(dict_data,i)
 
             dict_data2['model_s'] = dict_data['model']
-
-            dict_data2['path_o'] = dict_data['path_o']
+            dict_data2['path_o']  = dict_data['path_o']
 
             self.OPS.main_OPS(dict_data2, i)
 
@@ -73,7 +70,7 @@ class model_mng():
         if (os.path.exists(dir_)==False):
             os.mkdir(dir_)
 
-        dir_   = dict_data['path_o'] + 'predictions/'+str(epoch)
+        dir_   = dict_data['path_o'] + 'predictions/epoch_'+str(epoch)
         path_m = dir_ +'/model.h5'
 
         dict_data['model'].save(path_m)

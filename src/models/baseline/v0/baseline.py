@@ -1,7 +1,7 @@
 
 
-from src.models.LSTM.data_manager import data_manager
-from src.dst.optimizers.CMA_ES.CMA_ES import CMA_ES
+from src.dst.datamanager.data_manager import data_manager
+from src.models.LSTM.optimizers.CMA_ES.CMA_ES import CMA_ES
 from src.models.baseline.v0.configure import return_dict_bounds
 import numpy as np
 import functools
@@ -12,7 +12,7 @@ import cma
 class baseline(CMA_ES,data_manager):
 
 
-    def __init__(self, dict_c=None, path=None):
+    def __init__(self, dict_c=None):
 
         data_manager.__init__(self, dict_c)
         CMA_ES.__init__(self,dict_c)
@@ -25,11 +25,10 @@ class baseline(CMA_ES,data_manager):
         self.FPR      = None
         self.TPR      = None
 
-        self.df_f,self.df_f_val,self.df_t = self.return_df()
+        self.df_f,self.df_t = self.return_df()
 
-        self.df_f = self.df_f.iloc[0:3]
-        self.df_f_val = self.df_f_val.iloc[0:3]
-        self.df_t = self.df_t.iloc[0:3]
+        self.df_f = self.df_f
+        self.df_t = self.df_t
 
         self.configure_data()
 

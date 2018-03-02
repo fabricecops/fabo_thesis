@@ -1,7 +1,7 @@
 import GPyOpt
 import src.helper.helper as hf
 
-import src.models.LSTM.s2s as s2s
+import src.models.LSTM.model_a.s2s as s2s
 
 
 class BayesionOpt():

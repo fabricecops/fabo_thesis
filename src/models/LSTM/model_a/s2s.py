@@ -2,9 +2,8 @@ from keras.layers.recurrent import LSTM
 from keras.layers import Dense,RepeatVector
 from keras.models import Sequential
 
-from src.models.LSTM.data_manager import data_manager
+from src.dst.datamanager.data_manager import data_manager
 from src.dst.keras_model.model import model
-from src.dst.outputhandler.pickle import pickle_load
 from tqdm import tqdm
 import numpy as np
 
@@ -53,20 +52,23 @@ class LSTM_(model, data_manager):
         return hist
 
     def predict(self):
-        df_t_train     = self.df_t_train.apply(self._predict, axis=1)
-        df_t_val     = self.df_t_val.apply(self._predict, axis=1)
+        df_t_train    = self.df_t_train.apply(self._predict, axis=1)
+        df_t_val      = self.df_t_val.apply(self._predict, axis=1)
 
-        df_f_train     = self.df_f_train.sample(10).apply(self._predict, axis=1)
-        df_f_val     = self.df_f_val.apply(self._predict, axis=1)
+        df_f_train    = self.df_f_train.sample(self.dict_c['sample']).apply(self._predict, axis=1)
+        df_f_val      = self.df_f_val.apply(self._predict, axis=1)
 
         dict_data    = {
                         'path_o'      : self.path_gen,
                         'model'       : self.model,
+
                         'df_t_train'  : df_t_train,
                         'df_t_val'    : df_t_val,
 
                         'df_f_train'  : df_f_train,
-                        'df_f_val  '  : df_f_val,
+                        'df_f_val'    : df_f_val,
+
+
                         'dict_c'      : self.dict_c,
                         'batch_size'  : self.dict_c['batch_size']
         }

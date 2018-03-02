@@ -37,6 +37,7 @@ def return_dict_bounds():
         'bounds'           : [-100,100],
         'sigma'            : 0.5,
         'progress_ST'      : 0.3,
+        'sample'           : 5,
 
 
         ###### Bayes opt ######
@@ -63,7 +64,7 @@ def return_dict_bounds():
         'val_split_f'        : 0.15,
         'val_split_t'        : 0.20,
 
-        'verbose'          : 2,
+        'verbose'          : 1,
         'epochs'           : 10000,
         'batch_size'       : 1,
 

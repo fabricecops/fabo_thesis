@@ -4,11 +4,6 @@ from keras.callbacks import TensorBoard
 import time
 import warnings
 import numpy as np
-from sklearn import metrics
-import pickle
-from src.dst.outputhandler.OPS import OPS
-
-
 
 
 #### callbacks ##############

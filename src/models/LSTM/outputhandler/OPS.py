@@ -53,12 +53,21 @@ class OPS():
 
     def _save_output(self,dict_data,i):
         if(i==0):
-            df_o_t = dict_data['df_true'][['frames', 'name', 'label', 'data_X', 'data_y']]
-            df_o_f = dict_data['df_false_T'][['frames', 'name', 'label', 'data_X', 'data_y']]
+            print(dict_data.keys())
+
+            df_t_train = dict_data['df_t_train'][['frames', 'name', 'label', 'data_X', 'data_y']]
+            df_t_val   = dict_data['df_t_val'][['frames', 'name', 'label', 'data_X', 'data_y']]
+
+            df_f_train = dict_data['df_f_train'][['frames', 'name', 'label', 'data_X', 'data_y']]
+            df_f_val   = dict_data['df_f_val'][['frames', 'name', 'label', 'data_X', 'data_y']]
+
 
             dict_o = {
-                'df_o_t': df_o_t,
-                'df_o_f': df_o_f
+                'df_t_train': df_t_train,
+                'df_t_val'  : df_t_val,
+
+                'df_f_train': df_f_train,
+                'df_f_val'  : df_f_val
             }
 
 
@@ -117,8 +126,8 @@ class OPS():
         plt.ylabel('TPR')
 
         ax2 = plt.subplot(122)
-        ax2.hist(dict_data['df_true']['error_tm'], label = 'True', color = 'red', alpha = 0.5 , bins = 50, range=(-2,5))
-        ax2.hist(dict_data['df_false']['error_tm'],label = 'False',color = 'green', alpha = 0.5,bins = 50, range=(-2,5))
+        ax2.hist(dict_data['df_t_train']['error_tm'], label = 'True', color = 'red', alpha = 0.5 , bins = 50, range=(-2,5))
+        ax2.hist(dict_data['df_f_train']['error_tm'],label = 'False',color = 'green', alpha = 0.5,bins = 50, range=(-2,5))
         plt.legend()
         plt.savefig(dir + '/AUC.png')
 
@@ -131,8 +140,8 @@ class OPS():
         plt.ylabel('TPR')
 
         ax2 = plt.subplot(122)
-        ax2.hist(dict_data['df_true']['error_tm'], label='True', color='red', alpha=0.5, bins=50,range=(-2,5))
-        ax2.hist(dict_data['df_false_val']['error_tm'], label='False', color='green', alpha=0.5, bins=50,range=(-2,5))
+        ax2.hist(dict_data['df_t_val']['error_tm'], label='True', color='red', alpha=0.5, bins=50,range=(-2,5))
+        ax2.hist(dict_data['df_f_val']['error_tm'], label='False', color='green', alpha=0.5, bins=50,range=(-2,5))
         plt.legend()
         plt.savefig(dir + '/AUC_val.png')
 
