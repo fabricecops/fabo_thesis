@@ -6,21 +6,22 @@ import gpflowopt
 import gpflow
 import matplotlib.pyplot as plt
 import os
+
 class BO():
 
     def __init__(self,dict_c):
         self.dict_c = dict_c
         self.domain = None
-        self.path   = None
         self._configure()
 
     def optimization(self):
 
-        design = gpflowopt.design.LatinHyperCube(11, self.domain)
+        design = gpflowopt.design.LatinHyperCube(self.dict_c['initial_n'], self.domain)
 
         X = design.generate()
         Y = self.opt_function(X)
 
+        print(Y)
         objective_models = [gpflow.gpr.GPR(X.copy(), Y[:, [i]].copy(), gpflow.kernels.Matern52(2, ARD=True)) for i in
                             range(Y.shape[1])]
         for model in objective_models:
@@ -36,7 +37,7 @@ class BO():
         # Then run the BayesianOptimizer for 20 iterations
         optimizer = gpflowopt.BayesianOptimizer(self.domain, hvpoi, optimizer=acquisition_opt)
         # with optimizer.silent():
-        result = optimizer.optimize([self.opt_function], n_iter=20)
+        result = optimizer.optimize([self.opt_function], n_iter=self.dict_c['nr_iteration'])
 
 
 
@@ -48,10 +49,6 @@ class BO():
             self._configure_dict_c(x)
             BL                 = baseline(self.dict_c)
             y                  = BL.main()
-
-
-            self.save_output(self.dict_c,y)
-
 
 
             y = np.array([y[0], y[1]]).reshape((1, 2))
@@ -68,16 +65,22 @@ class BO():
         return array_y
 
     def _configure(self):
-        self.path   = './models/BO_BL/'
-        string = 'experiment_'+str(len(os.listdir(self.path)))
-        self.path   = self.path+string
-        if (os.path.exists(self.path)==False):
-            os.mkdir(self.path)
 
+        path = self.dict_c['path_save']
+        string = 'experiment_' + str(len(os.listdir(path)))
+        path = path + string
 
+        print(path)
+        if (os.path.exists(path) == False):
+            os.mkdir(path)
+
+        path_d = path + '/data'
+        print(path_d)
+        if (os.path.exists(path_d) == False):
+            os.mkdir(path_d)
 
         ### sigma_CMA
-        self.domain = gpflowopt.domain.ContinuousParameter('s_CMA',0,3)
+        self.domain = gpflowopt.domain.ContinuousParameter('s_CMA',0.1,3)
         ### time dim
         self.domain += gpflowopt.domain.ContinuousParameter('TD',2,5)
         ### min h
@@ -149,31 +152,6 @@ class BO():
         plt.ylabel('Objective 2')
         plt.savefig(self.path+'/paretofront.png')
         pickle_save_(self.path+'/hvpoi.p',hvpoi)
-
-    def save_output(self,dict_c,y):
-
-
-
-        path_e = self.path +'/data'
-
-        if (os.path.exists(path_e) == False):
-            os.mkdir(path_e)
-
-
-        dict_c = {
-            'dict_c':dict_c,
-            'y'     : y
-        }
-
-
-        index = str(len(os.listdir(path_e)))+'.p'
-        path_g = path_e +'/'+index
-
-        pickle_save_(path_g,dict_c)
-
-
-
-
 
 
 

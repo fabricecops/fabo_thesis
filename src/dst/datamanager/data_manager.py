@@ -1,6 +1,5 @@
 from src.dst.outputhandler.pickle import pickle_load
 from src.dst.helper.apply_mp import *
-from sklearn.preprocessing import MinMaxScaler
 import pandas as pd
 from sklearn.utils import shuffle
 import os
@@ -18,8 +17,7 @@ class data_manager(pipe_line_data):
 
         self.len_df       = None
         self.count_t      = None
-        self.scaler_p     = None
-        self.scaler_v     = None
+
 
         path,_,_          = self._return_path_dict_data(dict_c)
 
@@ -34,17 +32,17 @@ class data_manager(pipe_line_data):
         val_samples_f   = int(len( self.df_f )*self.dict_c['val_split_t'])
         val_samples_t   = int(len( self.df_t )*self.dict_c['val_split_f'])
 
-        self.df_f_val   = self.df_f.iloc[0:val_samples_f].iloc[0:5]
-        self.df_f_train = self.df_f.iloc[val_samples_f:len(self.df_f)].iloc[0:5]
-        self.df_t_val = self.df_f.iloc[0:val_samples_t].iloc[0:5]
-        self.df_t_train = self.df_f.iloc[val_samples_t:len(self.df_t)].iloc[0:5]
 
+        self.df_f_val   = self.df_f.iloc[0:val_samples_f]
+        self.df_f_train = self.df_f.iloc[val_samples_f:len(self.df_f)]
+        self.df_t_val = self.df_f.iloc[0:val_samples_t]
+        self.df_t_train = self.df_f.iloc[val_samples_t:len(self.df_t)]
 
 
         print(len(self.df_f_train),len(self.df_f_val),len(self.df_t_train),len(self.df_t_val ))
 
     def main_data_conf(self,*args):
-        path_df,path_sc_p,path_sc_v = self.return_path_pd(self.dict_c)
+        path_df,path_sc_p,path_sc_v,_ = self.return_path_pd(self.dict_c)
 
         self.df           = pickle_load(path_df,self.peak_derivation, ())
         self.df           = self.df[self.df['countFrames']>5]
@@ -53,12 +51,9 @@ class data_manager(pipe_line_data):
 
         self.len_df       = len(self.df)
 
-        self.scaler_p     = pickle_load(path_sc_p,self._train_scaler, self.df['data_p'])
-        self.scaler_v     = pickle_load(path_sc_v,self._train_scaler, self.df['data_v'])
 
 
-
-        self.df =  apply_by_multiprocessing(self.df, self._configure_data_movie, axis=1, workers=6        )
+        self.df =  apply_by_multiprocessing(self.df, self._configure_data_movie, axis=1, workers=6)
         self.df =  self.df[self.df['data_X'] != '']
         self.df =  self.df[self.df['data_y'] != '']
         self.count_t = len(self.df)
@@ -90,8 +85,6 @@ class data_manager(pipe_line_data):
         y = np.concatenate(np.array(df['data_y']), axis = 0)
 
 
-
-
         return X,y
 
     def _configure_data_movie(self,row):
@@ -112,28 +105,30 @@ class data_manager(pipe_line_data):
         return row
 
     def _choose_features(self,row):
-        bool_ = False
         data  = None
-        for mode in self.dict_c['mode_data']:
+        for i,mode in enumerate(self.dict_c['mode_data']):
 
             if(mode == 'p'):
-                if(bool_ == False):
-                    data  = self._transform_scaler(row['data_p'],mode)
-                    bool_ = True
+                if(i == 0):
+                    data  = row['data_p']
                 else:
-                    tmp   = self._transform_scaler(row['data_p'],mode)
-                    data  = np.concatenate((data,tmp), axis = 0)
+                    data  = np.concatenate((data,row['data_p']), axis = 1)
 
 
             elif(mode=='v'):
-                if (bool_ == False):
-
-                    data  = self._transform_scaler(row['data_v'],mode)
-                    bool_ = True
+                if(i == 0):
+                    data  = row['data_v']
                 else:
+                    data  = np.concatenate((data,row['data_v']), axis = 1)
 
-                    tmp   = self._transform_scaler(row['data_v'],mode)
-                    data = np.concatenate((data,tmp), axis=1)
+            elif(mode == 'PCA'):
+                if(i == 0):
+                    data  = row['PCA']
+                else:
+                    data  = np.concatenate((data,row['PCA']), axis = 1)
+
+
+
 
         return data
 
@@ -182,31 +177,6 @@ class data_manager(pipe_line_data):
         else:
             return None,None
 
-    def _transform_scaler(self,data,mode):
-        if(mode == 'p'):
-            data = self.scaler_p.transform(data)
-        elif(mode =='v'):
-            data = self.scaler_v.transform(data)
-
-        return data
-
-    def _train_scaler(self,Series):
-        Series  = Series[0]
-        scaler  = MinMaxScaler(feature_range=(0, 1))
-        array   = None
-
-        for i,x in enumerate(Series):
-
-            if(i == 0):
-                array = Series.iloc[i]
-
-            else:
-                array = np.concatenate((array,Series.iloc[i]), axis = 0)
-
-        scaler.fit(array)
-
-
-        return scaler
 
     def _print_data(self):
 
@@ -223,8 +193,9 @@ class data_manager(pipe_line_data):
         A = '_A_' + str(dict_c['area'])
         C = '_C_' + str(dict_c['nr_contours'])
         R = '_R_' + str(dict_c['resolution'])
+        PCA = '_PCA_'+str(dict_c['PCA_components'])
 
-        df = df + TH + A + C + R
+        df = df + TH + A + C + R +PCA
         path = './data/processed/df/df_r/'
 
         path_dir = path+df
@@ -259,3 +230,9 @@ class data_manager(pipe_line_data):
 
     def return_df(self):
         return self.df_f,self.df_t
+
+    def return_split(self):
+
+
+        return self.df_f_train,self.df_t_train,self.df_f_val,self.df_t_val
+

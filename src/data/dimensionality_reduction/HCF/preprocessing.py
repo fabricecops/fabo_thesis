@@ -4,8 +4,14 @@ import shutil
 import cv2
 from tqdm import tqdm
 
-print(os.getcwd())
 from src.dst.helper.apply_mp import *
+from sklearn import decomposition
+from sklearn.preprocessing import MinMaxScaler
+
+import matplotlib.pyplot as plt
+
+
+
 
 class get_df():
 
@@ -234,8 +240,8 @@ class path_Generation():
 
 
     def main(self,*args):
-        # self.df =  apply_by_multiprocessing(self.df, self._get_points_movie, axis=1, workers=8)
-        self.df = self.df.apply(self._get_points_movie, axis=1)
+        self.df =  apply_by_multiprocessing(self.df, self._get_points_movie, axis=1, workers=8)
+        # self.df = self.df.apply(self._get_points_movie, axis=1)
         return self.df
 
     def configure_frame(self,df,i,j,heigth):
@@ -550,12 +556,99 @@ class tracker():
 
             self.track_frame[heigth] = 10000
 
-class PCA():
+
+class scaler():
 
     def __init__(self):
         pass
 
+    def main(self,df,scaler_p,scaler_v):
+        df =  apply_by_multiprocessing(df, self._transform_scaler,
+                                                      scaler =scaler_p,
+                                                      name   = 'data_p',
+                                                      axis   = 1,
+                                                      workers= 2)
+        df = apply_by_multiprocessing(df, self._transform_scaler,
+                                           scaler=scaler_v,
+                                           name='data_v',
+                                           axis=1,
+                                           workers=2)
 
+
+        return df
+
+
+
+
+    def _train_scaler(self, args):
+        scaler = MinMaxScaler(feature_range=(0, 1))
+
+        df     = args[0]
+        key    = args[1]
+
+        data   = np.concatenate(list(df[key]))
+
+        scaler.fit(data)
+
+        return scaler
+
+    def _transform_scaler(self,row,scaler=None,name=None):
+
+
+
+        row[name] = scaler.transform(row[name])
+
+        return row
+
+
+class PCA_():
+
+    def __init__(self):
+        pass
+
+    def main(self,df,path):
+
+
+        PCA_mod    = decomposition.PCA()
+
+        data_v     = np.concatenate(list(df['data_v']))
+        data_p     = np.concatenate(list(df['data_p']))
+        data       = np.concatenate([data_p,data_v], axis = 1)
+
+        PCA_mod.fit(data)
+
+        self.save_POV(PCA_mod,path)
+
+        df =  apply_by_multiprocessing(df, self.transform_PCA,
+                                                      model   = PCA_mod,
+                                                      axis   = 1,
+                                                      workers= 2)
+
+
+
+        return df
+
+
+    def transform_PCA(self,row,model = None):
+
+        data             = np.concatenate([row['data_p'],row['data_v']], axis = 1)
+        row['PCA']       = model.transform(data)
+
+        return row
+
+    def save_POV(self,PCA_mod,path):
+
+
+        POV = PCA_mod.explained_variance_ratio_
+        cum = PCA_mod.explained_variance_ratio_.cumsum()
+
+        plt.plot(POV, label = 'POV')
+        plt.plot(cum, label = 'cumsum POV')
+        plt.legend()
+        plt.title('Explained variability per PCA component')
+        plt.xlabel('percentage of variability explained')
+        plt.ylabel('percentage')
+        plt.savefig(path+"/POV.png")
 
 
 if __name__ == '__main__':

@@ -7,6 +7,11 @@ def return_dict_bounds():
         'print_BO_bounds'  : False,
         'print_nr_mov'     : True,
 
+        ##### Filesystem manager ####
+        'path_data': './data/raw/configured_raw/',
+        'path_save': './models/BO_BL/',
+        'name': None,
+
 
         #### Preprocessing ############
         ## background subtractions ####
@@ -20,6 +25,9 @@ def return_dict_bounds():
         'min_h'            : 10,
         'max_h'            : 150,
 
+        ## PCA componentes #########
+        'PCA_components': 100,
+
         #### Data manager  #########
         'mode_data'        : ['p'],
         'train'            : 'df_f_tr',
@@ -27,24 +35,33 @@ def return_dict_bounds():
         'anomaly'          : 'df_t',
 
         ###### CMA_ES    ######
-        'verbose_CMA'      : 1,
+        'verbose_CMA'      : 0,
         'verbose_CMA_log'  : 0,
-        'evals'            : 100,
+        'evals'            : 10,
         'bounds'           : [-100,100],
         'sigma'            : 0.5,
         'progress_ST'      : 0.3,
 
 
         ###### Bayes opt ######
-        'max_iter'         : 30,
+        'nr_iter'         : 30,
         'initial_n'        : 5,
         'initial_dt'       : 'latin',
         'eps'              : -1,
-        'maximize'         : True,
+
 
         ##### fit                    #####
-        'folds'            : 5
+        'folds'            : 5,
+        'val_split_f': 0.5,
+        'val_split_t': 0.5,
+        'stateful'   : None,
 
+
+        ##### model definition  #####
+        'window': 0,
+        'time_dim': 10,
+        'pred_seq': True,
+        'resolution_AUC': 1000,
 
         #### data gathering statefull ####
 

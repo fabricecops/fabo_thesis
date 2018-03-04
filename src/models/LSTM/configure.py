@@ -24,6 +24,9 @@ def return_dict_bounds():
         'min_h'            : 10,
         'max_h'            : 150,
 
+        ## PCA componentes #########
+        'PCA_components'   : 100,
+
         #### Data manager  #########
         'mode_data'        : ['p'],
         'train'            : 'df_f_tr',
