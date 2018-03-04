@@ -7,10 +7,6 @@ def return_dict_bounds():
         'print_BO_bounds'  : False,
         'print_nr_mov'     : True,
 
-        ##### Filesystem manager ####
-        'path_data'        : './data/raw/configured_raw/',
-        'path_save'        : './models/LSTM/stateful/',
-        'name'             : None,
 
         #### Preprocessing ############
         ## background subtractions ####
@@ -46,73 +42,11 @@ def return_dict_bounds():
         'eps'              : -1,
         'maximize'         : True,
 
-        #### optimizer         #####
-        'optimizer'        : 'adam',
-        'lr'               : 0.00001,
-
-        ##### model definition  #####
-        'window'           : 0,
-        'time_dim'         : 10,
-        'pred_seq'         : True,
-        'dropout'          : 0.03,
-        'hidden'           : 500,
-        'stateful'         : False,
-
-
         ##### fit                    #####
-        'val_split'        : 0.15,
-        'verbose'          : 2,
-        'epochs'           : 10000,
-        'batch_size'       : 128,
+        'folds'            : 5
 
 
         #### data gathering statefull ####
-
-        ##### callbacks   #########
-        ## Early stopping
-        'ES'                    : False,
-        'ES_patience'           : 5,
-
-        ## LRonplateau
-        'LR_P'                  : False,
-        'LR_factor'             : 0.3,
-        'LR_patience'           : 8,
-
-        ## Ratio ES
-        'ESR'                   : False,
-        'early_ratio_val'       : 100,
-
-        ## TB
-        'TB'                    : False,
-        'hist_freq'             : True,
-        'w_graphs'              : True,
-        'w_images'              : True,
-        'w_grads'               : True,
-
-        ## Monitor callback
-        'MT'                    : False,
-
-        ## model checkpoint
-        'MC'                    : False,
-        'mode_MC'               : 'min',
-        'save_best_only'        : True,
-        'verbose_MC'            : 0,
-
-        ## history
-        'hist'                  : False,
-
-        ##CSV append
-        'CSV'                   : False,
-        'CSV_append'            : False,
-
-        ##Calc AUC
-        'AUC'                   : True,
-        'resolution_AUC'        : 1000,
-        'epoch_mod_AUC'         : 1,
-        'verbose_AUC'           : 1,
-
-        ##TH stopper
-        'TH_stopper'            : False
 
     }
 

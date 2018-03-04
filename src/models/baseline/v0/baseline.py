@@ -42,6 +42,9 @@ class baseline(CMA_ES,data_manager):
 
         parameters     = dimension*self.dict_c['time_dim']
 
+
+
+
         es = cma.fmin(self._opt_function,
                       array,
                       self.sigma,

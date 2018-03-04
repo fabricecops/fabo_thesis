@@ -550,6 +550,14 @@ class tracker():
 
             self.track_frame[heigth] = 10000
 
+class PCA():
+
+    def __init__(self):
+        pass
+
+
+
+
 if __name__ == '__main__':
     pass
 
