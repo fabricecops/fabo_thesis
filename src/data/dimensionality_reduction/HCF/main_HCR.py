@@ -25,7 +25,7 @@ class pipe_line_data():
         #### get dataframe ############
         GD     = pp.get_df(self.path)
         path_o = './data/processed/df/df_1.p'
-        df     = pickle_load(path_o,GD.get_df_data, *self.list_names).iloc[0:100]
+        df     = pickle_load(path_o,GD.get_df_data, *self.list_names)
 
 
         ### movie pictures to interim stage

@@ -6,7 +6,7 @@ from src.models.baseline.v0.configure import return_dict_bounds
 import numpy as np
 import functools
 import cma
-from src.dst.outputhandler.pickle import pickle_save
+from src.dst.outputhandler.pickle import pickle_save_
 import os
 import matplotlib.pyplot as plt
 plt.style.use('ggplot')
@@ -41,9 +41,9 @@ class baseline(CMA_ES,data_manager):
 
         parameters     = dimension*self.dict_c['time_dim']
         data_CV        = self.split_CV(self.df_f_train,self.df_t_train,self.dict_c['folds'])
-
+        CV_score     = 0.
         array_dict   = []
-
+        weights      = np.zeros(dimension)
         for data in data_CV:
             self.AUC     = -10
 
@@ -52,6 +52,7 @@ class baseline(CMA_ES,data_manager):
 
             self.train_t = data[2]
             self.val_t   = data[3]
+
 
 
             es = cma.fmin(self._opt_function,
@@ -63,10 +64,12 @@ class baseline(CMA_ES,data_manager):
                            'verb_log'             :self.verbose_log })
 
             AUC,FPR,TPR       = self.AUC_max,self.FPR,self.TPR
-            AUC_v,FPR_v,TPR_v = self._opt_function_val(es[0])
-            AUC_t,FPR_t,TPR_t = self._opt_function_val(es[0])
+            AUC_v,FPR_v,TPR_v = self._opt_function_(es[0],self.val_f,self.val_t)
+            AUC_t,FPR_t,TPR_t = self._opt_function_(es[0],self.df_f_test,self.df_t_test)
 
+            weights          += es[0]/float(len(data_CV))
 
+            CV_score         += es[1]/float(len(data_CV))
 
             dict_ = {
                      'x'     :  es[0],
@@ -84,13 +87,36 @@ class baseline(CMA_ES,data_manager):
             }
             array_dict.append(dict_)
 
+        AUC_tr, FPR_tr, TPR_tr = self._opt_function_(weights, self.df_f_train, self.df_t_train)
+        AUC_t, FPR_t, TPR_t = self._opt_function_(weights, self.df_f_test, self.df_t_test)
+
+
+        dict_    = {
+                    'x'       : weights,
+                    'CV_score': CV_score,
+
+                    'AUC_tr'  : AUC_tr,
+                    'AUC_t'   : FPR_tr,
+
+                    'FPR_tr'  : FPR_tr,
+                    'TPR_tr'  : TPR_tr,
+
+                    'FPR_t'   : FPR_t,
+                    'TPR_t'   : TPR_t
+
+
+        }
+
+
+
         df       = pd.DataFrame(array_dict,columns=['x','AUC','AUC_v','AUC_t','FPR',
                                                     'FPR_v','FPR_t','TPR','TPR_v','TPR_t'])
-        CV_score =  self.save_output(df)
+
+        self.save_output(df,dict_)
 
 
 
-        return CV_score,-parameters
+        return -CV_score,-parameters
 
     def _opt_function(self, x):
 
@@ -109,26 +135,18 @@ class baseline(CMA_ES,data_manager):
 
         return -AUC
 
-    def _opt_function_val(self, x):
+    def _opt_function_(self, x,f,t):
 
 
-        eval_true  = np.array(list(map(functools.partial(self._get_error_max, x=x), np.array(self.val_t))))
-        eval_false = np.array(list(map(functools.partial(self._get_error_max, x=x), np.array(self.val_f))))
-
-        AUC, FPR, TPR = self.get_AUC_score(eval_true, eval_false)
-
-
-        return AUC,FPR,TPR
-
-    def _opt_function_test(self, x):
-
-        eval_true  = np.array(list(map(functools.partial(self._get_error_max, x=x), np.array(self.df_t_test))))
-        eval_false = np.array(list(map(functools.partial(self._get_error_max, x=x), np.array(self.df_f_test))))
+        eval_true  = np.array(list(map(functools.partial(self._get_error_max, x=x), np.array(t))))
+        eval_false = np.array(list(map(functools.partial(self._get_error_max, x=x), np.array(f))))
 
         AUC, FPR, TPR = self.get_AUC_score(eval_true, eval_false)
 
 
         return AUC,FPR,TPR
+
+
 
     def _get_error_m(self, row):
 
@@ -173,7 +191,7 @@ class baseline(CMA_ES,data_manager):
 
         return array
 
-    def save_output(self,df):
+    def save_output(self,df,dict_):
         path   = self.dict_c['path_save']
         string = 'experiment_'+str(len(os.listdir(path))-1)
         path   = path+string
@@ -183,7 +201,8 @@ class baseline(CMA_ES,data_manager):
         if (os.path.exists(path_n) == False):
             os.mkdir(path_n)
 
-        pickle_save(path_n+'/df.p',df)
+        pickle_save_(path_n+'/df.p',df)
+        pickle_save_(path_n+'/dict.p',dict_)
         fig = plt.figure(figsize=(16, 4))
 
         ax1 = plt.subplot(131)
@@ -210,7 +229,7 @@ class baseline(CMA_ES,data_manager):
         plt.ylabel('TPR')
         plt.legend()
         plt.title('test AUC')
-        plt.savefig(path_n +'/AUC_curve')
+        plt.savefig(path_n +'/AUC_curve.png')
 
 
 
@@ -218,6 +237,7 @@ class baseline(CMA_ES,data_manager):
         ax1 = plt.subplot(121)
         for i in range(len(df)):
             ax1.plot(df['x'].iloc[i], label = 'x_'+str(i)+'_'+str(round(df['AUC'].iloc[i],3)))
+        ax1.plot(dict_['x'], color = 'k', linewidth = 3)
         plt.xlabel('weigths')
         plt.ylabel('value')
         plt.legend()
@@ -225,14 +245,16 @@ class baseline(CMA_ES,data_manager):
 
 
         ax2 = plt.subplot(122)
-        for i in range(len(df)):
-            ax2.plot(df['FPR_v'].iloc[i],df['TPR_v'].iloc[i], label = 'CV_'+str(i)+'_'+str(round(df['AUC_v'].iloc[i],3)))
+        ax2.plot(dict_['FPR_tr'],dict_['TPR_tr'], label = 'train ROC')
+        ax2.plot(dict_['FPR_t'],dict_['TPR_t'] ,label = 'test ROC')
+
         plt.xlabel('FPR')
         plt.ylabel('TPR')
         plt.legend()
-        plt.title('val AUC')
+        plt.title('CV_score: '+str(round(-dict_['CV_score'],4))+' Test_score: '+str(round(-dict_['CV_score'],4))+
+                             ' Train_score: '+str(round(dict_['AUC_tr'],4)))
 
-        plt.show()
+        plt.savefig(path_n+'/AUC_T.png')
 
 if __name__ == '__main__':
 

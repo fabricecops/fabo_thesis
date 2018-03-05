@@ -14,6 +14,7 @@ class BO():
         self.domain = None
         self._configure()
 
+
     def optimization(self):
 
         design = gpflowopt.design.LatinHyperCube(self.dict_c['initial_n'], self.domain)
@@ -37,7 +38,7 @@ class BO():
         # Then run the BayesianOptimizer for 20 iterations
         optimizer = gpflowopt.BayesianOptimizer(self.domain, hvpoi, optimizer=acquisition_opt)
         # with optimizer.silent():
-        result = optimizer.optimize([self.opt_function], n_iter=self.dict_c['nr_iteration'])
+        result = optimizer.optimize([self.opt_function], n_iter=self.dict_c['nr_iter'])
 
 
 
@@ -69,13 +70,11 @@ class BO():
         path = self.dict_c['path_save']
         string = 'experiment_' + str(len(os.listdir(path)))
         path = path + string
-
-        print(path)
+        self.path = path
         if (os.path.exists(path) == False):
             os.mkdir(path)
 
         path_d = path + '/data'
-        print(path_d)
         if (os.path.exists(path_d) == False):
             os.mkdir(path_d)
 
