@@ -611,6 +611,7 @@ class PCA_():
 
         PCA_mod    = decomposition.PCA(n_components=50)
 
+        print(df.columns)
         data_v     = np.concatenate(list(df['data_v']))
         data_p     = np.concatenate(list(df['data_p']))
         data       = np.concatenate([data_p,data_v], axis = 1)
@@ -619,13 +620,13 @@ class PCA_():
 
         self.save_POV(PCA_mod,path)
 
-        df.apply(self.transform_PCA,model = PCA_mod)
+        df = df.apply(self.transform_PCA,model = PCA_mod,axis=1)
 
 
         return df
 
 
-    def transform_PCA(self,row,model):
+    def transform_PCA(self,row,model = None):
 
         data             = np.concatenate([row['data_p'],row['data_v']], axis = 1)
         row['PCA']       = model.transform(data)

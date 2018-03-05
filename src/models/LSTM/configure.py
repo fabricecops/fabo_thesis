@@ -36,14 +36,14 @@ def return_dict_bounds():
 
         ###### CMA_ES    ######
         'folds'            : 5,
-        'bootstrap_split'  : 0.3,
+        'bootstrap_split'  : 0.25,
         'verbose_CMA'      : 1,
         'verbose_CMA_log'  : 0,
         'evals'            : 10000,
         'bounds'           : [-100,100],
         'sigma'            : 0.4222222222222225,
         'progress_ST'      : 0.3,
-        'sample'           : 5,
+        'sample'           : 800,
 
 
         ###### Bayes opt ######

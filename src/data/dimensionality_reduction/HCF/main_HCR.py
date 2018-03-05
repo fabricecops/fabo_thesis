@@ -42,7 +42,7 @@ class pipe_line_data():
         # peak derivation
         print('Peak derivation')
         PP                = pp.path_Generation(df, self.dict_c )
-        df                = pickle_load(path_pd,PP.main,())
+        df                = PP.main()
 
 
         ## Train scaler ####
