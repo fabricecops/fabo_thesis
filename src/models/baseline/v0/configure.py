@@ -38,20 +38,21 @@ def return_dict_bounds():
         'verbose_CMA'      : 1,
         'verbose_CMA_log'  : 0,
         'evals'            : 10000,
-        'bounds'           : [-100,100],
+        'bounds'           : [0,100],
         'sigma'            : 0.5,
         'progress_ST'      : 0.3,
 
 
         ###### Bayes opt ######
-        'nr_iter'         : 50,
-        'initial_n'        : 15,
+        'nr_iter'         : 100,
+        'initial_n'        : 10,
         'initial_dt'       : 'latin',
         'eps'              : -1,
 
 
         ##### fit                    #####
         'folds'            : 5,
+        'bootstrap_split': 0.3,
         'val_split_f': 0.2,
         'val_split_t': 0.2,
         'stateful'   : None,

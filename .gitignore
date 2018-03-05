@@ -14,13 +14,3 @@ notebooks/
 
 
 
-PER CMA_ES:
-- AUC  val per split(gemiddelde)
-
-PER CV
-- plot van weights
-- AUC  train  --> op alle data maar met gemiddelde van solutions
-- AUC  test   --> bepaald door gemiddelde van weights die gevonden zijn
-
-einde van alles:
-- pareto plot (einde van de validatie)

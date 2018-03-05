@@ -615,7 +615,7 @@ class PCA_():
         data_p     = np.concatenate(list(df['data_p']))
         data       = np.concatenate([data_p,data_v], axis = 1)
 
-        PCA_mod.fit(data)
+        PCA_mod.fit(data,)
 
         self.save_POV(PCA_mod,path)
 

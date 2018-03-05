@@ -5,6 +5,7 @@ import numpy as np
 import gpflowopt
 import gpflow
 import matplotlib.pyplot as plt
+plt.style.use('ggplot')
 import os
 
 class BO():
@@ -22,7 +23,6 @@ class BO():
         X = design.generate()
         Y = self.opt_function(X)
 
-        print(Y)
         objective_models = [gpflow.gpr.GPR(X.copy(), Y[:, [i]].copy(), gpflow.kernels.Matern52(2, ARD=True)) for i in
                             range(Y.shape[1])]
         for model in objective_models:
@@ -81,21 +81,26 @@ class BO():
         ### sigma_CMA
         self.domain = gpflowopt.domain.ContinuousParameter('s_CMA',0.1,3)
         ### time dim
-        self.domain += gpflowopt.domain.ContinuousParameter('TD',2,5)
+        self.domain += gpflowopt.domain.ContinuousParameter('TD',2,20)
+        ### max h
+        self.domain+= gpflowopt.domain.ContinuousParameter('MH',100,250)
         ### min h
-        self.domain+= gpflowopt.domain.ContinuousParameter('MH',100,200)
-        ### max h1
         self.domain+= gpflowopt.domain.ContinuousParameter('MiH',0,100)
         ### resolution
-        self.domain+=gpflowopt.domain.ContinuousParameter('R',10,20)
+        self.domain+=gpflowopt.domain.ContinuousParameter('R',1,10)
         ### nr_contours
         self.domain+=gpflowopt.domain.ContinuousParameter('nr_C',1,6)
         ### threshold
-        self.domain+=gpflowopt.domain.ContinuousParameter('threshold',100,300)
+        self.domain+=gpflowopt.domain.ContinuousParameter('threshold',100,500)
         ### area
         self.domain+=gpflowopt.domain.ContinuousParameter('A',100,500)
-        ### pos/speed
-        self.domain +=gpflowopt.domain.ContinuousParameter('PV',0.5,3.5)
+        ### pos
+        self.domain +=gpflowopt.domain.ContinuousParameter('V',0.,1.)
+        ### speed
+        self.domain +=gpflowopt.domain.ContinuousParameter('V',0.,1.)
+        ### PCA
+        self.domain +=gpflowopt.domain.ContinuousParameter('PCA',0.,1.)
+
 
     def _configure_dict_c(self,x):
 
@@ -110,27 +115,28 @@ class BO():
 
 
 
+        array = []
+
+        if(round(x[8])== 1):
+            array.append('p')
+        if(round(x[9])== 1):
+            array.append('v')
+        if(round(x[10])== 1):
+            array.append('PCA')
+
+        self.dict_c['mode_data'] = array
 
 
-        if(int(round(x[8]))== 1):
-            self.dict_c['mode_data'] = ['p']
-        if(int(round(x[8]))== 2):
-            self.dict_c['mode_data'] = ['v']
-        if(int(round(x[8]))== 2):
-            self.dict_c['mode_data'] = ['p','v']
 
-
-
-
-        # print('SIGMA = ',self.dict_c['sigma'])
-        # print('time_dim = ',self.dict_c['time_dim'])
-        # print('min_h = ',self.dict_c['min_h'])
-        # print('max_h = ',self.dict_c['max_h'])
-        # print('resolution = ',self.dict_c['resolution'])
-        # print('nr_contours = ',self.dict_c['nr_contours'])
-        # print('threshold = ',self.dict_c['threshold'])
-        # print('area = ',self.dict_c['area'])
-        # print('attributes = ',self.dict_c['mode_data'])
+        print('SIGMA = ',self.dict_c['sigma'])
+        print('time_dim = ',self.dict_c['time_dim'])
+        print('min_h = ',self.dict_c['min_h'])
+        print('max_h = ',self.dict_c['max_h'])
+        print('resolution = ',self.dict_c['resolution'])
+        print('nr_contours = ',self.dict_c['nr_contours'])
+        print('threshold = ',self.dict_c['threshold'])
+        print('area = ',self.dict_c['area'])
+        print('attributes = ',self.dict_c['mode_data'])
 
     def plot(self,hvpoi):
         # plot pareto front

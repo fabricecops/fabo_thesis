@@ -1,7 +1,7 @@
 
 
 from src.dst.datamanager.data_manager import data_manager
-from src.models.LSTM.optimizers.CMA_ES.CMA_ES import CMA_ES
+from src.models.LSTM.optimizers.CMA_ES import CMA_ES
 from src.models.baseline.v0.configure import return_dict_bounds
 import numpy as np
 import functools
@@ -12,6 +12,9 @@ import matplotlib.pyplot as plt
 plt.style.use('ggplot')
 
 import pandas as pd
+
+
+
 class baseline(CMA_ES,data_manager):
 
 
@@ -146,8 +149,6 @@ class baseline(CMA_ES,data_manager):
 
         return AUC,FPR,TPR
 
-
-
     def _get_error_m(self, row):
 
         e_f = np.mean(row, axis = 1)
@@ -166,24 +167,28 @@ class baseline(CMA_ES,data_manager):
         self.df_f_test      = list(map(self._get_error_m, np.array(self.df_f_test['data_X'])))
         self.df_t_test      = list(map(self._get_error_m, np.array(self.df_t_test['data_X'])))
 
+
+
+
     def split_CV(self,f,t,folds):
-        step_f = len(f)//folds
-        step_t  = len(t)/folds
-
-
+        id_f    = int(round(len(f)*self.dict_c['bootstrap_split']))
+        id_t    = int(round(len(t)*self.dict_c['bootstrap_split']))
+        print(id_f)
+        print(id_t)
+        f       = np.array(f)
+        t       = np.array(t)
         array = []
         for i in range(folds):
-            id_f = i*step_f
-            id_t = i*step_t
+            np.random.shuffle(f)
+            np.random.shuffle(t)
 
 
-            val_f   = f[id_f:id_f+step_f]
-            train_f = f[0:id_f]
-            train_f.extend(f[id_f+step_f:])
+            train_f  = f[0:id_f]
+            val_f    = f[id_f:]
 
-            val_t   = t[id_t:id_t + step_t]
-            train_t = t[0:id_t]
-            train_t.extend(t[id_t + step_t:])
+            train_t  = t[0:id_t]
+            val_t    = t[id_t:]
+
 
             print(len(val_f),len(val_t),len(train_f),len(train_t))
 

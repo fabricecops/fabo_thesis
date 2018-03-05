@@ -1,3 +1,4 @@
+
 def return_dict_bounds():
     dict_c = {
 
@@ -14,31 +15,33 @@ def return_dict_bounds():
 
         #### Preprocessing ############
         ## background subtractions ####
-        'threshold'        : 100,
-        'nr_contours'      : 4,
+        'threshold'        : 300,
+        'nr_contours'      : 3,
         'nr_features'      : 3,
 
         ## Peak derivation #############
-        'resolution'       : 4,
-        'area'             : 200,
-        'min_h'            : 10,
-        'max_h'            : 150,
+        'resolution'       : 3,
+        'area'             : 300,
+        'min_h'            : 15,
+        'max_h'            : 200,
 
         ## PCA componentes #########
         'PCA_components'   : 100,
 
         #### Data manager  #########
-        'mode_data'        : ['p'],
+        'mode_data'        : ['p','PCA'],
         'train'            : 'df_f_tr',
         'val'              : 'df_f_val',
         'anomaly'          : 'df_t',
 
         ###### CMA_ES    ######
+        'folds'            : 5,
+        'bootstrap_split'  : 0.3,
         'verbose_CMA'      : 1,
         'verbose_CMA_log'  : 0,
-        'evals'            : 5,
+        'evals'            : 10000,
         'bounds'           : [-100,100],
-        'sigma'            : 0.5,
+        'sigma'            : 0.4222222222222225,
         'progress_ST'      : 0.3,
         'sample'           : 5,
 
@@ -64,12 +67,12 @@ def return_dict_bounds():
 
 
         ##### fit                    #####
-        'val_split_f'        : 0.15,
-        'val_split_t'        : 0.20,
+        'val_split_f'        : 0.2,
+        'val_split_t'        : 0.2,
 
         'verbose'          : 1,
         'epochs'           : 10000,
-        'batch_size'       : 1,
+        'batch_size'       : 248,
 
 
         #### data gathering statefull ####
@@ -128,3 +131,6 @@ def return_dict_bounds():
               {'name': 'latent',   'type': 'discrete',   'domain': (100, 150, 200, 250, 300)}]
 
     return dict_c,bounds
+
+
+

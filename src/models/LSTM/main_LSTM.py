@@ -1,12 +1,12 @@
 
 import os
 from src.models.LSTM.model_a.s2s import LSTM_
-from src.models.LSTM.outputhandler.OPS import OPS
-from src.models.LSTM.optimizers.CMA_ES.CMA_ES import CMA_ES
+from src.models.LSTM.outputhandler.OPS import OPS_LSTM
+from src.models.LSTM.optimizers.CMA_ES import CMA_ES
 
 from src.models.LSTM.configure import return_dict_bounds
-from pathos.helpers import mp
-import time
+import multiprocessing as mp
+
 
 import queue
 
@@ -14,51 +14,74 @@ class model_mng():
 
     def __init__(self,dict_c):
 
-        self.dict_c = dict_c
-        self.model  = LSTM_(dict_c)
-        self.OPS    = OPS(self.dict_c)
 
+        self.dict_c      = dict_c
+        self.model       = LSTM_(dict_c)
+        self.OPS_LSTM    = OPS_LSTM(self.dict_c)
 
         self.dict_data = None
-        self.Queue_o   = queue.Queue()
+        self.Queue_cma = mp.Queue(maxsize=10)
 
-    def main(self):
+    def main(self,Queue_cma):
+
+
         for i in range(self.dict_c['epochs']):
-
             dict_data    = self.process_LSTM()
+
+            self.OPS_LSTM.save_output(dict_data,i)
+
             self._conf_FS(dict_data,i)
+            self.OPS_LSTM.main(dict_data,i)
+
+            print('x'*50)
+            print(Queue_cma.empty())
+            print('x'*50)
+
+            if(Queue_cma.empty() == False):
+
+                df,dict_,path = self.Queue_cma.get()
+                self.OPS_LSTM.save_output_CMA(df,dict_,path)
+
 
             if(i != 0):
-                while p.is_alive():
-                    time.sleep(0.1)
+                if p.is_alive() == False:
 
-                p.terminate()
+                    p.terminate()
 
-            p = mp.Process(target=self.process_output, args= (i,dict_data))
-            p.daemon = False
-            p.start()
+                    p = mp.Process(target=self.process_output, args= (Queue_cma,dict_data))
+                    p.daemon = False
+                    p.start()
+            if(i==0):
+                p = mp.Process(target=self.process_output, args=(Queue_cma,dict_data))
+                p.daemon = False
+                p.start()
+
 
 
 
     def process_LSTM(self):
 
         loss                = self.model.fit()
-        dict_data   = self.model.predict()
+        dict_data           = self.model.predict()
         dict_data['losses'] = loss
+
 
         return dict_data
 
-    def process_output(self,i,dict_data):
+    def process_output(self,queue,dict_data):
 
-            self.OPS._save_output(dict_data,i)
 
             CMA_ES_    = CMA_ES(self.dict_c)
-            dict_data2 = CMA_ES_.main_CMA_ES(dict_data,i)
+            tuple_     = CMA_ES_.main_CMA_ES(dict_data)
 
-            dict_data2['model_s'] = dict_data['model']
-            dict_data2['path_o']  = dict_data['path_o']
+            queue.put(tuple_)
+            print('0'*50)
+            print(queue.empty())
+            print('0'*50)
 
-            self.OPS.main_OPS(dict_data2, i)
+
+
+
 
     def _conf_FS(self,dict_data,epoch):
         string = 'epoch_'+str(epoch)
@@ -78,10 +101,12 @@ class model_mng():
 
 
 
+
 if __name__ == '__main__':
     dict_c, bounds = return_dict_bounds()
 
-    mm    = model_mng(dict_c).main()
+    mm    = model_mng(dict_c)
+    mm.main(mm.Queue_cma)
 
     ##### train_BO_different_windows ####
     # dict_c, bounds = return_dict_bounds()
