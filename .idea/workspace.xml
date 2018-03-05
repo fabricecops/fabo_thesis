@@ -6,18 +6,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c452cadd-2f9a-4dbc-96c5-eb88182fb6f7" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" afterPath="$PROJECT_DIR$/.idea/modules.xml" />
       <change beforePath="$PROJECT_DIR$/.idea/thesis.iml" afterPath="$PROJECT_DIR$/.idea/thesis.iml" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/TODO.txt" afterPath="$PROJECT_DIR$/TODO.txt" />
       <change beforePath="$PROJECT_DIR$/src/data/dimensionality_reduction/HCF/preprocessing.py" afterPath="$PROJECT_DIR$/src/data/dimensionality_reduction/HCF/preprocessing.py" />
-      <change beforePath="$PROJECT_DIR$/src/models/LSTM/configure.py" afterPath="$PROJECT_DIR$/src/models/LSTM/configure.py" />
       <change beforePath="$PROJECT_DIR$/src/models/LSTM/main_LSTM.py" afterPath="$PROJECT_DIR$/src/models/LSTM/main_LSTM.py" />
-      <change beforePath="$PROJECT_DIR$/src/models/LSTM/outputhandler/OPS.py" afterPath="$PROJECT_DIR$/src/models/LSTM/outputhandler/OPS.py" />
-      <change beforePath="$PROJECT_DIR$/src/models/baseline/v0/BO.py" afterPath="$PROJECT_DIR$/src/models/baseline/v0/BO.py" />
-      <change beforePath="$PROJECT_DIR$/src/models/baseline/v0/baseline.py" afterPath="$PROJECT_DIR$/src/models/baseline/v0/baseline.py" />
-      <change beforePath="$PROJECT_DIR$/src/models/baseline/v0/configure.py" afterPath="$PROJECT_DIR$/src/models/baseline/v0/configure.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -122,11 +115,11 @@
       <file leaf-file-name="main_LSTM.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/models/LSTM/main_LSTM.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-257">
-              <caret line="22" column="45" lean-forward="false" selection-start-line="22" selection-start-column="8" selection-end-line="22" selection-end-column="45" />
+            <state relative-caret-position="504">
+              <caret line="31" column="0" lean-forward="false" selection-start-line="31" selection-start-column="0" selection-end-line="31" selection-end-column="0" />
               <folding>
                 <element signature="e#1#10#0" expanded="true" />
-                <element signature="e#1978#2408#0" expanded="false" />
+                <element signature="e#1803#2233#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -135,8 +128,8 @@
       <file leaf-file-name="data_manager.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/dst/datamanager/data_manager.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="650">
-              <caret line="52" column="0" lean-forward="false" selection-start-line="52" selection-start-column="0" selection-end-line="52" selection-end-column="0" />
+            <state relative-caret-position="1080">
+              <caret line="66" column="0" lean-forward="false" selection-start-line="66" selection-start-column="0" selection-end-line="66" selection-end-column="0" />
               <folding>
                 <element signature="e#4345#4597#0" expanded="false" />
                 <element signature="e#4929#5204#0" expanded="false" />
@@ -145,12 +138,30 @@
           </provider>
         </entry>
       </file>
+      <file leaf-file-name="__init__.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/data/dimensionality_reduction/HCF/__init__.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="preprocessing.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/data/dimensionality_reduction/HCF/preprocessing.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="65">
-              <caret line="608" column="8" lean-forward="false" selection-start-line="608" selection-start-column="8" selection-end-line="608" selection-end-column="8" />
-              <folding />
+            <state relative-caret-position="299">
+              <caret line="606" column="12" lean-forward="false" selection-start-line="606" selection-start-column="8" selection-end-line="606" selection-end-column="12" />
+              <folding>
+                <element signature="e#236#1974#0" expanded="false" />
+                <element signature="e#1997#2994#0" expanded="false" />
+                <element signature="e#3015#6270#0" expanded="false" />
+                <element signature="e#6300#6955#0" expanded="false" />
+                <element signature="e#6986#12391#0" expanded="false" />
+                <element signature="e#12415#19283#0" expanded="false" />
+                <element signature="e#19307#20404#0" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -158,8 +169,8 @@
       <file leaf-file-name="pca.py" pinned="false" current-in-tab="false">
         <entry file="file:///usr/local/lib/python3.6/dist-packages/sklearn/decomposition/pca.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="74">
-              <caret line="312" column="8" lean-forward="false" selection-start-line="312" selection-start-column="8" selection-end-line="312" selection-end-column="8" />
+            <state relative-caret-position="326">
+              <caret line="306" column="28" lean-forward="false" selection-start-line="306" selection-start-column="28" selection-end-line="306" selection-end-column="28" />
               <folding />
             </state>
           </provider>
@@ -168,8 +179,8 @@
       <file leaf-file-name="main_HCR.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/data/dimensionality_reduction/HCF/main_HCR.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="450">
-              <caret line="58" column="31" lean-forward="true" selection-start-line="58" selection-start-column="31" selection-end-line="58" selection-end-column="31" />
+            <state relative-caret-position="558">
+              <caret line="58" column="31" lean-forward="false" selection-start-line="58" selection-start-column="31" selection-end-line="58" selection-end-column="31" />
               <folding />
             </state>
           </provider>
@@ -200,16 +211,6 @@
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="0">
               <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="queue.py" pinned="false" current-in-tab="false">
-        <entry file="file:///usr/lib/python3.6/queue.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="432">
-              <caret line="26" column="8" lean-forward="false" selection-start-line="26" selection-start-column="8" selection-end-line="26" selection-end-column="8" />
               <folding />
             </state>
           </provider>
@@ -337,17 +338,17 @@
         <option value="$PROJECT_DIR$/src/models/LSTM/optimizers/CMA_ES/CMA_ES.py" />
         <option value="$PROJECT_DIR$/src/models/LSTM/optimizers/CMA_ES.py" />
         <option value="$PROJECT_DIR$/src/models/LSTM/outputhandler/OPS.py" />
-        <option value="$PROJECT_DIR$/src/models/LSTM/main_LSTM.py" />
         <option value="$PROJECT_DIR$/src/dst/datamanager/data_manager.py" />
         <option value="$PROJECT_DIR$/src/models/LSTM/configure.py" />
+        <option value="$PROJECT_DIR$/src/models/LSTM/main_LSTM.py" />
         <option value="$PROJECT_DIR$/src/data/dimensionality_reduction/HCF/preprocessing.py" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds" extendedState="4">
     <option name="x" value="67" />
     <option name="y" value="25" />
-    <option name="width" value="1392" />
+    <option name="width" value="1247" />
     <option name="height" value="1415" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -373,6 +374,30 @@
             <path>
               <item name="]\" type="b2602c69:ProjectViewProjectNode" />
               <item name="fabo_thesis" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="]\" type="b2602c69:ProjectViewProjectNode" />
+              <item name="fabo_thesis" type="462c0819:PsiDirectoryNode" />
+              <item name="data" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="]\" type="b2602c69:ProjectViewProjectNode" />
+              <item name="fabo_thesis" type="462c0819:PsiDirectoryNode" />
+              <item name="data" type="462c0819:PsiDirectoryNode" />
+              <item name="interim" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="]\" type="b2602c69:ProjectViewProjectNode" />
+              <item name="fabo_thesis" type="462c0819:PsiDirectoryNode" />
+              <item name="data" type="462c0819:PsiDirectoryNode" />
+              <item name="processed" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="]\" type="b2602c69:ProjectViewProjectNode" />
+              <item name="fabo_thesis" type="462c0819:PsiDirectoryNode" />
+              <item name="data" type="462c0819:PsiDirectoryNode" />
+              <item name="processed" type="462c0819:PsiDirectoryNode" />
+              <item name="df" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="]\" type="b2602c69:ProjectViewProjectNode" />
@@ -495,6 +520,24 @@
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
     </configuration>
+    <configuration default="true" type="PythonConfigurationType" factoryName="Python">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="thesis" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+    </configuration>
     <configuration name="configure" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -566,23 +609,6 @@
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
-    </configuration>
-    <configuration default="true" type="PythonConfigurationType" factoryName="Python">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="thesis" />
-      <option name="SCRIPT_NAME" value="" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
     </configuration>
     <configuration default="true" type="tests" factoryName="Nosetests">
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -701,17 +727,25 @@
       <option name="project" value="LOCAL" />
       <updated>1520237998858</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="lol">
+      <created>1520267530212</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1520267530212</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="67" y="25" width="2493" height="1415" extended-state="6" />
+    <frame x="67" y="25" width="1247" height="1415" extended-state="4" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.11070999" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2213312" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32977098" sideWeight="0.50213546" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3136955" sideWeight="0.49786454" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3136955" sideWeight="0.32638332" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3289977" sideWeight="0.49859607" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3136955" sideWeight="0.6736167" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32977098" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32924336" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -723,7 +757,6 @@
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3289977" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
     </layout>
@@ -791,12 +824,11 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="297" />
+      <option name="time" value="298" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/models/BO_BL/experiment_0/data/nr_20/AUC_curve.png" />
     <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="288">
@@ -915,7 +947,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1602">
           <caret line="96" column="19" lean-forward="false" selection-start-line="96" selection-start-column="0" selection-end-line="97" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -926,7 +957,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1530">
           <caret line="85" column="8" lean-forward="false" selection-start-line="85" selection-start-column="8" selection-end-line="85" selection-end-column="8" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -964,11 +994,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/models/LSTM/stateful/2/val_curve.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/models/LSTM/stateful/2/val_curve.png" />
     <entry file="file:///usr/local/lib/python3.6/dist-packages/tensorflow/python/client/session.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="24336">
@@ -977,11 +1003,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/models/LSTM/stateful/3/val_curve.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/models/LSTM/stateful/3/val_curve.png" />
     <entry file="file://$PROJECT_DIR$/src/models/baseline/v0/configure.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="828">
@@ -1045,24 +1067,51 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/models/LSTM/stateful/11/data_CMA/nr_16/AUC_T.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/models/LSTM/stateful/11/data_CMA/nr_16/AUC_curve.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
+    <entry file="file://$PROJECT_DIR$/models/LSTM/stateful/11/data_CMA/nr_16/AUC_T.png" />
+    <entry file="file://$PROJECT_DIR$/models/LSTM/stateful/11/data_CMA/nr_16/AUC_curve.png" />
+    <entry file="file:///usr/local/lib/python3.6/dist-packages/sklearn/decomposition/pca.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="326">
+          <caret line="306" column="28" lean-forward="false" selection-start-line="306" selection-start-column="28" selection-end-line="306" selection-end-column="28" />
+          <folding />
+        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/models/LSTM/main_LSTM.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-257">
-          <caret line="22" column="45" lean-forward="false" selection-start-line="22" selection-start-column="8" selection-end-line="22" selection-end-column="45" />
+        <state relative-caret-position="504">
+          <caret line="31" column="0" lean-forward="false" selection-start-line="31" selection-start-column="0" selection-end-line="31" selection-end-column="0" />
           <folding>
             <element signature="e#1#10#0" expanded="true" />
-            <element signature="e#1978#2408#0" expanded="false" />
+            <element signature="e#1803#2233#0" expanded="false" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/dst/datamanager/data_manager.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1080">
+          <caret line="66" column="0" lean-forward="false" selection-start-line="66" selection-start-column="0" selection-end-line="66" selection-end-column="0" />
+          <folding>
+            <element signature="e#4345#4597#0" expanded="false" />
+            <element signature="e#4929#5204#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/data/dimensionality_reduction/HCF/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/data/dimensionality_reduction/HCF/main_HCR.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="558">
+          <caret line="58" column="31" lean-forward="false" selection-start-line="58" selection-start-column="31" selection-end-line="58" selection-end-column="31" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1074,38 +1123,19 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/dst/datamanager/data_manager.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="650">
-          <caret line="52" column="0" lean-forward="false" selection-start-line="52" selection-start-column="0" selection-end-line="52" selection-end-column="0" />
-          <folding>
-            <element signature="e#4345#4597#0" expanded="false" />
-            <element signature="e#4929#5204#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///usr/local/lib/python3.6/dist-packages/sklearn/decomposition/pca.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="74">
-          <caret line="312" column="8" lean-forward="false" selection-start-line="312" selection-start-column="8" selection-end-line="312" selection-end-column="8" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/data/dimensionality_reduction/HCF/main_HCR.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="450">
-          <caret line="58" column="31" lean-forward="true" selection-start-line="58" selection-start-column="31" selection-end-line="58" selection-end-column="31" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/data/dimensionality_reduction/HCF/preprocessing.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="65">
-          <caret line="608" column="8" lean-forward="false" selection-start-line="608" selection-start-column="8" selection-end-line="608" selection-end-column="8" />
-          <folding />
+        <state relative-caret-position="299">
+          <caret line="606" column="12" lean-forward="false" selection-start-line="606" selection-start-column="8" selection-end-line="606" selection-end-column="12" />
+          <folding>
+            <element signature="e#236#1974#0" expanded="false" />
+            <element signature="e#1997#2994#0" expanded="false" />
+            <element signature="e#3015#6270#0" expanded="false" />
+            <element signature="e#6300#6955#0" expanded="false" />
+            <element signature="e#6986#12391#0" expanded="false" />
+            <element signature="e#12415#19283#0" expanded="false" />
+            <element signature="e#19307#20404#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>

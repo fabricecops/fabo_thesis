@@ -609,27 +609,23 @@ class PCA_():
     def main(self,df,path):
 
 
-        PCA_mod    = decomposition.PCA()
+        PCA_mod    = decomposition.PCA(n_components=50)
 
         data_v     = np.concatenate(list(df['data_v']))
         data_p     = np.concatenate(list(df['data_p']))
         data       = np.concatenate([data_p,data_v], axis = 1)
 
-        PCA_mod.fit(data,)
+        PCA_mod.fit(data)
 
         self.save_POV(PCA_mod,path)
 
-        df =  apply_by_multiprocessing(df, self.transform_PCA,
-                                                      model   = PCA_mod,
-                                                      axis   = 1,
-                                                      workers= 2)
-
+        df.apply(self.transform_PCA,model = PCA_mod)
 
 
         return df
 
 
-    def transform_PCA(self,row,model = None):
+    def transform_PCA(self,row,model):
 
         data             = np.concatenate([row['data_p'],row['data_v']], axis = 1)
         row['PCA']       = model.transform(data)

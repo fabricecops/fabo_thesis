@@ -33,15 +33,10 @@ class model_mng():
             self._conf_FS(dict_data,i)
             self.OPS_LSTM.main(dict_data,i)
 
-            print('x'*50)
-            print(Queue_cma.empty())
-            print('x'*50)
-
             if(Queue_cma.empty() == False):
 
                 df,dict_,path = self.Queue_cma.get()
                 self.OPS_LSTM.save_output_CMA(df,dict_,path)
-
 
             if(i != 0):
                 if p.is_alive() == False:
@@ -75,9 +70,7 @@ class model_mng():
             tuple_     = CMA_ES_.main_CMA_ES(dict_data)
 
             queue.put(tuple_)
-            print('0'*50)
-            print(queue.empty())
-            print('0'*50)
+
 
 
 
