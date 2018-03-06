@@ -7,9 +7,10 @@
   <component name="ChangeListManager">
     <list default="true" id="c452cadd-2f9a-4dbc-96c5-eb88182fb6f7" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/src/data/dimensionality_reduction/HCF/main_HCR.py" afterPath="$PROJECT_DIR$/src/data/dimensionality_reduction/HCF/main_HCR.py" />
-      <change beforePath="$PROJECT_DIR$/src/data/dimensionality_reduction/HCF/preprocessing.py" afterPath="$PROJECT_DIR$/src/data/dimensionality_reduction/HCF/preprocessing.py" />
       <change beforePath="$PROJECT_DIR$/src/models/LSTM/configure.py" afterPath="$PROJECT_DIR$/src/models/LSTM/configure.py" />
+      <change beforePath="$PROJECT_DIR$/src/models/LSTM/main_LSTM.py" afterPath="$PROJECT_DIR$/src/models/LSTM/main_LSTM.py" />
+      <change beforePath="$PROJECT_DIR$/src/models/LSTM/model_a/s2s.py" afterPath="$PROJECT_DIR$/src/models/LSTM/model_a/s2s.py" />
+      <change beforePath="$PROJECT_DIR$/src/models/LSTM/outputhandler/OPS.py" afterPath="$PROJECT_DIR$/src/models/LSTM/outputhandler/OPS.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -33,19 +34,29 @@
                 </provider>
               </entry>
             </file>
-            <file leaf-file-name="OPS.py" pinned="false" current-in-tab="false">
+            <file leaf-file-name="OPS.py" pinned="false" current-in-tab="true">
               <entry file="file://$PROJECT_DIR$/src/models/LSTM/outputhandler/OPS.py">
                 <provider selected="true" editor-type-id="text-editor">
-                  <state relative-caret-position="1026">
-                    <caret line="220" column="23" lean-forward="false" selection-start-line="220" selection-start-column="8" selection-end-line="220" selection-end-column="23" />
+                  <state relative-caret-position="1015">
+                    <caret line="297" column="0" lean-forward="false" selection-start-line="297" selection-start-column="0" selection-end-line="297" selection-end-column="0" />
                     <folding>
                       <element signature="e#0#52#0" expanded="true" />
-                      <element signature="e#610#3041#0" expanded="false" />
-                      <element signature="e#3838#7383#0" expanded="false" />
-                      <element signature="e#7427#7550#0" expanded="false" />
-                      <element signature="e#7597#7703#0" expanded="false" />
-                      <element signature="e#7759#9978#0" expanded="false" />
+                      <element signature="e#610#2987#0" expanded="false" />
+                      <element signature="e#3038#3736#0" expanded="false" />
+                      <element signature="e#7561#9769#0" expanded="false" />
+                      <element signature="e#9813#9936#0" expanded="false" />
+                      <element signature="e#9983#10089#0" expanded="false" />
                     </folding>
+                  </state>
+                </provider>
+              </entry>
+            </file>
+            <file leaf-file-name="AUC.py" pinned="false" current-in-tab="false">
+              <entry file="file://$PROJECT_DIR$/src/dst/metrics/AUC.py">
+                <provider selected="true" editor-type-id="text-editor">
+                  <state relative-caret-position="180">
+                    <caret line="12" column="8" lean-forward="false" selection-start-line="12" selection-start-column="8" selection-end-line="12" selection-end-column="8" />
+                    <folding />
                   </state>
                 </provider>
               </entry>
@@ -77,11 +88,11 @@
                 </provider>
               </entry>
             </file>
-            <file leaf-file-name="configure.py" pinned="false" current-in-tab="true">
+            <file leaf-file-name="configure.py" pinned="false" current-in-tab="false">
               <entry file="file://$PROJECT_DIR$/src/models/LSTM/configure.py">
                 <provider selected="true" editor-type-id="text-editor">
-                  <state relative-caret-position="349">
-                    <caret line="45" column="32" lean-forward="false" selection-start-line="45" selection-start-column="32" selection-end-line="45" selection-end-column="32" />
+                  <state relative-caret-position="-587">
+                    <caret line="39" column="30" lean-forward="false" selection-start-line="39" selection-start-column="30" selection-end-line="39" selection-end-column="30" />
                     <folding />
                   </state>
                 </provider>
@@ -90,15 +101,12 @@
             <file leaf-file-name="CMA_ES.py" pinned="false" current-in-tab="false">
               <entry file="file://$PROJECT_DIR$/src/models/LSTM/optimizers/CMA_ES.py">
                 <provider selected="true" editor-type-id="text-editor">
-                  <state relative-caret-position="144">
-                    <caret line="8" column="0" lean-forward="false" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
+                  <state relative-caret-position="36">
+                    <caret line="9" column="16" lean-forward="false" selection-start-line="9" selection-start-column="16" selection-end-line="9" selection-end-column="16" />
                     <folding>
-                      <element signature="e#2012#2336#0" expanded="false" />
-                      <element signature="e#3657#4138#0" expanded="false" />
-                      <element signature="e#4188#4473#0" expanded="false" />
-                      <element signature="e#4518#4629#0" expanded="false" />
-                      <element signature="e#4676#4782#0" expanded="false" />
-                      <element signature="e#4828#4877#0" expanded="false" />
+                      <element signature="e#1915#2239#0" expanded="false" />
+                      <element signature="e#4426#4537#0" expanded="false" />
+                      <element signature="e#4736#4785#0" expanded="false" />
                     </folding>
                   </state>
                 </provider>
@@ -111,71 +119,51 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="main_LSTM.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/models/LSTM/main_LSTM.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="31" column="0" lean-forward="false" selection-start-line="31" selection-start-column="0" selection-end-line="31" selection-end-column="0" />
-              <folding>
-                <element signature="e#1#10#0" expanded="true" />
-                <element signature="e#1803#2233#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="data_manager.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/dst/datamanager/data_manager.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1080">
-              <caret line="66" column="0" lean-forward="false" selection-start-line="66" selection-start-column="0" selection-end-line="66" selection-end-column="0" />
-              <folding>
-                <element signature="e#4345#4597#0" expanded="false" />
-                <element signature="e#4929#5204#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="__init__.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/data/dimensionality_reduction/HCF/__init__.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="preprocessing.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/data/dimensionality_reduction/HCF/preprocessing.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3960">
-              <caret line="511" column="54" lean-forward="false" selection-start-line="511" selection-start-column="54" selection-end-line="511" selection-end-column="54" />
-              <folding>
-                <element signature="e#236#1974#0" expanded="false" />
-                <element signature="e#1997#2994#0" expanded="false" />
-                <element signature="e#3015#6270#0" expanded="false" />
-                <element signature="e#6300#6955#0" expanded="false" />
-                <element signature="e#14135#16968#0" expanded="false" />
-                <element signature="e#19307#20404#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="POV.png" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/data/processed/df/df_pd/df_T_300_A_300_C_3_R_3/POV.png">
+      <file leaf-file-name="AUC.png" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/models/Results/wrong_validation/unstatefull_LSTM/AUC.png">
           <provider selected="true" editor-type-id="images">
             <state />
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="pickle.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/dst/outputhandler/pickle.py">
+      <file leaf-file-name="AUC_val.png" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/models/Results/wrong_validation/unstatefull_LSTM/AUC_val.png">
+          <provider selected="true" editor-type-id="images">
+            <state />
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="val_curve.png" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/models/Results/wrong_validation/unstatefull_LSTM/val_curve.png">
+          <provider selected="true" editor-type-id="images">
+            <state />
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="val_curve.png" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/models/LSTM/stateful/1/val_curve.png">
+          <provider selected="true" editor-type-id="images">
+            <state />
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="main_LSTM.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/models/LSTM/main_LSTM.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1170">
-              <caret line="70" column="0" lean-forward="false" selection-start-line="70" selection-start-column="0" selection-end-line="70" selection-end-column="0" />
+            <state relative-caret-position="414">
+              <caret line="32" column="28" lean-forward="false" selection-start-line="32" selection-start-column="28" selection-end-line="32" selection-end-column="28" />
+              <folding>
+                <element signature="e#1802#2232#0" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="configure.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/data/dimensionality_reduction/AE/configure.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -184,20 +172,42 @@
       <file leaf-file-name="main_HCR.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/data/dimensionality_reduction/HCF/main_HCR.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="666">
-              <caret line="43" column="39" lean-forward="false" selection-start-line="43" selection-start-column="39" selection-end-line="43" selection-end-column="39" />
+            <state relative-caret-position="0">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
               <folding>
-                <element signature="e#1799#2305#0" expanded="false" />
+                <element signature="e#0#9#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="__init__.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/models/LSTM/__init__.py">
+      <file leaf-file-name="data_manager.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/dst/datamanager/data_manager.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="774">
+              <caret line="46" column="12" lean-forward="false" selection-start-line="46" selection-start-column="12" selection-end-line="46" selection-end-column="12" />
+              <folding>
+                <element signature="e#0#52#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="models.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/models/LSTM/model_a/models.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="0">
               <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="s2s.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/models/LSTM/model_a/s2s.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="151">
+              <caret line="53" column="11" lean-forward="false" selection-start-line="53" selection-start-column="11" selection-end-line="53" selection-end-column="11" />
               <folding />
             </state>
           </provider>
@@ -304,7 +314,6 @@
         <option value="$PROJECT_DIR$/src/dst/outputhandler/OPS.py" />
         <option value="$PROJECT_DIR$/src/models/LSTM/s2s.py" />
         <option value="$PROJECT_DIR$/src/models/LSTM/data_manager.py" />
-        <option value="$PROJECT_DIR$/src/models/LSTM/model_a/s2s.py" />
         <option value="$PROJECT_DIR$/notebooks/experiments/BO/multiobjective.ipynb" />
         <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/TODO.txt" />
@@ -312,20 +321,21 @@
         <option value="$PROJECT_DIR$/src/models/baseline/v0/configure.py" />
         <option value="$PROJECT_DIR$/src/models/baseline/v0/baseline.py" />
         <option value="$PROJECT_DIR$/src/models/LSTM/optimizers/CMA_ES/CMA_ES.py" />
-        <option value="$PROJECT_DIR$/src/models/LSTM/optimizers/CMA_ES.py" />
-        <option value="$PROJECT_DIR$/src/models/LSTM/outputhandler/OPS.py" />
         <option value="$PROJECT_DIR$/src/dst/datamanager/data_manager.py" />
-        <option value="$PROJECT_DIR$/src/models/LSTM/main_LSTM.py" />
         <option value="$PROJECT_DIR$/src/data/dimensionality_reduction/HCF/preprocessing.py" />
         <option value="$PROJECT_DIR$/src/data/dimensionality_reduction/HCF/main_HCR.py" />
+        <option value="$PROJECT_DIR$/src/models/LSTM/model_a/s2s.py" />
         <option value="$PROJECT_DIR$/src/models/LSTM/configure.py" />
+        <option value="$PROJECT_DIR$/src/models/LSTM/main_LSTM.py" />
+        <option value="$PROJECT_DIR$/src/models/LSTM/optimizers/CMA_ES.py" />
+        <option value="$PROJECT_DIR$/src/models/LSTM/outputhandler/OPS.py" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds" extendedState="4">
     <option name="x" value="67" />
     <option name="y" value="25" />
-    <option name="width" value="1247" />
+    <option name="width" value="1313" />
     <option name="height" value="1415" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -359,12 +369,6 @@
             <path>
               <item name="]\" type="b2602c69:ProjectViewProjectNode" />
               <item name="fabo_thesis" type="462c0819:PsiDirectoryNode" />
-              <item name="data" type="462c0819:PsiDirectoryNode" />
-              <item name="interim" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="]\" type="b2602c69:ProjectViewProjectNode" />
-              <item name="fabo_thesis" type="462c0819:PsiDirectoryNode" />
               <item name="models" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -376,7 +380,42 @@
             <path>
               <item name="]\" type="b2602c69:ProjectViewProjectNode" />
               <item name="fabo_thesis" type="462c0819:PsiDirectoryNode" />
+              <item name="models" type="462c0819:PsiDirectoryNode" />
+              <item name="LSTM" type="462c0819:PsiDirectoryNode" />
+              <item name="stateful" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="]\" type="b2602c69:ProjectViewProjectNode" />
+              <item name="fabo_thesis" type="462c0819:PsiDirectoryNode" />
+              <item name="models" type="462c0819:PsiDirectoryNode" />
+              <item name="LSTM" type="462c0819:PsiDirectoryNode" />
+              <item name="stateful" type="462c0819:PsiDirectoryNode" />
+              <item name="1" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="]\" type="b2602c69:ProjectViewProjectNode" />
+              <item name="fabo_thesis" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="]\" type="b2602c69:ProjectViewProjectNode" />
+              <item name="fabo_thesis" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="dst" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="]\" type="b2602c69:ProjectViewProjectNode" />
+              <item name="fabo_thesis" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="dst" type="462c0819:PsiDirectoryNode" />
+              <item name="datamanager" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="]\" type="b2602c69:ProjectViewProjectNode" />
+              <item name="fabo_thesis" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="dst" type="462c0819:PsiDirectoryNode" />
+              <item name="outputhandler" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="]\" type="b2602c69:ProjectViewProjectNode" />
@@ -390,13 +429,29 @@
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="models" type="462c0819:PsiDirectoryNode" />
               <item name="LSTM" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="]\" type="b2602c69:ProjectViewProjectNode" />
+              <item name="fabo_thesis" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="models" type="462c0819:PsiDirectoryNode" />
+              <item name="LSTM" type="462c0819:PsiDirectoryNode" />
+              <item name="model_a" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="]\" type="b2602c69:ProjectViewProjectNode" />
+              <item name="fabo_thesis" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="models" type="462c0819:PsiDirectoryNode" />
+              <item name="LSTM" type="462c0819:PsiDirectoryNode" />
+              <item name="outputhandler" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="Scratches" />
       <pane id="Scope" />
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -673,16 +728,23 @@
       <option name="project" value="LOCAL" />
       <updated>1520271325549</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="lol">
+      <created>1520273240292</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1520273240292</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="67" y="25" width="2493" height="1415" extended-state="6" />
+    <frame x="67" y="25" width="1313" height="1415" extended-state="4" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.11070999" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.21020563" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3136955" sideWeight="0.3365423" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3136955" sideWeight="0.6634577" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32440704" sideWeight="0.13835198" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32440704" sideWeight="0.861648" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32977098" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32924336" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -762,41 +824,37 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="299" />
+      <option name="time" value="300" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/models/LSTM/optimizers/CMA_ES/unit.py" />
-    <entry file="file://$PROJECT_DIR$/src/models/baseline/v0/BO.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="10" column="11" lean-forward="false" selection-start-line="10" selection-start-column="11" selection-end-line="10" selection-end-column="11" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/data/processed/df/df_pd/df_T_456_A_456_C_5_R_8/POV.png" />
-    <entry file="file://$PROJECT_DIR$/src/dst/metrics/AUC.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="143">
-          <caret line="29" column="0" lean-forward="false" selection-start-line="29" selection-start-column="0" selection-end-line="29" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/data/processed/df/df_pd/df_T_189_A_144_C_2_R_3/POV.png" />
-    <entry file="file://$PROJECT_DIR$/models/LSTM/stateful/1/predictions/AUC.png" />
-    <entry file="file://$PROJECT_DIR$/models/LSTM/stateful/1/predictions/AUC_val.png" />
-    <entry file="file://$PROJECT_DIR$/models/Results/wrong_validation/s2s_p/val_curve.png">
+    <entry file="file://$PROJECT_DIR$/models/LSTM/stateful/0/data_CMA/nr_0/AUC_T.png">
       <provider selected="true" editor-type-id="images">
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/models/Results/wrong_validation/unstatefull_LSTM/val_curve.png">
+    <entry file="file://$PROJECT_DIR$/models/Results/wrong_validation/38/val_curve.png">
       <provider selected="true" editor-type-id="images">
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/models/Results/wrong_validation/s2s_w/val_curve.png">
+    <entry file="file://$PROJECT_DIR$/models/LSTM/stateful/0/data_CMA/nr_0/AUC_curve.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/LSTM/stateful/0/val_curve.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/LSTM/stateful/1/predictions/epoch_6/AUC.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/LSTM/stateful/1/predictions/epoch_6/AUC_val.png">
       <provider selected="true" editor-type-id="images">
         <state />
       </provider>
@@ -806,240 +864,195 @@
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/models/LSTM/stateful/1/val_curve.png" />
-    <entry file="file:///usr/local/lib/python3.6/dist-packages/matplotlib/pyplot.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="276">
-          <caret line="700" column="0" lean-forward="false" selection-start-line="700" selection-start-column="0" selection-end-line="700" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///usr/local/lib/python3.6/dist-packages/matplotlib/figure.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="276">
-          <caret line="1833" column="0" lean-forward="false" selection-start-line="1833" selection-start-column="0" selection-end-line="1833" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///usr/local/lib/python3.6/dist-packages/matplotlib/backend_bases.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="276">
-          <caret line="2266" column="0" lean-forward="false" selection-start-line="2266" selection-start-column="0" selection-end-line="2266" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/models/BO_BL/experiment_2/data/nr_0/AUC_curve.png">
+    <entry file="file://$PROJECT_DIR$/models/Results/wrong_validation/s2s_p/val_curve.png">
       <provider selected="true" editor-type-id="images">
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/models/BO_BL/experiment_2/data/nr_0/AUC_T.png">
+    <entry file="file://$PROJECT_DIR$/models/Results/wrong_validation/s2s_w/val_curve.png">
       <provider selected="true" editor-type-id="images">
         <state />
       </provider>
     </entry>
-    <entry file="file:///usr/local/lib/python3.6/dist-packages/cma/evolution_strategy.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="39330">
-          <caret line="2193" column="0" lean-forward="false" selection-start-line="2193" selection-start-column="0" selection-end-line="2193" selection-end-column="0" />
-        </state>
+    <entry file="file://$PROJECT_DIR$/models/LSTM/stateful/1/data_CMA/nr_0/AUC_curve.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/models/LSTM/stateful/26/data_CMA/nr_0/AUC_T.png" />
-    <entry file="file://$PROJECT_DIR$/models/LSTM/stateful/26/data_CMA/nr_0/AUC_curve.png" />
-    <entry file="file://$PROJECT_DIR$/src/models/LSTM/model_a/s2s.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1602">
-          <caret line="96" column="19" lean-forward="false" selection-start-line="96" selection-start-column="0" selection-end-line="97" selection-end-column="0" />
-        </state>
+    <entry file="file://$PROJECT_DIR$/models/LSTM/stateful/3/data_CMA/nr_3/AUC_T.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/models/LSTM/stateful/27/data_CMA/nr_0/AUC_curve.png" />
-    <entry file="file://$PROJECT_DIR$/models/LSTM/stateful/27/data_CMA/nr_0/AUC_T.png" />
-    <entry file="file://$PROJECT_DIR$/models/LSTM/stateful/10/val_curve.png" />
-    <entry file="file://$APPLICATION_HOME_DIR$/helpers/python-skeletons/multiprocessing/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1530">
-          <caret line="85" column="8" lean-forward="false" selection-start-line="85" selection-start-column="8" selection-end-line="85" selection-end-column="8" />
-        </state>
+    <entry file="file://$PROJECT_DIR$/models/LSTM/stateful/3/data_CMA/nr_3/AUC_curve.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
       </provider>
     </entry>
-    <entry file="file:///usr/lib/python3.6/queue.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="432">
-          <caret line="26" column="8" lean-forward="false" selection-start-line="26" selection-start-column="8" selection-end-line="26" selection-end-column="8" />
-        </state>
+    <entry file="file://$PROJECT_DIR$/models/LSTM/stateful/3/data_CMA/nr_6/AUC_T.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/models/LSTM/stateful/17/val_curve.png" />
-    <entry file="file:///usr/local/lib/python3.6/dist-packages/multiprocess/process.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4392">
-          <caret line="248" column="0" lean-forward="false" selection-start-line="248" selection-start-column="0" selection-end-line="248" selection-end-column="0" />
-        </state>
+    <entry file="file://$PROJECT_DIR$/models/LSTM/stateful/3/data_CMA/nr_6/AUC_curve.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/models/LSTM/stateful/16/val_curve.png" />
-    <entry file="file:///usr/lib/python3.6/multiprocessing/__init__.py">
+    <entry file="file://$PROJECT_DIR$/models/LSTM/stateful/3/val_curve.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/LSTM/stateful/3/predictions/epoch_0/AUC_val.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/LSTM/stateful/3/predictions/epoch_0/AUC.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/LSTM/stateful/3/data_CMA/nr_0/AUC_curve.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/LSTM/stateful/3/data_CMA/nr_0/AUC_T.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/LSTM/stateful/7/predictions/epoch_0/AUC.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/LSTM/stateful/7/predictions/epoch_0/AUC_val.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/LSTM/stateful/13/predictions/epoch_0/AUC_val.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/LSTM/stateful/13/predictions/epoch_0/AUC.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/LSTM/stateful/13/data_CMA/nr_0/AUC_curve.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/LSTM/stateful/13/data_CMA/nr_0/AUC_T.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/LSTM/stateful/13/val_curve.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/LSTM/stateful/2/predictions/epoch_9/AUC_val.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/LSTM/stateful/2/predictions/epoch_9/AUC.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/LSTM/stateful/2/predictions/epoch_8/AUC.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/LSTM/stateful/2/predictions/epoch_8/AUC_val.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/LSTM/stateful/2/predictions/epoch_7/AUC.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/LSTM/stateful/2/predictions/epoch_7/AUC_val.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/LSTM/stateful/2/data_CMA/nr_8/AUC_curve.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/LSTM/stateful/2/data_CMA/nr_8/AUC_T.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/LSTM/stateful/2/val_curve.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/LSTM/stateful/2/data_CMA/nr_0/AUC_T.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/LSTM/stateful/2/data_CMA/nr_0/AUC_curve.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/Results/wrong_validation/unstatefull_LSTM/AUC.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/Results/wrong_validation/unstatefull_LSTM/AUC_val.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/data/dimensionality_reduction/AE/configure.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/models/LSTM/stateful/2/val_curve.png" />
-    <entry file="file:///usr/local/lib/python3.6/dist-packages/tensorflow/python/client/session.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="24336">
-          <caret line="1373" column="0" lean-forward="false" selection-start-line="1373" selection-start-column="0" selection-end-line="1373" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/models/LSTM/stateful/3/val_curve.png" />
-    <entry file="file://$PROJECT_DIR$/src/models/baseline/v0/configure.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="828">
-          <caret line="46" column="31" lean-forward="false" selection-start-line="46" selection-start-column="31" selection-end-line="46" selection-end-column="31" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/models/LSTM/outputhandler/OPS.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1026">
-          <caret line="220" column="23" lean-forward="false" selection-start-line="220" selection-start-column="8" selection-end-line="220" selection-end-column="23" />
-          <folding>
-            <element signature="e#0#52#0" expanded="true" />
-            <element signature="e#610#3041#0" expanded="false" />
-            <element signature="e#3838#7383#0" expanded="false" />
-            <element signature="e#7427#7550#0" expanded="false" />
-            <element signature="e#7597#7703#0" expanded="false" />
-            <element signature="e#7759#9978#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/models/baseline/v0/baseline.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="342">
-          <caret line="27" column="0" lean-forward="false" selection-start-line="27" selection-start-column="0" selection-end-line="32" selection-end-column="0" />
-          <folding>
-            <element signature="e#860#3392#0" expanded="false" />
-            <element signature="e#1239#2590#0" expanded="false" />
-            <element signature="e#1546#1781#0" expanded="false" />
-            <element signature="e#2156#2553#0" expanded="false" />
-            <element signature="e#2800#3136#0" expanded="false" />
-            <element signature="e#3191#3315#0" expanded="false" />
-            <element signature="e#3436#3918#0" expanded="false" />
-            <element signature="e#3760#3832#0" expanded="false" />
-            <element signature="e#3967#4252#0" expanded="false" />
-            <element signature="e#4296#4343#0" expanded="false" />
-            <element signature="e#4388#4437#0" expanded="false" />
-            <element signature="e#4478#4852#0" expanded="false" />
-            <element signature="e#4899#5523#0" expanded="false" />
-            <element signature="e#5189#5501#0" expanded="false" />
-            <element signature="e#5569#7750#0" expanded="false" />
-            <element signature="e#7784#7875#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/models/LSTM/optimizers/CMA_ES.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="144">
-          <caret line="8" column="0" lean-forward="false" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
-          <folding>
-            <element signature="e#2012#2336#0" expanded="false" />
-            <element signature="e#3657#4138#0" expanded="false" />
-            <element signature="e#4188#4473#0" expanded="false" />
-            <element signature="e#4518#4629#0" expanded="false" />
-            <element signature="e#4676#4782#0" expanded="false" />
-            <element signature="e#4828#4877#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/models/LSTM/stateful/11/data_CMA/nr_16/AUC_T.png" />
-    <entry file="file://$PROJECT_DIR$/models/LSTM/stateful/11/data_CMA/nr_16/AUC_curve.png" />
-    <entry file="file:///usr/local/lib/python3.6/dist-packages/sklearn/decomposition/pca.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="5202">
-          <caret line="306" column="28" lean-forward="false" selection-start-line="306" selection-start-column="28" selection-end-line="306" selection-end-column="28" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/models/LSTM/main_LSTM.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="31" column="0" lean-forward="false" selection-start-line="31" selection-start-column="0" selection-end-line="31" selection-end-column="0" />
-          <folding>
-            <element signature="e#1#10#0" expanded="true" />
-            <element signature="e#1803#2233#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/dst/datamanager/data_manager.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1080">
-          <caret line="66" column="0" lean-forward="false" selection-start-line="66" selection-start-column="0" selection-end-line="66" selection-end-column="0" />
-          <folding>
-            <element signature="e#4345#4597#0" expanded="false" />
-            <element signature="e#4929#5204#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/data/dimensionality_reduction/HCF/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/dst/outputhandler/pickle.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1170">
-          <caret line="70" column="0" lean-forward="false" selection-start-line="70" selection-start-column="0" selection-end-line="70" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/data/dimensionality_reduction/HCF/main_HCR.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="666">
-          <caret line="43" column="39" lean-forward="false" selection-start-line="43" selection-start-column="39" selection-end-line="43" selection-end-column="39" />
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#1799#2305#0" expanded="false" />
+            <element signature="e#0#9#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/data/dimensionality_reduction/HCF/preprocessing.py">
+    <entry file="file://$PROJECT_DIR$/src/dst/datamanager/data_manager.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3960">
-          <caret line="511" column="54" lean-forward="false" selection-start-line="511" selection-start-column="54" selection-end-line="511" selection-end-column="54" />
+        <state relative-caret-position="774">
+          <caret line="46" column="12" lean-forward="false" selection-start-line="46" selection-start-column="12" selection-end-line="46" selection-end-column="12" />
           <folding>
-            <element signature="e#236#1974#0" expanded="false" />
-            <element signature="e#1997#2994#0" expanded="false" />
-            <element signature="e#3015#6270#0" expanded="false" />
-            <element signature="e#6300#6955#0" expanded="false" />
-            <element signature="e#14135#16968#0" expanded="false" />
-            <element signature="e#19307#20404#0" expanded="false" />
+            <element signature="e#0#52#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/data/processed/df/df_pd/df_T_300_A_300_C_3_R_3/POV.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/models/LSTM/__init__.py">
+    <entry file="file://$PROJECT_DIR$/src/models/LSTM/model_a/models.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
@@ -1047,22 +1060,75 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/models/Results/wrong_validation/unstatefull_LSTM/val_curve.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/LSTM/stateful/1/val_curve.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/models/LSTM/configure.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="349">
-          <caret line="45" column="32" lean-forward="false" selection-start-line="45" selection-start-column="32" selection-end-line="45" selection-end-column="32" />
+        <state relative-caret-position="-587">
+          <caret line="39" column="30" lean-forward="false" selection-start-line="39" selection-start-column="30" selection-end-line="39" selection-end-column="30" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/models/LSTM/stateful/12/val_curve.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
+    <entry file="file://$PROJECT_DIR$/src/dst/metrics/AUC.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="12" column="8" lean-forward="false" selection-start-line="12" selection-start-column="8" selection-end-line="12" selection-end-column="8" />
+          <folding />
+        </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/models/LSTM/stateful/12/data_CMA/nr_47/AUC_curve.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
+    <entry file="file://$PROJECT_DIR$/src/models/LSTM/optimizers/CMA_ES.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="36">
+          <caret line="9" column="16" lean-forward="false" selection-start-line="9" selection-start-column="16" selection-end-line="9" selection-end-column="16" />
+          <folding>
+            <element signature="e#1915#2239#0" expanded="false" />
+            <element signature="e#4426#4537#0" expanded="false" />
+            <element signature="e#4736#4785#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/models/LSTM/model_a/s2s.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="151">
+          <caret line="53" column="11" lean-forward="false" selection-start-line="53" selection-start-column="11" selection-end-line="53" selection-end-column="11" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/models/LSTM/main_LSTM.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="414">
+          <caret line="32" column="28" lean-forward="false" selection-start-line="32" selection-start-column="28" selection-end-line="32" selection-end-column="28" />
+          <folding>
+            <element signature="e#1802#2232#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/models/LSTM/outputhandler/OPS.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1015">
+          <caret line="297" column="0" lean-forward="false" selection-start-line="297" selection-start-column="0" selection-end-line="297" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#52#0" expanded="true" />
+            <element signature="e#610#2987#0" expanded="false" />
+            <element signature="e#3038#3736#0" expanded="false" />
+            <element signature="e#7561#9769#0" expanded="false" />
+            <element signature="e#9813#9936#0" expanded="false" />
+            <element signature="e#9983#10089#0" expanded="false" />
+          </folding>
+        </state>
       </provider>
     </entry>
   </component>

@@ -55,7 +55,7 @@ class LSTM_(model, data_manager):
         df_t_train    = self.df_t_train.apply(self._predict, axis=1)
         df_t_val      = self.df_t_val.apply(self._predict, axis=1)
 
-        df_f_train    = self.df_f_train.sample(self.dict_c['sample']).apply(self._predict, axis=1)
+        df_f_train    = self.df_f_train.apply(self._predict, axis=1)
         df_f_val      = self.df_f_val.apply(self._predict, axis=1)
 
         dict_data    = {

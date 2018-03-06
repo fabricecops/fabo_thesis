@@ -66,8 +66,8 @@ class OPS_LSTM(AUC):
         plt.ylabel('TPR')
 
         ax2 = plt.subplot(122)
-        ax2.hist(dict_data['t_m'], label = 'True', color = 'red', alpha = 0.5 , bins = 50, range=(-2,5))
-        ax2.hist(dict_data['f_tr_m'],label = 'False',color = 'green', alpha = 0.5,bins = 50, range=(-2,5))
+        ax2.hist(dict_data['t_m'], label = 'True', color = 'red', alpha = 0.5 , bins = 50)
+        ax2.hist(dict_data['f_tr_m'],label = 'False',color = 'green', alpha = 0.5,bins = 50)
         plt.legend()
         plt.savefig(path_p + 'AUC.png')
 
@@ -80,8 +80,8 @@ class OPS_LSTM(AUC):
         plt.ylabel('TPR')
 
         ax2 = plt.subplot(122)
-        ax2.hist(dict_data['t_m'], label='True', color='red', alpha=0.5, bins=50,range=(-2,5))
-        ax2.hist(dict_data['f_v_m'], label='False', color='green', alpha=0.5, bins=50,range=(-2,5))
+        ax2.hist(dict_data['t_m'], label='True', color='red', alpha=0.5, bins=50)
+        ax2.hist(dict_data['f_v_m'], label='False', color='green', alpha=0.5, bins=50)
         plt.legend()
         plt.savefig(path_p + 'AUC_val.png')
 
@@ -113,10 +113,10 @@ class OPS_LSTM(AUC):
     def get_data(self,dict_data,i):
 
         self.df_t_train = dict_data['df_t_train']
-        self.df_t_val = dict_data['df_t_val']
+        self.df_t_val   = dict_data['df_t_val']
 
         self.df_f_train = dict_data['df_f_train']
-        self.df_f_val = dict_data['df_f_val']
+        self.df_f_val   = dict_data['df_f_val']
 
         self.dimension = self.df_t_train.iloc[0]['data_X'].shape[2]
 
@@ -125,9 +125,10 @@ class OPS_LSTM(AUC):
         self.AUC_max = 0
         self.AUC_min = 100
 
-
+        self._calc_loss()
         array_t                             = zip(list(self.df_t_train['data_y']),list(self.df_t_train['data_y_p']))
         array_t_m                           = list(map(self._get_error_m,array_t))
+
         array_t                             = zip(list(self.df_t_train['data_y']),list(self.df_t_train['data_y_p']))
         val_t_train                         = list(map(self._get_error_mean,array_t))
 
@@ -151,13 +152,14 @@ class OPS_LSTM(AUC):
         AUC, FPR, TPR = self.get_AUC_score(array_t_m, array_f_tr)
         AUC_v, FPR_v, TPR_v = self.get_AUC_score(array_t_m, array_f_v)
 
-
+        print(len(val_t_train),len(val_f), len(train_f))
 
         loss_f_t     = np.mean(train_f)
         loss_f_v     = np.mean(val_f)
         loss_t       = np.mean(val_t_train)
 
-
+        print(np.mean(train_loss),loss_f_t,loss_f_v,loss_t)
+        print('AUC is:',AUC_v)
         loss_t_std      = np.std(val_t_train)
         loss_f_t_std   = np.std(train_f)
         loss_f_v_std   = np.std(val_f)
@@ -195,27 +197,6 @@ class OPS_LSTM(AUC):
             df.to_csv(path, mode = 'a', header = False)
 
         return dict_data
-
-    def _get_error_m(self, row):
-
-        y     = row[0]
-        y_p   = row[1]
-
-
-        e_f = np.max(np.mean(np.power((y - y_p),2),axis=(1,2)))
-
-        return e_f
-
-    def _get_error_mean(self, row):
-
-        y     = row[0]
-        y_p   = row[1]
-
-        e_f = np.mean(np.power((y - y_p), 2))
-
-
-
-        return e_f
 
 
     def save_output_CMA(self,df,dict_,path):
@@ -272,21 +253,56 @@ class OPS_LSTM(AUC):
         plt.legend()
         plt.title('Weights cma')
 
-
+        string = 'CV_score: '+str(round(-dict_['CV_score'],4))
+        print(-dict_['AUC_t'])
         ax2 = plt.subplot(122)
-        ax2.plot(dict_['FPR_tr'],dict_['TPR_tr'], label = 'train ROC')
-        ax2.plot(dict_['FPR_t'],dict_['TPR_t'] ,label = 'test ROC')
+        ax2.plot(dict_['FPR_tr'],dict_['TPR_tr'], label = 'train ROC'+str(round(-dict_['AUC_tr'],4)))
+        ax2.plot(dict_['FPR_t'],dict_['TPR_t'] ,label = 'test ROC'+str(round(-dict_['AUC_t'],4)))
 
         plt.xlabel('FPR')
         plt.ylabel('TPR')
         plt.legend()
-        plt.title('CV_score: '+str(round(-dict_['CV_score'],4))+' Test_score: '+str(round(-dict_['CV_score'],4))+
-                             ' Train_score: '+str(round(dict_['AUC_tr'],4)))
+        plt.title(string)
 
         plt.savefig(path_n+'/AUC_T.png')
 
+    def _get_error_m(self, row):
+
+        y     = row[0]
+        y_p   = row[1]
 
 
+        e_f = np.max(np.mean(np.power((y - y_p),2),axis=(1,2)))
+
+        return e_f
+
+    def _get_error_mean(self, row):
+
+        y     = row[0]
+        y_p   = row[1]
+
+        e_f = np.mean(np.power((y - y_p), 2))
+
+
+
+        return e_f
+
+
+    def _calc_loss(self):
+
+        t_y    = np.concatenate((np.array(self.df_t_train['data_y']),np.array(self.df_t_val['data_y'])),axis = 0)
+        t_y_p  = np.concatenate((np.array(self.df_t_train['data_y_p']),np.array(self.df_t_val['data_y_p'])),axis = 0)
+
+        t_y    = np.concatenate(t_y)
+
+
+
+        print(t_y.shape)
+
+
+
+        array_t = zip(list(self.df_t_train['data_y']), list(self.df_t_train['data_y_p']))
+        val_t_train = list(map(self._get_error_mean, array_t))
 
 
 

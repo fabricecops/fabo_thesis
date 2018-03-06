@@ -29,7 +29,6 @@ class model_mng():
             dict_data    = self.process_LSTM()
 
             self.OPS_LSTM.save_output(dict_data,i)
-
             self._conf_FS(dict_data,i)
             self.OPS_LSTM.main(dict_data,i)
 

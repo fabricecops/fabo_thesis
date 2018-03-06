@@ -20,7 +20,7 @@ def return_dict_bounds():
         'nr_features'      : 3,
 
         ## Peak derivation #############
-        'resolution'       : 3,
+        'resolution'       : 6,
         'area'             : 300,
         'min_h'            : 15,
         'max_h'            : 200,
@@ -29,7 +29,7 @@ def return_dict_bounds():
         'PCA_components'   : 100,
 
         #### Data manager  #########
-        'mode_data'        : ['p','PCA'],
+        'mode_data'        : ['p'],
         'train'            : 'df_f_tr',
         'val'              : 'df_f_val',
         'anomaly'          : 'df_t',
@@ -37,10 +37,10 @@ def return_dict_bounds():
         ###### CMA_ES    ######
         'folds'            : 5,
         'bootstrap_split'  : 0.25,
-        'verbose_CMA'      : 1,
+        'verbose_CMA'      : 0,
         'verbose_CMA_log'  : 0,
         'evals'            : 10000,
-        'bounds'           : [-100,100],
+        'bounds'           : [0.,100.],
         'sigma'            : 0.4222222222222225,
         'progress_ST'      : 0.3,
         'sample'           : 800,
@@ -51,7 +51,7 @@ def return_dict_bounds():
         'initial_n'        : 5,
         'initial_dt'       : 'latin',
         'eps'              : -1,
-        'maximize'         : True,
+        'maximize'         : False,
 
         #### optimizer         #####
         'optimizer'        : 'adam',
@@ -70,9 +70,9 @@ def return_dict_bounds():
         'val_split_f'        : 0.2,
         'val_split_t'        : 0.2,
 
-        'verbose'          : 1,
+        'verbose'          : 2,
         'epochs'           : 10000,
-        'batch_size'       : 248,
+        'batch_size'       : 500,
 
 
         #### data gathering statefull ####
