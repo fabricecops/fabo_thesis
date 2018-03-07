@@ -1,11 +1,4 @@
-
-
-FIXES
-- Oppervlakte wegdoen bij snelheid
-- name mapping maken
-- TQDM's adden
-
-- Anomaliteiten:
+Anomaliteiten:
 --> boven een bepaalde hoogte
 --> stoel
 --> onder een bepaalde hoogte
@@ -26,56 +19,57 @@ FIXES
 --> ladder actie
 --> dashing movements
 
+THESIS:
+PC
+- nieuwe ram fixen
+DATA
+- extra label bij zetten
 
---> speed inrekenen? Veel voorbeelden met high speed
+OLD MODEL
+- val set train pakken
+- best predictions save
+- Bayes Opt
 
-Video:
-- Diegene met frame length tussen 3-5 lijken gewoon ruis te zijn, mag ik die deleten?
+Spatio temporeel
+- implementeren
 
-
-ARTHUR
-+ 15 + 11 - taxi - 4 (duvel - cola)
-LORAN
-15 - wiet - worstenbroodje
-FRE
-15
-
-
-TODO;
-setup:
-- The beast 17.10 fixen
-- code in een docker fixen
-- GPU aansturing fixen
-
-modelling:
-Hand crafted features:
--BO_BL resultaten binnenhalen
--BO_LSTM resultaten binnenhalen
--statefull vs non statefull vergelijken
--cascade systeem bouwen
-
-spatio temporele model trainen met BO
+CASCADE IMPLEMENTEREN
 
 
-Demo maken die realtime werkt.
-
-vragen:
-anomaliteiten in resultaten steken?
-
-visualizer:
-- add error plot
-- switch from error to features
-- switch from anam to normal
-
-
-Thesis schrijven
+SCHRIJVEN
 
 
 
+JOBHUNT
+- CV fine tunen
+- bellen TARA + voorbereiden
+- Strategy bootcamp
 
-TODO:
-- predictions save voor visualizer
-- visualizer total error plot7
+
+VANDAAG
+- planning fabriek
+- CV bijtunen
+- Val set fixen
+- Predictions saven
+
+MORGEN
+- RAM kopen
+- Fabriek afmaken + nieuwe werk
+- Interview voorbereiden
+- visualizer fixen (total error plot)
+- labeller fixen (add)
+
+Vrijdag
+- Interview Tara 10.30
+- Bain inzenden
+- Labelling fixen
+
+Zaterdag
+- labelling fixen
+- bayes opt
+
+zondag
+- Schrijven
 
 
 
