@@ -6,7 +6,7 @@ import functools
 plt.style.use('ggplot')
 import numpy as np
 from src.dst.metrics.AUC import AUC
-from src.dst.outputhandler.pickle import pickle_save_
+from src.dst.outputhandler.pickle import pickle_save_,pickle_load
 
 class OPS_LSTM(AUC):
 
@@ -14,8 +14,8 @@ class OPS_LSTM(AUC):
         self.dict_c = dict_c
         AUC.__init__(self,dict_c)
 
-    def main(self,dict_data,i):
-        dict_data2           = self.get_data(dict_data,i)
+    def main(self,dict_data):
+        dict_data2           = self.get_data(dict_data)
         dict_data2['path_o'] = dict_data['path_o']
 
         self._save_plots(dict_data2)
@@ -28,19 +28,21 @@ class OPS_LSTM(AUC):
         path_p = dir+str_
 
         ### validation curve
-        df = pd.read_json(dict_data['path_o']+'hist.json')
-        print(df)
+        df = pickle_load(dict_data['path_o']+'hist.json', None)
+
 
         fig = plt.figure(figsize=(16, 4))
 
-        ax1 = plt.subplot(121)
-        ax1.plot(df['train_t'],    color = 'red',   label = 'val_t')
-        ax1.plot(df['val_t'],    color = 'red',   label = 'val_t')
-        ax1.plot(df['test_t'],    color = 'k',   label = 'test_t')
 
-        ax1.plot(df['train_f'],  color = 'blue',  label = 'train_f')
-        ax1.plot(df['val_f'],    color = 'green', label = 'val_f')
-        ax1.plot(df['test_f'],  color = 'yellow',  label = 'test_f')
+        ax1 = plt.subplot(121)
+        ax1.plot(np.array(df['train_t']),    color = 'red',   label = 'val_t')
+        ax1.plot(np.array(df['val_t']),    color = 'red',   label = 'val_t')
+        ax1.plot(np.array(df['test_t']),    color = 'k',   label = 'test_t')
+
+        ax1.plot(np.array(df['train_f']),  color = 'blue',  label = 'train_f')
+        ax1.plot(np.array(df['val_f']),    color = 'green', label = 'val_f')
+        ax1.plot(np.array(df['test_f']),  color = 'yellow',  label = 'test_f')
+        ax1.set_ylim(0.0,0.02)
 
         plt.legend()
         plt.title('validation/train curve')
@@ -48,9 +50,9 @@ class OPS_LSTM(AUC):
         plt.ylabel('average loss')
 
         ax2 = plt.subplot(122)
-        ax2.plot(df['AUC'], color = 'r', label = 'train')
-        ax2.plot(df['AUC_v'], color = 'g', label = 'val')
-        ax2.plot(df['AUC_t'], color = 'b', label = 'test')
+        ax2.plot(np.array(df['AUC']), color = 'r', label = 'train')
+        ax2.plot(np.array(df['AUC_v']), color = 'g', label = 'val')
+        ax2.plot(np.array(df['AUC_t']), color = 'b', label = 'test')
 
         plt.title('train/val AUC')
         plt.xlabel('epoch nr')
@@ -65,7 +67,6 @@ class OPS_LSTM(AUC):
         plt.title('ROC curve train  with AUC: '+str(round(dict_data['AUC'],3)))
         plt.xlabel('FPR')
         plt.ylabel('TPR')
-        plt.legend()
 
         ax2 = plt.subplot(122)
         ax2.hist(dict_data['t_tr_m'], label = 'True', color = 'red', alpha = 0.5 , bins = 50)
@@ -84,6 +85,7 @@ class OPS_LSTM(AUC):
         ax2 = plt.subplot(122)
         ax2.hist(dict_data['t_v_m'], label='True', color='red', alpha=0.5, bins=50)
         ax2.hist(dict_data['f_v_m'], label='False', color='green', alpha=0.5, bins=50)
+        plt.legend()
         plt.savefig(path_p + 'AUC_val.png')
 
         fig = plt.figure(figsize=(16, 4))
@@ -97,7 +99,10 @@ class OPS_LSTM(AUC):
         ax2 = plt.subplot(122)
         ax2.hist(dict_data['t_t_m'], label='True', color='red', alpha=0.5, bins=50)
         ax2.hist(dict_data['f_t_m'], label='False', color='green', alpha=0.5, bins=50)
+        plt.legend()
         plt.savefig(path_p + 'AUC_test.png')
+
+        plt.close('all')
 
     def save_output(self,dict_data,i):
         if(i==0):
@@ -121,9 +126,8 @@ class OPS_LSTM(AUC):
             path_o = dict_data['path_o'] + 'output.p'
             pickle_save(path_o, dict_o)
 
-
-    def get_data(self,dict_data,i):
-
+    def get_data(self,dict_data):
+        i               = dict_data['epoch']
         self.df_t_train = dict_data['df_t_train']
         self.df_t_val   = dict_data['df_t_val']
         self.df_t_test  = dict_data['df_t_test']
@@ -203,17 +207,20 @@ class OPS_LSTM(AUC):
         path = dict_data['path_o'] + 'hist.json'
         df = pd.DataFrame([dict_data])[['AUC','AUC_v','AUC_t',
                                         'train_f','train_t','val_f','val_t','test_t','test_f']]
+
+
+
         if(i == 0):
-            df.to_json(path)
+            pickle_save(path,df)
         else:
 
-            df_saved = pd.read_json(path)
-            df_saved = df_saved.append(df,ignore_index=True)
+            df_saved = pickle_load(path,None)
+            df_saved = df_saved.append(df,ignore_index=False)
 
-            df_saved.to_json(path)
+
+            pickle_save(path,df_saved)
 
         return dict_data
-
 
     def save_output_CMA(self,dict_):
         path   = dict_['path_o']
@@ -260,24 +267,23 @@ class OPS_LSTM(AUC):
         plt.plot(dict_['x'], color = 'k', linewidth = 3)
         plt.xlabel('weigths')
         plt.ylabel('value')
-        plt.legend()
         plt.title('Weights cma')
 
         plt.savefig(path_n+'/weights.png')
+        plt.close('all')
 
 
-
-        path = dict_['path_o'] + 'hist.csv'
-        df = pd.DataFrame([dict_])[['AUC', 'AUC_v','AUC_t']]
-        if (dict_['epoch'] == 0):
-            df.to_json(path)
-        else:
-            df.to_json(path)
-
-        if (dict_['AUC_v'] > max(list(df['AUC_v']))):
-
-            path_pr = path + 'predictions.p'
-            pickle_save(path_pr,dict_)
+        # path = dict_['path_o'] + 'AUC.json'
+        # df = pd.DataFrame([dict_])[['AUC', 'AUC_v','AUC_t']]
+        # if (dict_['epoch'] == 0):
+        #     df.to_json(path)
+        # else:
+        #     df.to_json(path)
+        #
+        # if (dict_['AUC_v'] > max(list(df['AUC_v']))):
+        #
+        #     path_pr = path + 'predictions.p'
+        #     pickle_save(path_pr,dict_)
 
 
     def _get_error_m(self, row):

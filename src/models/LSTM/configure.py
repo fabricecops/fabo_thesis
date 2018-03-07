@@ -39,7 +39,7 @@ def return_dict_bounds():
         'bootstrap_split'  : 0.25,
         'verbose_CMA'      : 1,
         'verbose_CMA_log'  : 0,
-        'evals'            : 100,
+        'evals'            : 5000,
         'bounds'           : [0.,100.],
         'sigma'            : 0.4222222222222225,
         'progress_ST'      : 0.3,

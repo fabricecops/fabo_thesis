@@ -49,8 +49,7 @@ JOBHUNT
 VANDAAG
 - planning fabriek
 - CV bijtunen
-- Val set fixen
-- Predictions saven
+
 
 MORGEN
 - RAM kopen
