@@ -7,6 +7,8 @@ from src.dst.keras_model.model import model
 from tqdm import tqdm
 import numpy as np
 import shutil
+
+
 class LSTM_(model, data_manager):
 
     def __init__(self, dict_c=None, path=None):
@@ -52,11 +54,12 @@ class LSTM_(model, data_manager):
         return hist
 
     def predict(self):
-        df_t_train    = self.df_t_train.apply(self._predict, axis=1)
-        df_t_val      = self.df_t_val.apply(self._predict, axis=1)
+        df_t_train     = self.df_t_train.apply(self._predict, axis=1)
+        df_t_val       = self.df_t_val.apply(self._predict, axis=1)
+        df_t_test      = self.df_t_test.apply(self._predict, axis=1)
 
-        df_f_train    = self.df_f_train.apply(self._predict, axis=1)
-        df_f_val      = self.df_f_val.apply(self._predict, axis=1)
+        df_f_train     = self.df_f_train.apply(self._predict, axis=1)
+        df_f_val       = self.df_f_val.apply(self._predict, axis=1)
         df_f_test      = self.df_f_test.apply(self._predict, axis=1)
 
         dict_data    = {
@@ -65,6 +68,7 @@ class LSTM_(model, data_manager):
 
                         'df_t_train'  : df_t_train,
                         'df_t_val'    : df_t_val,
+                        'df_t_test'   : df_t_test,
 
                         'df_f_train'  : df_f_train,
                         'df_f_val'    : df_f_val,
@@ -249,8 +253,6 @@ class LSTM_(model, data_manager):
 
 
     def copy_experiment(self):
-        import os
-        print(os.listdir(os.getcwd()))
         src = 'src'
         dst = self.path_gen+'/src'
 

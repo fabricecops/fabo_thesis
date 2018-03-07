@@ -33,6 +33,7 @@ class data_manager(pipe_line_data):
         test_samples_f   = int(len( self.df_f )*self.dict_c['test_split_f'])
 
         val_samples_t   = int(len( self.df_t )*self.dict_c['val_split_t'])
+        test_samples_t   = int(len( self.df_t )*self.dict_c['test_split_f'])
 
 
         self.df_f_val   = self.df_f.iloc[0:val_samples_f]
@@ -41,11 +42,13 @@ class data_manager(pipe_line_data):
 
 
 
-        self.df_t_val = self.df_t.iloc[0:val_samples_t]
-        self.df_t_train = self.df_t.iloc[val_samples_t:len(self.df_t)]
+        self.df_t_train = self.df_t.iloc[val_samples_t+test_samples_t:len(self.df_t)]
+        self.df_t_val   = self.df_t.iloc[0:val_samples_t]
+        self.df_t_test  = self.df_t.iloc[val_samples_t:val_samples_t+test_samples_t]
 
 
-        print(len(self.df_f_train),len(self.df_f_val),len(self.df_t_train),len(self.df_t_val ))
+        print(len(self.df_f_train),len(self.df_f_val),len(self.df_f_test))
+        print(len(self.df_t_train),len(self.df_t_val),len(self.df_t_test))
 
     def main_data_conf(self,*args):
         path_df,path_sc_p,path_sc_v,_ = self.return_path_pd(self.dict_c)

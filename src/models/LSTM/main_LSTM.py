@@ -19,8 +19,8 @@ class model_mng():
         self.model       = LSTM_(dict_c)
         self.OPS_LSTM    = OPS_LSTM(self.dict_c)
 
-        self.dict_data = None
-        self.Queue_cma = mp.Queue(maxsize=10)
+        self.dict_data   = None
+        self.Queue_cma   = mp.Queue(maxsize=10)
 
     def main(self,Queue_cma):
 
@@ -30,12 +30,13 @@ class model_mng():
 
             self.OPS_LSTM.save_output(dict_data,i)
             self._conf_FS(dict_data,i)
+            dict_data['epoch'] = i
             self.OPS_LSTM.main(dict_data,i)
 
             if(Queue_cma.empty() == False):
 
-                df,dict_,path = self.Queue_cma.get()
-                self.OPS_LSTM.save_output_CMA(df,dict_,path)
+                dict_    = self.Queue_cma.get()
+                self.OPS_LSTM.save_output_CMA(dict_,)
 
             if(i != 0):
                 if p.is_alive() == False:
@@ -68,9 +69,9 @@ class model_mng():
 
 
             CMA_ES_    = CMA_ES(self.dict_c)
-            tuple_     = CMA_ES_.main_CMA_ES(dict_data)
+            dict_      = CMA_ES_.main_CMA_ES(dict_data)
 
-            queue.put(tuple_)
+            queue.put(dict_)
 
 
 
