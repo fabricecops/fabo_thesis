@@ -29,14 +29,20 @@ class data_manager(pipe_line_data):
         self.df_t = shuffle(self.df_t)
         self.df_f = shuffle(self.df_f)
 
-        val_samples_f   = int(len( self.df_f )*self.dict_c['val_split_t'])
-        val_samples_t   = int(len( self.df_t )*self.dict_c['val_split_f'])
+        val_samples_f   = int(len( self.df_f )*self.dict_c['val_split_f'])
+        test_samples_f   = int(len( self.df_f )*self.dict_c['test_split_f'])
+
+        val_samples_t   = int(len( self.df_t )*self.dict_c['val_split_t'])
 
 
         self.df_f_val   = self.df_f.iloc[0:val_samples_f]
-        self.df_f_train = self.df_f.iloc[val_samples_f:len(self.df_f)]
-        self.df_t_val = self.df_f.iloc[0:val_samples_t]
-        self.df_t_train = self.df_f.iloc[val_samples_t:len(self.df_t)]
+        self.df_f_test  = self.df_f.iloc[val_samples_f:val_samples_f+test_samples_f]
+        self.df_f_train = self.df_f.iloc[val_samples_f+test_samples_f:len(self.df_f)]
+
+
+
+        self.df_t_val = self.df_t.iloc[0:val_samples_t]
+        self.df_t_train = self.df_t.iloc[val_samples_t:len(self.df_t)]
 
 
         print(len(self.df_f_train),len(self.df_f_val),len(self.df_t_train),len(self.df_t_val ))
@@ -53,7 +59,7 @@ class data_manager(pipe_line_data):
 
 
 
-        self.df =  apply_by_multiprocessing(self.df, self._configure_data_movie, axis=1, workers=6)
+        self.df =  apply_by_multiprocessing(self.df, self._configure_data_movie, axis=1, workers=12)
         self.df =  self.df[self.df['data_X'] != '']
         self.df =  self.df[self.df['data_y'] != '']
         self.count_t = len(self.df)

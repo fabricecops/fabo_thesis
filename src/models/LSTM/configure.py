@@ -15,14 +15,14 @@ def return_dict_bounds():
 
         #### Preprocessing ############
         ## background subtractions ####
-        'threshold'        : 300,
+        'threshold'        : 200,
         'nr_contours'      : 3,
         'nr_features'      : 3,
 
         ## Peak derivation #############
-        'resolution'       : 6,
-        'area'             : 300,
-        'min_h'            : 15,
+        'resolution'       : 4,
+        'area'             : 200,
+        'min_h'            : 20,
         'max_h'            : 200,
 
         ## PCA componentes #########
@@ -35,11 +35,11 @@ def return_dict_bounds():
         'anomaly'          : 'df_t',
 
         ###### CMA_ES    ######
-        'folds'            : 5,
+        'folds'            : 3,
         'bootstrap_split'  : 0.25,
-        'verbose_CMA'      : 0,
+        'verbose_CMA'      : 1,
         'verbose_CMA_log'  : 0,
-        'evals'            : 10000,
+        'evals'            : 100,
         'bounds'           : [0.,100.],
         'sigma'            : 0.4222222222222225,
         'progress_ST'      : 0.3,
@@ -69,6 +69,7 @@ def return_dict_bounds():
         ##### fit                    #####
         'val_split_f'        : 0.2,
         'val_split_t'        : 0.2,
+        'test_split_f'       : 0.2,
 
         'verbose'          : 2,
         'epochs'           : 10000,

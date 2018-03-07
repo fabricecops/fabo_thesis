@@ -74,10 +74,8 @@ Thesis schrijven
 
 
 TODO:
-- CMA_ES module bij LSTM training fixen
-- twee models klaar zetten + bayesopt
-- data anomaliteiten labelen
-
+- predictions save voor visualizer
+- visualizer total error plot7
 
 
 

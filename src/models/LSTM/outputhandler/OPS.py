@@ -39,11 +39,12 @@ class OPS_LSTM(AUC):
 
         ax1 = plt.subplot(121)
         ax1.plot(df['val_t'],    color = 'red',   label = 'val_t')
-        ax1.fill_between(range(len(df)),df['val_t']-df['val_std_t'],df['val_t']+df['val_std_t'], color = 'red', alpha = 0.3)
-        ax1.plot(df['val_f'],    color = 'green', label = 'val_f')
-        ax1.fill_between(range(len(df)),df['val_f']-df['val_std_f'],df['val_t']+df['val_std_f'], color = 'green', alpha = 0.3)
+        ax1.plot(df['test_t'],    color = 'k',   label = 'test_t')
+
         ax1.plot(df['train_f'],  color = 'blue',  label = 'train_f')
-        ax1.fill_between(range(len(df)),df['train_f']-df['train_std'],df['train_f']+df['train_std'], color = 'blue', alpha = 0.3)
+        ax1.plot(df['val_f'],    color = 'green', label = 'val_f')
+        ax1.plot(df['test_f'],  color = 'yellow',  label = 'test_f')
+
         plt.legend()
         plt.title('validation/train curve')
         plt.xlabel('epoch nr')
@@ -52,9 +53,12 @@ class OPS_LSTM(AUC):
         ax2 = plt.subplot(122)
         plt.plot(df['AUC'], color = 'r', label = 'train')
         plt.plot(df['AUC_v'], color = 'g', label = 'val')
+        plt.plot(df['AUC_t'], color = 'b', label = 'test')
+
         plt.title('train/val AUC')
         plt.xlabel('epoch nr')
         plt.ylabel('AUC')
+        plt.legend()
         plt.savefig(dict_data['path_o'] + '/val_curve.png')
 
         fig = plt.figure(figsize=(16, 4))
@@ -64,9 +68,10 @@ class OPS_LSTM(AUC):
         plt.title('ROC curve train  with AUC: '+str(round(dict_data['AUC'],3)))
         plt.xlabel('FPR')
         plt.ylabel('TPR')
-
+        plt.legend()
+        
         ax2 = plt.subplot(122)
-        ax2.hist(dict_data['t_m'], label = 'True', color = 'red', alpha = 0.5 , bins = 50)
+        ax2.hist(dict_data['t_m_tr'], label = 'True', color = 'red', alpha = 0.5 , bins = 50)
         ax2.hist(dict_data['f_tr_m'],label = 'False',color = 'green', alpha = 0.5,bins = 50)
         plt.legend()
         plt.savefig(path_p + 'AUC.png')
@@ -80,12 +85,24 @@ class OPS_LSTM(AUC):
         plt.ylabel('TPR')
 
         ax2 = plt.subplot(122)
-        ax2.hist(dict_data['t_m'], label='True', color='red', alpha=0.5, bins=50)
+        ax2.hist(dict_data['t_m_tr'], label='True', color='red', alpha=0.5, bins=50)
         ax2.hist(dict_data['f_v_m'], label='False', color='green', alpha=0.5, bins=50)
         plt.legend()
         plt.savefig(path_p + 'AUC_val.png')
 
+        fig = plt.figure(figsize=(16, 4))
+        ax1 = plt.subplot(121)
 
+        ax1.plot(dict_data['FPR_t'], dict_data['TPR_t'])
+        plt.title('ROC curve test with AUC: ' + str(round(dict_data['AUC_t'], 3)))
+        plt.xlabel('FPR')
+        plt.ylabel('TPR')
+
+        ax2 = plt.subplot(122)
+        ax2.hist(dict_data['t_m_t'], label='True', color='red', alpha=0.5, bins=50)
+        ax2.hist(dict_data['f_v_m'], label='False', color='green', alpha=0.5, bins=50)
+        plt.legend()
+        plt.savefig(path_p + 'AUC_test.png')
 
     def save_output(self,dict_data,i):
         if(i==0):
@@ -117,80 +134,76 @@ class OPS_LSTM(AUC):
 
         self.df_f_train = dict_data['df_f_train']
         self.df_f_val   = dict_data['df_f_val']
+        self.df_f_test  = dict_data['df_f_test']
 
         self.dimension = self.df_t_train.iloc[0]['data_X'].shape[2]
 
-        train_loss = dict_data['losses']
+
+        loss_f_tr       = dict_data['loss_f_tr']
+        loss_f_v       = dict_data['loss_f_v']
+
 
         self.AUC_max = 0
         self.AUC_min = 100
 
-        self._calc_loss()
-        array_t                             = zip(list(self.df_t_train['data_y']),list(self.df_t_train['data_y_p']))
-        array_t_m                           = list(map(self._get_error_m,array_t))
 
         array_t                             = zip(list(self.df_t_train['data_y']),list(self.df_t_train['data_y_p']))
-        val_t_train                         = list(map(self._get_error_mean,array_t))
+        array_t_m_tr                         = list(map(self._get_error_m,array_t))
+
 
         array_t                             = zip(list(self.df_t_val['data_y']),list(self.df_t_val['data_y_p']))
-        array_t_m.extend(list(map(self._get_error_m,array_t)))
-        array_t                             = zip(list(self.df_t_val['data_y']),list(self.df_t_val['data_y_p']))
-        val_t_train.extend(list(map(self._get_error_mean,array_t)))
-
+        array_t_m_t                         = list(map(self._get_error_m,array_t))
 
         array_f                             = zip(list(self.df_f_train['data_y']),list(self.df_f_train['data_y_p']))
         array_f_tr                          = list(map(self._get_error_m,array_f))
-        array_f                             = zip(list(self.df_f_train['data_y']),list(self.df_f_train['data_y_p']))
-        train_f                             = list(map(self._get_error_mean,array_f))
 
-        array_fv                            = zip(list(self.df_f_val['data_y']),list(self.df_f_val['data_y_p']))
-        val_f                               = list(map(self._get_error_mean,array_fv))
         array_fv                            = zip(list(self.df_f_val['data_y']),list(self.df_f_val['data_y_p']))
         array_f_v                           = list(map(self._get_error_m,array_fv))
 
+        array_ft = zip(list(self.df_f_test['data_y']), list(self.df_f_test['data_y_p']))
+        array_f_te = list(map(self._get_error_m, array_ft))
 
-        AUC, FPR, TPR = self.get_AUC_score(array_t_m, array_f_tr)
-        AUC_v, FPR_v, TPR_v = self.get_AUC_score(array_t_m, array_f_v)
 
-        print(len(val_t_train),len(val_f), len(train_f))
+        AUC, FPR, TPR = self.get_AUC_score(array_t_m_t, array_f_tr)
+        AUC_v, FPR_v, TPR_v = self.get_AUC_score(array_t_m_t, array_f_v)
+        AUC_t, FPR_t, TPR_t = self.get_AUC_score(array_t_m_t, array_f_te)
 
-        loss_f_t     = np.mean(train_f)
-        loss_f_v     = np.mean(val_f)
-        loss_t       = np.mean(val_t_train)
-
-        print(np.mean(train_loss),loss_f_t,loss_f_v,loss_t)
-        print('AUC is:',AUC_v)
-        loss_t_std      = np.std(val_t_train)
-        loss_f_t_std   = np.std(train_f)
-        loss_f_v_std   = np.std(val_f)
-
+        loss_f_te, loss_t_v,loss_t_t = self._calc_loss()
         dict_data   =  {
                         'AUC'        : AUC,
-
-
                         'FPR'            : FPR,
                         'TPR'            : TPR,
-                        'val_f'          : loss_f_v,
-                        'val_t'          : loss_t,
-                        'train_f'        : loss_f_t,
-                        'train_std'      : loss_f_t_std,
-                        'val_std_f'      : loss_f_v_std,
-                        'val_std_t'      : loss_t_std,
-
 
                         'AUC_v'          : AUC_v,
                         'TPR_v'          : TPR_v,
                         'FPR_v'          : FPR_v,
 
+
+                        'AUC_t'          : AUC_t,
+                        'TPR_t'          : TPR_t,
+                        'FPR_t'          : FPR_t,
+
+                        'val_f'          : loss_f_v,
+                        'train_f'        : loss_f_tr,
+                        'test_f'         : loss_f_te,
+
+
+                        'val_t'          : loss_t_v,
+                        'test_t'         : loss_t_t,
+
                         'path_o'         : dict_data['path_o'],
 
-                        't_m'            : array_t_m,
+                        't_m_tr'         : array_t_m_tr,
+                        't_m_t'          : array_f_te,
+
                         'f_tr_m'         : array_f_tr,
-                        'f_v_m'          : array_f_v
+                        'f_v_m'          : array_f_v,
+                        'f_t_m'          : array_f_te,
                         }
 
         path = dict_data['path_o'] + 'hist.csv'
-        df = pd.DataFrame([dict_data])[['AUC','train_f','val_f','val_t','val_std_t','val_std_f','train_std','AUC_v','TPR_v','FPR_v','TPR','FPR']]
+        df = pd.DataFrame([dict_data])[['AUC','TPR','FPR','AUC_v','TPR_v','FPR_v','AUC_t','TPR_t','FPR_t',
+                                        'train_f','val_f','val_t','test_t','test_f']]
         if(i == 0):
             df.to_csv(path)
         else:
@@ -281,28 +294,45 @@ class OPS_LSTM(AUC):
         y     = row[0]
         y_p   = row[1]
 
-        e_f = np.mean(np.power((y - y_p), 2))
+        e_f = np.mean(np.power((y - y_p), 2))*y.shape[0]
 
 
 
         return e_f
 
 
+
     def _calc_loss(self):
+        t_v_y    = np.concatenate(list(self.df_t_train['data_y']))
+        t_t_y     = np.concatenate(list(self.df_t_val['data_y']))
 
-        t_y    = np.concatenate((np.array(self.df_t_train['data_y']),np.array(self.df_t_val['data_y'])),axis = 0)
-        t_y_p  = np.concatenate((np.array(self.df_t_train['data_y_p']),np.array(self.df_t_val['data_y_p'])),axis = 0)
-
-        t_y    = np.concatenate(t_y)
-
-
-
-        print(t_y.shape)
+        t_v_yp    = np.concatenate(list(self.df_t_train['data_y_p']))
+        t_t_yp     = np.concatenate(list(self.df_t_val['data_y_p']))
 
 
 
-        array_t = zip(list(self.df_t_train['data_y']), list(self.df_t_train['data_y_p']))
-        val_t_train = list(map(self._get_error_mean, array_t))
+
+        f_t_y     = np.concatenate(list(self.df_f_test['data_y']))
+        f_t_yp    = np.concatenate(list(self.df_f_test['data_y_p']))
+
+
+        e_t_v    = np.mean(np.power((t_v_y-t_v_yp),2),axis = (1,2))
+        del t_v_y,t_v_yp
+
+        e_t_t    = np.mean(np.power((t_t_y-t_t_yp),2),axis = (1,2))
+        del t_t_y,t_t_yp
+
+        e_f_t = np.mean(np.power((f_t_y-f_t_yp),2),axis = (1,2))
+        del f_t_y,f_t_yp
+
+
+
+        loss_t_v = np.mean(e_t_v)
+        loss_t_t = np.mean(e_t_t)
+        loss_f_t = np.mean(e_f_t)
+
+
+        return loss_f_t,loss_t_v,loss_t_t
 
 
 

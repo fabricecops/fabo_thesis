@@ -55,9 +55,11 @@ class model_mng():
 
     def process_LSTM(self):
 
-        loss                = self.model.fit()
-        dict_data           = self.model.predict()
-        dict_data['losses'] = loss
+        loss,val_loss            = self.model.fit()
+
+        dict_data               = self.model.predict()
+        dict_data['loss_f_tr']  = loss[0]
+        dict_data['loss_f_v']   = val_loss[0]
 
 
         return dict_data

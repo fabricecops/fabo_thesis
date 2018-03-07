@@ -6,11 +6,10 @@ from src.dst.datamanager.data_manager import data_manager
 from src.dst.keras_model.model import model
 from tqdm import tqdm
 import numpy as np
-
+import shutil
 class LSTM_(model, data_manager):
 
     def __init__(self, dict_c=None, path=None):
-
         model.__init__(self, dict_c=dict_c,path=path)
         data_manager.__init__(self,dict_c)
 
@@ -25,6 +24,7 @@ class LSTM_(model, data_manager):
         self.X_val            = None
         self.y_val            = None
         self._configure_model()
+        self.copy_experiment()
 
         self.model            = self.create_model()
 
@@ -57,6 +57,7 @@ class LSTM_(model, data_manager):
 
         df_f_train    = self.df_f_train.apply(self._predict, axis=1)
         df_f_val      = self.df_f_val.apply(self._predict, axis=1)
+        df_f_test      = self.df_f_test.apply(self._predict, axis=1)
 
         dict_data    = {
                         'path_o'      : self.path_gen,
@@ -67,7 +68,7 @@ class LSTM_(model, data_manager):
 
                         'df_f_train'  : df_f_train,
                         'df_f_val'    : df_f_val,
-
+                        'df_f_test'   : df_f_test,
 
                         'dict_c'      : self.dict_c,
                         'batch_size'  : self.dict_c['batch_size']
@@ -121,7 +122,7 @@ class LSTM_(model, data_manager):
 
         hidden1 = 300
         hidden2 = 350
-        hidden3 = 400
+        hidden3 = 50
         model = Sequential()
         ##Encoder
         model.add(LSTM(hidden1,
@@ -165,10 +166,6 @@ class LSTM_(model, data_manager):
 
         return model
 
-
-
-
-
     def _fit_unstateful(self):
 
         callbacks = self.create_callbacks()
@@ -180,13 +177,13 @@ class LSTM_(model, data_manager):
                               callbacks        = callbacks,
                               validation_data  = (self.X_val,self.y_val),
                               )
-
-        return hist.history['loss']
+        return hist.history['loss'],hist.history['val_loss']
 
     def _fit_stateful(self):
 
 
-        loss   = []
+        loss    = []
+        val_loss= []
         boolean= True
 
         for i in tqdm(range(len(self.df_f_train))):
@@ -203,13 +200,15 @@ class LSTM_(model, data_manager):
                            shuffle          = False
                            )
             loss.extend(hist.history['loss'])
+            val_loss.extend(hist.history['val_loss'])
+
             self.model.reset_states()
 
             if(i%20 == 0):
                 print(np.mean(loss))
 
 
-        return loss
+        return loss,val_loss
 
     def _configure_model(self):
         self.batch_size = self.dict_c['batch_size']
@@ -238,9 +237,6 @@ class LSTM_(model, data_manager):
             self.X_train,self.y_train  = self.main_data_conf_stateless('train')
             self.X_val,self.y_val      = self.main_data_conf_stateless('val')
 
-
-
-
     def _predict(self, row):
 
         X = row['data_X']
@@ -250,3 +246,13 @@ class LSTM_(model, data_manager):
         row['data_y_p'] = y_pred
 
         return row
+
+
+    def copy_experiment(self):
+        import os
+        print(os.listdir(os.getcwd()))
+        src = 'src'
+        dst = self.path_gen+'/src'
+
+        shutil.copytree(src,dst)
+
