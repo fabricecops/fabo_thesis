@@ -164,8 +164,8 @@ class OPS_LSTM(AUC):
         array_f_te = list(map(self._get_error_m, array_ft))
 
 
-        AUC, FPR, TPR = self.get_AUC_score(array_t_m_t, array_f_tr)
-        AUC_v, FPR_v, TPR_v = self.get_AUC_score(array_t_m_t, array_f_v)
+        AUC, FPR, TPR = self.get_AUC_score(array_t_m_tr, array_f_tr)
+        AUC_v, FPR_v, TPR_v = self.get_AUC_score(array_t_m_tr, array_f_v)
         AUC_t, FPR_t, TPR_t = self.get_AUC_score(array_t_m_t, array_f_te)
 
         loss_f_te, loss_t_v,loss_t_t = self._calc_loss()

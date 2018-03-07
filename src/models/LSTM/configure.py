@@ -35,11 +35,11 @@ def return_dict_bounds():
         'anomaly'          : 'df_t',
 
         ###### CMA_ES    ######
-        'folds'            : 3,
+        'folds'            : 5,
         'bootstrap_split'  : 0.25,
         'verbose_CMA'      : 1,
         'verbose_CMA_log'  : 0,
-        'evals'            : 100,
+        'evals'            : 10000,
         'bounds'           : [0.,100.],
         'sigma'            : 0.4222222222222225,
         'progress_ST'      : 0.3,
