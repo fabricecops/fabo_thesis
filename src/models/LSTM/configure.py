@@ -40,7 +40,7 @@ def return_dict_bounds():
         'verbose_CMA'      : 1,
         'verbose_CMA_log'  : 0,
         'evals'            : 5000,
-        'bounds'           : [0.,100.],
+        'bounds'           : [-100.,100.],
         'sigma'            : 0.4222222222222225,
         'progress_ST'      : 0.3,
         'sample'           : 800,

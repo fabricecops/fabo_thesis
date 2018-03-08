@@ -37,7 +37,7 @@ def return_dict_bounds():
         ###### CMA_ES    ######
         'verbose_CMA'      : 1,
         'verbose_CMA_log'  : 0,
-        'evals'            : 10000,
+        'evals'            : 100,
         'bounds'           : [0,100],
         'sigma'            : 0.5,
         'progress_ST'      : 0.3,
