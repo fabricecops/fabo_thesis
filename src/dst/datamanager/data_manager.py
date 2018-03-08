@@ -44,13 +44,13 @@ class data_manager(pipe_line_data):
         self.df_t_val   = self.df_t.iloc[0:val_samples_t].iloc[0:5]
         self.df_t_test  = self.df_t.iloc[val_samples_t:val_samples_t+test_samples_t].iloc[0:5]
 
-        # self.df_f_val   = self.df_f.iloc[0:val_samples_f]
-        # self.df_f_test  = self.df_f.iloc[val_samples_f:val_samples_f+test_samples_f]
-        # self.df_f_train = self.df_f.iloc[val_samples_f+test_samples_f:len(self.df_f)]
-        #
-        # self.df_t_train = self.df_t.iloc[val_samples_t+test_samples_t:len(self.df_t)]
-        # self.df_t_val   = self.df_t.iloc[0:val_samples_t]
-        # self.df_t_test  = self.df_t.iloc[val_samples_t:val_samples_t+test_samples_t]
+        self.df_f_val   = self.df_f.iloc[0:val_samples_f]
+        self.df_f_test  = self.df_f.iloc[val_samples_f:val_samples_f+test_samples_f]
+        self.df_f_train = self.df_f.iloc[val_samples_f+test_samples_f:len(self.df_f)]
+
+        self.df_t_train = self.df_t.iloc[val_samples_t+test_samples_t:len(self.df_t)]
+        self.df_t_val   = self.df_t.iloc[0:val_samples_t]
+        self.df_t_test  = self.df_t.iloc[val_samples_t:val_samples_t+test_samples_t]
 
 
         print(len(self.df_f_train),len(self.df_f_val),len(self.df_f_test))

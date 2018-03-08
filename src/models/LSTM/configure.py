@@ -16,20 +16,20 @@ def return_dict_bounds():
         #### Preprocessing ############
         ## background subtractions ####
         'threshold'        : 200,
-        'nr_contours'      : 2,
+        'nr_contours'      : 4,
         'nr_features'      : 3,
 
         ## Peak derivation #############
-        'resolution'       : 20,
+        'resolution'       : 3,
         'area'             : 200,
         'min_h'            : 20,
         'max_h'            : 200,
 
         ## PCA componentes #########
-        'PCA_components'   : 100,
+        'PCA_components'   : 50,
 
         #### Data manager  #########
-        'mode_data'        : ['p'],
+        'mode_data'        : ['p','PCA'],
         'train'            : 'df_f_tr',
         'val'              : 'df_f_val',
         'anomaly'          : 'df_t',
@@ -40,7 +40,7 @@ def return_dict_bounds():
         'verbose_CMA'      : 1,
         'verbose_CMA_log'  : 0,
         'evals'            : 10,
-        'bounds'           : [-100.,100.],
+        'bounds'           : [0,100.],
         'sigma'            : 0.4222222222222225,
         'progress_ST'      : 0.3,
         'sample'           : 800,
