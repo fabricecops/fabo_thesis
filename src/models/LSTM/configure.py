@@ -16,11 +16,11 @@ def return_dict_bounds():
         #### Preprocessing ############
         ## background subtractions ####
         'threshold'        : 200,
-        'nr_contours'      : 3,
+        'nr_contours'      : 2,
         'nr_features'      : 3,
 
         ## Peak derivation #############
-        'resolution'       : 4,
+        'resolution'       : 20,
         'area'             : 200,
         'min_h'            : 20,
         'max_h'            : 200,
@@ -39,7 +39,7 @@ def return_dict_bounds():
         'bootstrap_split'  : 0.25,
         'verbose_CMA'      : 1,
         'verbose_CMA_log'  : 0,
-        'evals'            : 50003,
+        'evals'            : 10,
         'bounds'           : [-100.,100.],
         'sigma'            : 0.4222222222222225,
         'progress_ST'      : 0.3,

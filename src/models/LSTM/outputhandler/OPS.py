@@ -84,55 +84,44 @@ class OPS_LSTM(AUC):
         plt.savefig(dict_data['path_o'] + '/val_curve.png')
 
         fig = plt.figure(figsize=(16, 4))
-        ax1 = plt.subplot(121)
+        ax1 = plt.subplot(141)
 
-        ax1.plot(dict_data['FPR'],dict_data['TPR'])
-        plt.title('ROC curve train  with AUC: '+str(round(dict_data['AUC'],3))+' at epoch: '+str(dict_data['epoch']))
+        ax1.plot(dict_data['FPR'],dict_data['TPR'],label= 'train')
+        ax1.plot(dict_data['FPR_v'],dict_data['TPR_v'],label= 'val')
+        ax1.plot(dict_data['FPR_t'],dict_data['TPR_t'],label= 'test')
+        plt.legend()
+
+        plt.title('ROC curve no CMA at epoch: '+str(dict_data['epoch']))
         plt.xlabel('FPR')
         plt.ylabel('TPR')
 
-        ax2 = plt.subplot(122)
+        ax2 = plt.subplot(142)
         ax2.hist(dict_data['t_tr_m'], label = 'True', color = 'red', alpha = 0.5 , bins = 50)
         ax2.hist(dict_data['f_tr_m'],label = 'False',color = 'green', alpha = 0.5,bins = 50)
         plt.legend()
-        plt.savefig(path_p + 'AUC.png')
-        if (dict_data['AUC_v'] >= max(list(df['AUC_v']))):
-            plt.savefig(path_b+'AUC_best_no_CMA_train.png')
+        plt.title('Train set: '+str(round(dict_data['AUC'],3)))
+        plt.xlabel('error')
+        plt.ylabel('frequency')
 
-        fig = plt.figure(figsize=(16, 4))
-        ax1 = plt.subplot(121)
-
-        ax1.plot(dict_data['FPR_v'], dict_data['TPR_v'])
-        plt.title('ROC curve validation with AUC: '+str(round(dict_data['AUC_v'],3)))
-        plt.xlabel('FPR')
-        plt.ylabel('TPR')
-
-        ax2 = plt.subplot(122)
-        ax2.hist(dict_data['t_v_m'], label='True', color='red', alpha=0.5, bins=50)
-        ax2.hist(dict_data['f_v_m'], label='False', color='green', alpha=0.5, bins=50)
+        ax3 = plt.subplot(143)
+        ax3.hist(dict_data['t_v_m'], label = 'True', color = 'red', alpha = 0.5 , bins = 50)
+        ax3.hist(dict_data['f_v_m'],label = 'False',color = 'green', alpha = 0.5,bins = 50)
+        plt.title('Val set: '+str(round(dict_data['AUC_v'],3)))
+        plt.xlabel('error')
+        plt.ylabel('frequency')
         plt.legend()
-        plt.savefig(path_p + 'AUC_val.png')
+
+        ax4 = plt.subplot(144)
+        ax4.hist(dict_data['t_t_m'], label = 'True', color = 'red', alpha = 0.5 , bins = 50)
+        ax4.hist(dict_data['f_t_m'],label = 'False',color = 'green', alpha = 0.5,bins = 50)
+        plt.legend()
+        plt.title('test set: '+str(round(dict_data['AUC_t'],3)))
+        plt.xlabel('error')
+        plt.ylabel('frequency')
+        plt.savefig(path_p + 'AUC_no_cma.png')
+
         if (dict_data['AUC_v'] >= max(list(df['AUC_v']))):
             plt.savefig(path_b+'AUC_best_no_CMA_val.png')
-
-        fig = plt.figure(figsize=(16, 4))
-        ax1 = plt.subplot(121)
-
-        ax1.plot(dict_data['FPR_t'], dict_data['TPR_t'])
-        plt.title('ROC curve test with AUC: ' + str(round(dict_data['AUC_t'], 3)))
-        plt.xlabel('FPR')
-        plt.ylabel('TPR')
-
-        ax2 = plt.subplot(122)
-        ax2.hist(dict_data['t_t_m'], label='True', color='red', alpha=0.5, bins=50)
-        ax2.hist(dict_data['f_t_m'], label='False', color='green', alpha=0.5, bins=50)
-        plt.legend()
-        plt.savefig(path_p + 'AUC_test.png')
-        if (dict_data['AUC_v'] >= max(list(df['AUC_v']))):
-            plt.savefig(path_b+'AUC_best_no_CMA_test.png')
-
-
-
 
 
 
@@ -292,42 +281,27 @@ class OPS_LSTM(AUC):
         pickle_save_(path_n+'/dict.p',dict_)
         fig = plt.figure(figsize=(16, 4))
 
-        ax1 = plt.subplot(131)
-        ax1.plot(dict_['FPR'],dict_['TPR'], label = 'CV_'+str(round(dict_['AUC'],3)))
+        ax1 = plt.subplot(141)
+        ax1.plot(dict_['FPR'],dict_['TPR'], label = 'train')
+        ax1.plot(dict_['FPR_v'],dict_['TPR_v'], label = 'val')
+        ax1.plot(dict_['FPR_t'],dict_['TPR_t'], label = 'test')
+
         plt.xlabel('FPR')
         plt.ylabel('TPR')
         plt.legend()
-        plt.title('Train AUC at epoch: '+str(dict_['epoch']))
+        plt.title('AUC CMA at epoch: '+str(dict_['epoch']))
 
 
-        ax2 = plt.subplot(132)
-        ax2.plot(dict_['FPR_v'],dict_['TPR_v'], label = 'CV_'+str(round(dict_['AUC_v'],3)))
-        plt.xlabel('FPR')
-        plt.ylabel('TPR')
-        plt.legend()
-        plt.title('val AUC')
-
-        ax3 = plt.subplot(133)
-        ax3.plot(dict_['FPR_t'],dict_['TPR_t'], label = 'CV_'+str(round(dict_['AUC_t'],3)))
-        plt.xlabel('FPR')
-        plt.ylabel('TPR')
-        plt.legend()
-        plt.title('test AUC')
-        plt.savefig(path_n +'/AUC_curve.png')
-        if (dict_['AUC_v'] >= max(list(df['AUC_v']))):
-            plt.savefig(path_b+'AUC_best_CMA.png')
-
-        fig = plt.figure(figsize=(16, 4))
-        ax1 = plt.subplot(131)
-        ax1.hist(dict_['df_f_train'], label = 'False',color = 'g', alpha = 0.5)
-        ax1.hist(dict_['df_t_train'], label = 'True',color = 'r', alpha = 0.5)
+        ax2 = plt.subplot(142)
+        ax2.hist(dict_['df_f_train'], label = 'False',color = 'g', alpha = 0.5)
+        ax2.hist(dict_['df_t_train'], label = 'True', color = 'r', alpha = 0.5)
         plt.xlabel('Error')
         plt.ylabel('Frequency')
         plt.legend()
         plt.title('Train distribution: '+str(round(dict_['AUC'],3))+' at epoch: '+str(dict_['epoch']))
 
 
-        ax2 = plt.subplot(132)
+        ax2 = plt.subplot(143)
         ax2.hist(dict_['df_f_val'], label = 'False',color = 'g', alpha = 0.5)
         ax2.hist(dict_['df_t_val'], label = 'True',color = 'r', alpha = 0.5)
         plt.xlabel('Error')
@@ -335,7 +309,7 @@ class OPS_LSTM(AUC):
         plt.legend()
         plt.title('val distribution: '+str(round(dict_['AUC_v'],3)))
 
-        ax3 = plt.subplot(133)
+        ax3 = plt.subplot(144)
         ax3.hist(dict_['df_f_test'], label = 'False',color = 'g', alpha = 0.5)
         ax3.hist(dict_['df_t_test'], label = 'True',color = 'r', alpha = 0.5)
         plt.xlabel('Error')
@@ -355,6 +329,9 @@ class OPS_LSTM(AUC):
         plt.title('Weights cma')
 
         plt.savefig(path_n+'/weights.png')
+
+        if (dict_['AUC_v'] >= max(list(df['AUC_v']))):
+            plt.savefig(path_b+'best_weights.png')
         plt.close('all')
 
 
@@ -375,10 +352,7 @@ class OPS_LSTM(AUC):
 
         e_f = np.mean(np.power((y - y_p), 2))*y.shape[0]
 
-
-
         return e_f
-
 
     def _calc_loss(self):
         t_tr_y    = np.concatenate(list(self.df_t_train['data_y']))
