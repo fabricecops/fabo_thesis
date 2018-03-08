@@ -56,6 +56,7 @@ class model_mng():
         dict_data               = self.model.predict()
         dict_data['loss_f_tr']  = loss[0]
         dict_data['loss_f_v']   = val_loss[0]
+        dict_data['epoch']      = i
 
         OPS_LSTM_ = OPS_LSTM(self.dict_c)
         OPS_LSTM_.save_output(dict_data, i)
