@@ -51,11 +51,7 @@ VANDAAG
 
 
 MORGEN
-- RAM kopen
-- Fabriek afmaken + nieuwe werk
 - Interview voorbereiden
-- visualizer fixen (total error plot)
-- labeller fixen (add)
 
 Vrijdag
 - Interview Tara 10.30
