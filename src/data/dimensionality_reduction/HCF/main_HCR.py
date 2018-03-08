@@ -55,7 +55,7 @@ class pipe_line_data():
 
         print('PCA')
         ## PCA          ####
-        PCA_mod    = pp.PCA_()
+        PCA_mod    = pp.PCA_(self.dict_c)
         df         = PCA_mod.main(df,path)
 
 

@@ -603,15 +603,14 @@ class scaler():
 
 class PCA_():
 
-    def __init__(self):
-        pass
+    def __init__(self,dict_c):
+        self.dict_c = dict_c
 
     def main(self,df,path):
 
 
-        PCA_mod    = decomposition.PCA(n_components=50)
+        PCA_mod    = decomposition.PCA(n_components=self.dict_c['PCA_components'])
 
-        print(df.columns)
         data_v     = np.concatenate(list(df['data_v']))
         data_p     = np.concatenate(list(df['data_p']))
         data       = np.concatenate([data_p,data_v], axis = 1)
