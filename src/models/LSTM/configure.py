@@ -20,10 +20,10 @@ def return_dict_bounds():
         'nr_features'      : 3,
 
         ## Peak derivation #############
-        'resolution'       : 5,
+        'resolution'       : 4,
         'area'             : 200,
         'min_h'            : 20,
-        'max_h'            : 200,
+        'max_h'            : 170,
 
         ## PCA componentes #########
         'PCA_components'   : 50,
@@ -39,8 +39,8 @@ def return_dict_bounds():
         'bootstrap_split'  : 0.25,
         'verbose_CMA'      : 1,
         'verbose_CMA_log'  : 0,
-        'evals'            : 10,
-        'bounds'           : [0,100.],
+        'evals'            : 5000,
+        'bounds'           : [-100,100.],
         'sigma'            : 0.4222222222222225,
         'progress_ST'      : 0.3,
         'sample'           : 800,

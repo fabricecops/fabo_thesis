@@ -15,10 +15,10 @@ class OPS_LSTM(AUC):
         AUC.__init__(self,dict_c)
 
     def main(self,dict_data):
+
         dict_data2           = self.get_data(dict_data)
-
-
         self._save_plots(dict_data2)
+
 
     def _save_plots(self,dict_data):
 
@@ -293,8 +293,8 @@ class OPS_LSTM(AUC):
 
 
         ax2 = plt.subplot(142)
-        ax2.hist(dict_['df_f_train'], label = 'False',color = 'g', alpha = 0.5)
-        ax2.hist(dict_['df_t_train'], label = 'True', color = 'r', alpha = 0.5)
+        ax2.hist(dict_['df_f_train'], label = 'False',color = 'g', alpha = 0.5, bins = 50)
+        ax2.hist(dict_['df_t_train'], label = 'True', color = 'r', alpha = 0.5, bins = 50)
         plt.xlabel('Error')
         plt.ylabel('Frequency')
         plt.legend()
@@ -302,16 +302,16 @@ class OPS_LSTM(AUC):
 
 
         ax2 = plt.subplot(143)
-        ax2.hist(dict_['df_f_val'], label = 'False',color = 'g', alpha = 0.5)
-        ax2.hist(dict_['df_t_val'], label = 'True',color = 'r', alpha = 0.5)
+        ax2.hist(dict_['df_f_val'], label = 'False',color = 'g', alpha = 0.5, bins = 50)
+        ax2.hist(dict_['df_t_val'], label = 'True',color = 'r', alpha = 0.5, bins = 50)
         plt.xlabel('Error')
         plt.ylabel('Frequency')
         plt.legend()
         plt.title('val distribution: '+str(round(dict_['AUC_v'],3)))
 
         ax3 = plt.subplot(144)
-        ax3.hist(dict_['df_f_test'], label = 'False',color = 'g', alpha = 0.5)
-        ax3.hist(dict_['df_t_test'], label = 'True',color = 'r', alpha = 0.5)
+        ax3.hist(dict_['df_f_test'], label = 'False',color = 'g', alpha = 0.5, bins = 50)
+        ax3.hist(dict_['df_t_test'], label = 'True',color = 'r', alpha = 0.5, bins = 50)
         plt.xlabel('Error')
         plt.ylabel('Frequency')
         plt.legend()
@@ -333,7 +333,6 @@ class OPS_LSTM(AUC):
         if (dict_['AUC_v'] >= max(list(df['AUC_v']))):
             plt.savefig(path_b+'best_weights.png')
         plt.close('all')
-
 
     def _get_error_m(self, row):
 

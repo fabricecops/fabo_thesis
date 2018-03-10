@@ -93,7 +93,9 @@ class model_mng():
         dir_   = dict_data['path_o'] + 'predictions/epoch_'+str(epoch)
         path_m = dir_ +'/model.h5'
 
-        dict_data['model'].save(path_m)
+        if(epoch%20 == 0):
+
+            dict_data['model'].save(path_m)
 
 
 

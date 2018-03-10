@@ -85,7 +85,7 @@ class LSTM_(model, data_manager):
 
         hidden1 = 300
         hidden2 = 350
-        hidden3 = 400
+        hidden3 = 150
 
         model.add(LSTM(hidden1,
                input_shape       = self.input_shape,
