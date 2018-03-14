@@ -244,7 +244,7 @@ class path_Generation():
         self.df = df
         self.dict_c = dict_c
 
-        self.nr_features = dict_c['nr_features']
+        self.nr_features = 3
         self.nr_contours = dict_c['nr_contours']
         self.area        = dict_c['area']
 
@@ -385,7 +385,7 @@ class tracker():
     def __init__(self,dict_c):
         self.dict_c        = dict_c
         self.nr_contours   = self.dict_c['nr_contours']
-        self.nr_features   = self.dict_c['nr_features']
+        self.nr_features   = 3
 
 
         self.resolution  = np.arange(self.dict_c['min_h'], self.dict_c['max_h'], self.dict_c['resolution'])

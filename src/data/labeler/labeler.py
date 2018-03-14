@@ -398,22 +398,9 @@ class anomaly_segmenter():
         if(label != None):
             passages['passages'][dict_['index']]['label']['anomaly'] = label
 
-        print(passages['passages'][dict_['index']]['label']['segmentation'])
+
         if (segmentation != None):
-
-            if(segmentation != 'None'):
-
-                if (passages['passages'][dict_['index']]['label']['segmentation'] == None):
-                    passages['passages'][dict_['index']]['label']['segmentation'] = [segmentation]
-
-
-                if (segmentation not in passages['passages'][dict_['index']]['label']['segmentation']):
-                    passages['passages'][dict_['index']]['label']['segmentation'].append(segmentation)
-
-            else:
-
-                passages['passages'][dict_['index']]['label']['segmentation'] = None
-
+            passages['passages'][dict_['index']]['label']['segmentation'] = segmentation
 
         passages.to_json(path_p)
 

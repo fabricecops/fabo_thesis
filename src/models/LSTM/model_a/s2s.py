@@ -2,7 +2,7 @@ from keras.layers.recurrent import LSTM
 from keras.layers import Dense,RepeatVector
 from keras.models import Sequential
 
-from src.dst.datamanager.data_manager import data_manager
+from src.models.LSTM.data_manager import data_manager
 from src.dst.keras_model.model import model
 from tqdm import tqdm
 import numpy as np

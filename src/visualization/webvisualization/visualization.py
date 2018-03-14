@@ -15,7 +15,7 @@ class get_df_vs():
         pass
 
     def plot_dist(self, df_data):
-
+        fig = plt.figure(figsize=(16, 4))
         fig, axes = plt.subplots(nrows=1, ncols=3)
         df_data['label'].value_counts().plot(kind='bar', ax=axes[0], title='label dist')
         df_data['count'].value_counts().plot(kind='bar', ax=axes[1], title='count persons')

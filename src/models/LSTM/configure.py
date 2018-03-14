@@ -1,12 +1,11 @@
 
 def return_dict_bounds():
     dict_c = {
+        #### prints             ####
+        'print_nr_mov'    : True,
+        'print_sum'       : True,
+        'print_TB_com': False,
 
-        ##### prints  #######
-        'print_sum'        : True,
-        'print_TB_com'     : False,
-        'print_BO_bounds'  : False,
-        'print_nr_mov'     : True,
 
         ##### Filesystem manager ####
         'path_data'        : './data/raw/configured_raw/',
@@ -16,11 +15,10 @@ def return_dict_bounds():
         #### Preprocessing ############
         ## background subtractions ####
         'threshold'        : 200,
-        'nr_contours'      : 4,
-        'nr_features'      : 3,
+        'nr_contours'      : 2,
 
         ## Peak derivation #############
-        'resolution'       : 4,
+        'resolution'       : 30,
         'area'             : 200,
         'min_h'            : 20,
         'max_h'            : 170,
@@ -30,20 +28,15 @@ def return_dict_bounds():
 
         #### Data manager  #########
         'mode_data'        : ['p','v','PCA'],
-        'train'            : 'df_f_tr',
-        'val'              : 'df_f_val',
-        'anomaly'          : 'df_t',
+        'shuffle_style'    : 'testing',
 
         ###### CMA_ES    ######
-        'folds'            : 5,
-        'bootstrap_split'  : 0.25,
-        'verbose_CMA'      : 1,
+        'verbose_CMA'      : 0,
         'verbose_CMA_log'  : 0,
-        'evals'            : 5000,
+        'evals'            : 10,
         'bounds'           : [-100,100.],
         'sigma'            : 0.4222222222222225,
         'progress_ST'      : 0.3,
-        'sample'           : 800,
 
 
         ###### Bayes opt ######
@@ -61,8 +54,6 @@ def return_dict_bounds():
         'window'           : 0,
         'time_dim'         : 10,
         'pred_seq'         : True,
-        'dropout'          : 0.03,
-        'hidden'           : 500,
         'stateful'         : False,
 
 
@@ -73,7 +64,7 @@ def return_dict_bounds():
         'val_split_t'        : 0.2,
         'test_split_t'       : 0.2,
 
-        'verbose'          : 2,
+        'verbose'          : 0,
         'epochs'           : 10000,
         'batch_size'       : 500,
 

@@ -49,6 +49,12 @@ class model_mng():
         OPS_LSTM_ = OPS_LSTM(self.dict_c)
         OPS_LSTM_.save_output_CMA(dict_)
 
+
+        OPS_LSTM_.save_ROC_segment(dict_)
+
+        # check if AUC is better, plot train/val/test seperate
+        # plot together
+
     def process_LSTM(self,i):
 
         loss,val_loss            = self.model.fit()
@@ -60,7 +66,6 @@ class model_mng():
 
         OPS_LSTM_ = OPS_LSTM(self.dict_c)
         OPS_LSTM_.save_output(dict_data, i)
-        self._conf_FS(dict_data, i)
         dict_data['epoch'] = i
         OPS_LSTM_.main(dict_data)
 
@@ -80,22 +85,7 @@ class model_mng():
 
 
 
-    def _conf_FS(self,dict_data,epoch):
-        string = 'epoch_'+str(epoch)
 
-        dir_   = dict_data['path_o'] + 'predictions/'
-        if (os.path.exists(dir_)==False):
-            os.mkdir(dir_)
-        dir_   = dict_data['path_o'] + 'predictions/'+string
-        if (os.path.exists(dir_)==False):
-            os.mkdir(dir_)
-
-        dir_   = dict_data['path_o'] + 'predictions/epoch_'+str(epoch)
-        path_m = dir_ +'/model.h5'
-
-        if(epoch%20 == 0):
-
-            dict_data['model'].save(path_m)
 
 
 

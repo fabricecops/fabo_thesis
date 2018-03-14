@@ -1,11 +1,8 @@
-from src.dst.helper.apply_mp import *
-import cma
 from src.dst.metrics.AUC import AUC
-import functools
-from src.dst.datamanager.data_manager import data_manager
 import numpy as np
 import functools
 import cma
+import pandas as pd
 ###
 class CMA_ES(AUC):
 
@@ -33,7 +30,7 @@ class CMA_ES(AUC):
         self.configure_data(dict_data)
 
 
-        dimension = self.df_f_train[0].shape[1]
+        dimension = self.df_f_train['error_m'].iloc[0].shape[1]
         array = np.zeros(dimension)
 
 
@@ -46,8 +43,17 @@ class CMA_ES(AUC):
                        'verb_log': self.verbose_log})
 
         AUC, FPR, TPR       = self.AUC_max, self.FPR, self.TPR
-        AUC_v, FPR_v, TPR_v = self._opt_function_(es[0], self.df_f_val, self.df_t_val)
-        AUC_t, FPR_t, TPR_t = self._opt_function_(es[0], self.df_f_test, self.df_t_test)
+        AUC_v, FPR_v, TPR_v = self._opt_function_(es[0], self.df_f_val['error_m'], self.df_t_val['error_m'])
+        AUC_t, FPR_t, TPR_t = self._opt_function_(es[0], self.df_f_test['error_m'], self.df_t_test['error_m'])
+
+
+        self.df_f_train['error_m'] =  list(map(functools.partial(self._get_error_max, x=es[0]), np.array(self.df_f_train['error_m'])))
+        self.df_f_val['error_m']   =  list(map(functools.partial(self._get_error_max, x=es[0]), np.array(self.df_f_val['error_m'])))
+        self.df_f_test['error_m']  =  list(map(functools.partial(self._get_error_max, x=es[0]), np.array(self.df_f_test['error_m'])))
+
+        self.df_t_train['error_m'] =  list(map(functools.partial(self._get_error_max, x=es[0]), np.array(self.df_t_train['error_m'])))
+        self.df_t_val['error_m']   =  list(map(functools.partial(self._get_error_max, x=es[0]), np.array(self.df_t_val['error_m'])))
+        self.df_t_test['error_m']  =  list(map(functools.partial(self._get_error_max, x=es[0]), np.array(self.df_t_test['error_m'])))
 
 
         dict_ = {
@@ -63,13 +69,13 @@ class CMA_ES(AUC):
             'FPR_t'  : FPR_t,
             'TPR_t'  : TPR_t,
 
-            'df_f_train': np.array(list(map(functools.partial(self._get_error_max, x=es[0]), np.array(self.df_f_train)))),
-            'df_f_val'  : np.array(list(map(functools.partial(self._get_error_max, x=es[0]), np.array(self.df_f_val)))),
-            'df_f_test' : np.array(list(map(functools.partial(self._get_error_max, x=es[0]), np.array(self.df_f_test)))),
+            'df_f_train': self.df_f_train,
+            'df_f_val'  : self.df_f_val,
+            'df_f_test' : self.df_f_test,
 
-            'df_t_train' : np.array(list(map(functools.partial(self._get_error_max, x=es[0]), np.array(self.df_t_train)))),
-            'df_t_val'   : np.array(list(map(functools.partial(self._get_error_max, x=es[0]), np.array(self.df_t_val)))),
-            'df_t_test'  : np.array(list(map(functools.partial(self._get_error_max, x=es[0]), np.array(self.df_t_test)))),
+            'df_t_train' : self.df_t_train,
+            'df_t_val'   : self.df_t_val,
+            'df_t_test'  : self.df_t_test,
 
             'path_o'     : dict_data['path_o'],
             'epoch'      : dict_data['epoch']
@@ -84,8 +90,8 @@ class CMA_ES(AUC):
 
     def _opt_function(self, x):
 
-        eval_true = np.array(list(map(functools.partial(self._get_error_max, x=x), np.array(self.df_t_train))))
-        eval_false = np.array(list(map(functools.partial(self._get_error_max, x=x), np.array(self.df_f_train))))
+        eval_true = np.array(list(map(functools.partial(self._get_error_max, x=x), np.array(self.df_t_train['error_m']))))
+        eval_false = np.array(list(map(functools.partial(self._get_error_max, x=x), np.array(self.df_f_train['error_m']))))
 
         AUC, FPR, TPR = self.get_AUC_score(eval_true, eval_false)
         if (AUC > self.AUC_max):
@@ -116,6 +122,7 @@ class CMA_ES(AUC):
 
         e_f = np.mean(np.power((y - y_p),2),axis=1)
 
+
         return e_f
 
     def _get_error_mean(self, row):
@@ -132,6 +139,8 @@ class CMA_ES(AUC):
     def _get_error_max(self,e,x):
 
         eval_ = np.max(np.dot(e, x))
+
+
         return eval_
 
     def configure_data(self,dict_data):
@@ -145,24 +154,27 @@ class CMA_ES(AUC):
 
         self.dimension    = self.df_t_train.iloc[0]['data_X'].shape[2]
 
+        array_t                        = zip(list(self.df_t_train['data_y']),list(self.df_t_train['data_y_p']))
+        self.df_t_train['error_m']     = list(map(self._get_error_m,array_t))
+        self.df_t_train.drop(['data_X','data_y'],axis = 1,inplace = True)
 
+        array_t                        = zip(list(self.df_t_val['data_y']),list(self.df_t_val['data_y_p']))
+        self.df_t_val['error_m']       = list(map(self._get_error_m,array_t))
+        self.df_t_val.drop(['data_X','data_y'],axis = 1,inplace = True)
 
-        array_t                  = zip(list(self.df_t_train['data_y']),list(self.df_t_train['data_y_p']))
-        self.df_t_train          = list(map(self._get_error_m,array_t))
+        array_t                        = zip(list(self.df_t_test['data_y']),list(self.df_t_test['data_y_p']))
+        self.df_t_test['error_m']      = list(map(self._get_error_m,array_t))
+        self.df_t_test.drop(['data_X','data_y'],axis = 1,inplace = True)
 
-        array_t                  = zip(list(self.df_t_val['data_y']),list(self.df_t_val['data_y_p']))
-        self.df_t_val            = list(map(self._get_error_m,array_t))
+        array_f                        = zip(list(self.df_f_train['data_y']),list(self.df_f_train['data_y_p']))
+        self.df_f_train['error_m']     = list(map(self._get_error_m,array_f))
+        self.df_f_train.drop(['data_X','data_y'],axis = 1,inplace = True)
 
+        array_f                        = zip(list(self.df_f_val['data_y']),list(self.df_f_val['data_y_p']))
+        self.df_f_val['error_m']       = list(map(self._get_error_m,array_f))
+        self.df_f_val.drop(['data_X','data_y'],axis = 1,inplace = True)
 
-        array_t                  = zip(list(self.df_t_test['data_y']),list(self.df_t_test['data_y_p']))
-        self.df_t_test           = list(map(self._get_error_m,array_t))
+        array_f                        = zip(list(self.df_f_test['data_y']),list(self.df_f_test['data_y_p']))
+        self.df_f_test['error_m']      = list(map(self._get_error_m,array_f))
+        self.df_f_test.drop(['data_X','data_y'],axis = 1,inplace = True)
 
-
-        array_f                  = zip(list(self.df_f_train['data_y']),list(self.df_f_train['data_y_p']))
-        self.df_f_train          = list(map(self._get_error_m,array_f))
-
-        array_f                  = zip(list(self.df_f_val['data_y']),list(self.df_f_val['data_y_p']))
-        self.df_f_val            = list(map(self._get_error_m,array_f))
-
-        array_f                  = zip(list(self.df_f_test['data_y']),list(self.df_f_test['data_y_p']))
-        self.df_f_test           = list(map(self._get_error_m,array_f))

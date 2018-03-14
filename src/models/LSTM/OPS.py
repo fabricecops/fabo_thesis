@@ -16,16 +16,35 @@ class OPS_LSTM(AUC):
 
     def main(self,dict_data):
 
-        dict_data2           = self.get_data(dict_data)
-        self._save_plots(dict_data2)
+        dict_data2           = self._get_data_no_cma(dict_data)
+        self.save_plots_no_cma(dict_data2)
+
+    def save_output(self,dict_data,i):
+        if(i==0):
 
 
-    def _save_plots(self,dict_data):
 
-        dir = dict_data['path_o'] +'predictions/'
-        str_= 'epoch_'+str(len(os.listdir(dir))-1)+'/'
+            df_t_train = dict_data['df_t_train'][['frames', 'name', 'label', 'data_X', 'data_y']]
+            df_t_val   = dict_data['df_t_val'][['frames', 'name', 'label', 'data_X', 'data_y']]
 
-        path_p = dir+str_
+            df_f_train = dict_data['df_f_train'][['frames', 'name', 'label', 'data_X', 'data_y']]
+            df_f_val   = dict_data['df_f_val'][['frames', 'name', 'label', 'data_X', 'data_y']]
+
+
+            dict_o = {
+                'df_t_train': df_t_train,
+                'df_t_val'  : df_t_val,
+
+                'df_f_train': df_f_train,
+                'df_f_val'  : df_f_val
+            }
+
+
+            path_o = dict_data['path_o'] + 'output.p'
+            pickle_save(path_o, dict_o)
+
+    def save_plots_no_cma(self,dict_data):
+
 
         ### validation curve
         df = pickle_load(dict_data['path_o']+'hist.p', None)
@@ -43,6 +62,10 @@ class OPS_LSTM(AUC):
                 'AUC_t': [0.5],
                 'AUC'  : [0.5]
             }
+
+
+
+
 
         fig = plt.figure(figsize=(16, 4))
 
@@ -83,73 +106,285 @@ class OPS_LSTM(AUC):
         plt.legend()
         plt.savefig(dict_data['path_o'] + '/val_curve.png')
 
-        fig = plt.figure(figsize=(16, 4))
-        ax1 = plt.subplot(141)
-
-        ax1.plot(dict_data['FPR'],dict_data['TPR'],label= 'train')
-        ax1.plot(dict_data['FPR_v'],dict_data['TPR_v'],label= 'val')
-        ax1.plot(dict_data['FPR_t'],dict_data['TPR_t'],label= 'test')
-        plt.legend()
-
-        plt.title('ROC curve no CMA at epoch: '+str(dict_data['epoch']))
-        plt.xlabel('FPR')
-        plt.ylabel('TPR')
-
-        ax2 = plt.subplot(142)
-        ax2.hist(dict_data['t_tr_m'], label = 'True', color = 'red', alpha = 0.5 , bins = 50)
-        ax2.hist(dict_data['f_tr_m'],label = 'False',color = 'green', alpha = 0.5,bins = 50)
-        plt.legend()
-        plt.title('Train set: '+str(round(dict_data['AUC'],3)))
-        plt.xlabel('error')
-        plt.ylabel('frequency')
-
-        ax3 = plt.subplot(143)
-        ax3.hist(dict_data['t_v_m'], label = 'True', color = 'red', alpha = 0.5 , bins = 50)
-        ax3.hist(dict_data['f_v_m'],label = 'False',color = 'green', alpha = 0.5,bins = 50)
-        plt.title('Val set: '+str(round(dict_data['AUC_v'],3)))
-        plt.xlabel('error')
-        plt.ylabel('frequency')
-        plt.legend()
-
-        ax4 = plt.subplot(144)
-        ax4.hist(dict_data['t_t_m'], label = 'True', color = 'red', alpha = 0.5 , bins = 50)
-        ax4.hist(dict_data['f_t_m'],label = 'False',color = 'green', alpha = 0.5,bins = 50)
-        plt.legend()
-        plt.title('test set: '+str(round(dict_data['AUC_t'],3)))
-        plt.xlabel('error')
-        plt.ylabel('frequency')
-        plt.savefig(path_p + 'AUC_no_cma.png')
 
         if (dict_data['AUC_v'] >= max(list(df['AUC_v']))):
+
+            fig = plt.figure(figsize=(16, 4))
+            ax1 = plt.subplot(141)
+
+            ax1.plot(dict_data['FPR'],dict_data['TPR'],label= 'train')
+            ax1.plot(dict_data['FPR_v'],dict_data['TPR_v'],label= 'val')
+            ax1.plot(dict_data['FPR_t'],dict_data['TPR_t'],label= 'test')
+            plt.legend()
+
+            plt.title('ROC curve no CMA at epoch: '+str(dict_data['epoch']))
+            plt.xlabel('FPR')
+            plt.ylabel('TPR')
+
+            ax2 = plt.subplot(142)
+            ax2.hist(dict_data['t_tr_m'], label = 'True', color = 'red', alpha = 0.5 , bins = 50)
+            ax2.hist(dict_data['f_tr_m'],label = 'False',color = 'green', alpha = 0.5,bins = 50)
+            plt.legend()
+            plt.title('Train set: '+str(round(dict_data['AUC'],3)))
+            plt.xlabel('error')
+            plt.ylabel('frequency')
+
+            ax3 = plt.subplot(143)
+            ax3.hist(dict_data['t_v_m'], label = 'True', color = 'red', alpha = 0.5 , bins = 50)
+            ax3.hist(dict_data['f_v_m'],label = 'False',color = 'green', alpha = 0.5,bins = 50)
+            plt.title('Val set: '+str(round(dict_data['AUC_v'],3)))
+            plt.xlabel('error')
+            plt.ylabel('frequency')
+            plt.legend()
+
+            ax4 = plt.subplot(144)
+            ax4.hist(dict_data['t_t_m'], label = 'True', color = 'red', alpha = 0.5 , bins = 50)
+            ax4.hist(dict_data['f_t_m'],label = 'False',color = 'green', alpha = 0.5,bins = 50)
+            plt.legend()
+            plt.title('test set: '+str(round(dict_data['AUC_t'],3)))
+            plt.xlabel('error')
+            plt.ylabel('frequency')
+
             plt.savefig(path_b+'AUC_best_no_CMA_val.png')
 
 
 
         plt.close('all')
 
-    def save_output(self,dict_data,i):
-        if(i==0):
+    def save_output_CMA(self,dict_):
 
-            df_t_train = dict_data['df_t_train'][['frames', 'name', 'label', 'data_X', 'data_y']]
-            df_t_val   = dict_data['df_t_val'][['frames', 'name', 'label', 'data_X', 'data_y']]
-
-            df_f_train = dict_data['df_f_train'][['frames', 'name', 'label', 'data_X', 'data_y']]
-            df_f_val   = dict_data['df_f_val'][['frames', 'name', 'label', 'data_X', 'data_y']]
+        path   = dict_['path_o']
 
 
-            dict_o = {
-                'df_t_train': df_t_train,
-                'df_t_val'  : df_t_val,
+        path_AUC_CMA = path+'AUC_CMA.p'
+        df = pd.DataFrame([dict_])[['AUC', 'AUC_v','AUC_t']]
+        if (dict_['epoch'] == 0):
+            pickle_save(path_AUC_CMA,df)
+        else:
+            df_saved = pickle_load(path_AUC_CMA,None)
+            df_saved = df_saved.append(df,ignore_index=False)
+            pickle_save(path_AUC_CMA,df_saved)
+            df       = df_saved
 
-                'df_f_train': df_f_train,
-                'df_f_val'  : df_f_val
-            }
 
 
-            path_o = dict_data['path_o'] + 'output.p'
-            pickle_save(path_o, dict_o)
+        path_b = dict_['path_o']+'best/'
+        if (os.path.exists(path_b) == False):
+            os.mkdir(path_b)
 
-    def get_data(self,dict_data):
+
+        if (dict_['AUC_v'] >= max(list(df['AUC_v']))):
+
+            fig = plt.figure(figsize=(16, 4))
+
+            ax1 = plt.subplot(141)
+            ax1.plot(dict_['FPR'],dict_['TPR'], label = 'train')
+            ax1.plot(dict_['FPR_v'],dict_['TPR_v'], label = 'val')
+            ax1.plot(dict_['FPR_t'],dict_['TPR_t'], label = 'test')
+
+            plt.xlabel('FPR')
+            plt.ylabel('TPR')
+            plt.legend()
+            plt.title('AUC CMA at epoch: '+str(dict_['epoch']))
+
+
+            ax2 = plt.subplot(142)
+            ax2.hist(dict_['df_f_train']['error_m'], label = 'False',color = 'g', alpha = 0.5, bins = 50)
+            ax2.hist(dict_['df_t_train']['error_m'], label = 'True', color = 'r', alpha = 0.5, bins = 50)
+            plt.xlabel('Error')
+            plt.ylabel('Frequency')
+            plt.legend()
+            plt.title('Train distribution: '+str(round(dict_['AUC'],3))+' at epoch: '+str(dict_['epoch']))
+
+
+            ax2 = plt.subplot(143)
+            ax2.hist(dict_['df_f_val']['error_m'], label = 'False',color = 'g', alpha = 0.5, bins = 50)
+            ax2.hist(dict_['df_t_val']['error_m'], label = 'True',color = 'r', alpha = 0.5, bins = 50)
+            plt.xlabel('Error')
+            plt.ylabel('Frequency')
+            plt.legend()
+            plt.title('val distribution: '+str(round(dict_['AUC_v'],3)))
+
+            ax3 = plt.subplot(144)
+            ax3.hist(dict_['df_f_test']['error_m'], label = 'False',color = 'g', alpha = 0.5, bins = 50)
+            ax3.hist(dict_['df_t_test']['error_m'], label = 'True',color = 'r', alpha = 0.5, bins = 50)
+            plt.xlabel('Error')
+            plt.ylabel('Frequency')
+            plt.legend()
+            plt.title('test distribution: '+str(round(dict_['AUC_t'],3)))
+
+            plt.savefig(path_b+'AUC_best_cma_dist.png')
+
+            fig = plt.figure(figsize=(16, 4))
+            plt.plot(dict_['x'], color = 'k', linewidth = 3)
+            plt.xlabel('weigths')
+            plt.ylabel('value')
+            plt.title('Weights cma')
+
+            plt.savefig(path_b+'best_weights.png')
+
+            plt.close('all')
+
+    def save_ROC_segment(self,dict_data):
+
+        path         = dict_data['path_o']
+        path_AUC_CMA = path+'AUC_CMA.p'
+        df           = pickle_load(path_AUC_CMA, None)
+
+        path_save    = dict_data['path_o']+'best/'
+
+        if (dict_data['AUC_v'] >= max(list(df['AUC_v']))):
+            dict_data = self._get_data_segmented(dict_data)
+
+
+            fig = plt.figure(figsize=(16, 4))
+            ax1 = plt.subplot(141)
+
+            ax1.plot(dict_data['FPR'],dict_data['TPR'],color = 'k',label = 'MAIN')
+            for key in dict_data['dict_combined'].keys():
+                data =  dict_data['dict_combined'][key]
+                ax1.plot(data[1], data[2], label= key+'_'+str(round(data[0],2)))
+
+            plt.legend()
+            plt.title('ROC segmentated combined')
+            plt.xlabel('FPR')
+            plt.ylabel('TPR')
+
+            ax2 = plt.subplot(142)
+            ax2.plot(dict_data['FPR'],dict_data['TPR'],color = 'k',label = 'MAIN')
+            for key in dict_data['dict_train'].keys():
+                data =  dict_data['dict_train'][key]
+                ax2.plot(data[1], data[2], label= key+'_'+str(round(data[0],2)))
+
+            plt.legend()
+            plt.title('ROC segmentated training')
+            plt.xlabel('FPR')
+            plt.ylabel('TPR')
+
+            ax3 = plt.subplot(143)
+            ax3.plot(dict_data['FPR'], dict_data['TPR'], color='k', label='MAIN')
+            for key in dict_data['dict_val'].keys():
+                data = dict_data['dict_val'][key]
+                ax3.plot(data[1], data[2], label=key + '_' + str(round(data[0], 2)))
+
+            plt.legend()
+            plt.title('ROC segmentated val')
+            plt.xlabel('FPR')
+            plt.ylabel('TPR')
+
+            ax4 = plt.subplot(144)
+            ax4.plot(dict_data['FPR'], dict_data['TPR'], color='k', label='MAIN')
+            for key in dict_data['dict_test'].keys():
+                data = dict_data['dict_test'][key]
+                ax4.plot(data[1], data[2], label=key + '_' + str(round(data[0], 2)))
+
+            plt.legend()
+            plt.title('ROC segmentated test')
+            plt.xlabel('FPR')
+            plt.ylabel('TPR')
+            plt.savefig(path_save+'segmented_ROC.png')
+
+
+            plt.close('all')
+            if(dict_data['epoch'] == 0):
+                fig = plt.figure(figsize=(16, 4))
+
+                bottom2 = [x+y for x,y in zip(dict_data['dict_bar']['train'],dict_data['dict_bar']['val'])]
+
+                indexes = range(len(dict_data['dict_bar']['train']))
+                plt.bar(indexes,dict_data['dict_bar']['train'], align = 'center',label = 'train')
+                plt.bar(indexes,dict_data['dict_bar']['val'], align="center",bottom = dict_data['dict_bar']['train'],label = 'val')
+                plt.bar(indexes,dict_data['dict_bar']['test'], align="center",bottom = bottom2,label = 'test')
+                plt.xticks(range(len(dict_data['dict_bar']['groups'])), dict_data['dict_bar']['groups'])
+                plt.legend()
+                plt.xlabel('Groups')
+                plt.ylabel('Frequency')
+                plt.title('Distribution segmentation')
+                plt.savefig(dict_data['path_o']+'dist_segmentation.png')
+
+
+
+
+
+
+
+
+
+    def _get_data_segmented(self,dict_data):
+
+        df_t_train = dict_data['df_t_train']
+        df_t_val   = dict_data['df_t_val']
+        df_t_test  = dict_data['df_t_test']
+
+        df_f_train = dict_data['df_f_train']
+        df_f_val   = dict_data['df_f_val']
+        df_f_test  = dict_data['df_f_test']
+
+
+
+        dict_train = {}
+        for group in df_t_train.groupby('segmentation'):
+
+
+            AUC, FPR, TPR        = self.get_AUC_score(group[1]['error_m'], df_f_train['error_m'])
+            dict_train[group[0]] = [AUC,FPR,TPR]
+
+        dict_val   = {}
+        for group in df_t_val.groupby('segmentation'):
+            AUC, FPR, TPR        = self.get_AUC_score(group[1]['error_m'], df_f_val['error_m'])
+            dict_val[group[0]]   = [AUC,FPR,TPR]
+
+        dict_test = {}
+        for group in df_t_test.groupby('segmentation'):
+
+            AUC, FPR, TPR        = self.get_AUC_score(group[1]['error_m'],  df_f_test['error_m'])
+            dict_test[group[0]] = [AUC,FPR,TPR]
+
+
+        df_t  = df_t_train.append(df_t_val,ignore_index = True)
+        df_t  = df_t.append(df_t_test      ,ignore_index = True)
+
+        dict_combined = {}
+        for group in df_t.groupby('segmentation'):
+
+            AUC, FPR, TPR            = self.get_AUC_score(group[1]['error_m'], df_f_val['error_m'])
+            dict_combined[group[0]]  =  [AUC,FPR,TPR,len(group[0])]
+
+        groups   = ['gooien','onder','boven','muren','sneaky','object']
+        array_tr = [0,0,0,0,0,0]
+        array_v  = [0,0,0,0,0,0]
+        array_t  = [0,0,0,0,0,0]
+
+
+        for i,group in enumerate(groups):
+
+            array_tr[i] = len(df_t_train[df_t_train['segmentation'] == group])
+            array_v[i]  = len(df_t_val[df_t_val['segmentation'] == group])
+            array_t[i]  = len(df_t_test[df_t_test['segmentation'] == group])
+
+        dict_bar  = {
+                    'groups': groups,
+                    'train' : array_tr,
+                    'val'   : array_v,
+                    'test'  : array_t
+        }
+
+
+
+        dict_data['dict_train']     = dict_train
+        dict_data['dict_val']       = dict_val
+        dict_data['dict_test']      = dict_test
+        dict_data['dict_combined']  = dict_combined
+        dict_data['dict_bar']       = dict_bar
+
+
+
+        return dict_data
+
+
+
+
+    def _get_data_no_cma(self,dict_data):
         i               = dict_data['epoch']
         self.df_t_train = dict_data['df_t_train']
         self.df_t_val   = dict_data['df_t_val']
@@ -246,94 +481,6 @@ class OPS_LSTM(AUC):
 
         return dict_data
 
-    def save_output_CMA(self,dict_):
-
-        path   = dict_['path_o']
-
-
-        path_AUC_CMA = path+'AUC_CMA.p'
-        df = pd.DataFrame([dict_])[['AUC', 'AUC_v','AUC_t']]
-        if (dict_['epoch'] == 0):
-            pickle_save(path_AUC_CMA,df)
-        else:
-            df_saved = pickle_load(path_AUC_CMA,None)
-            df_saved = df_saved.append(df,ignore_index=False)
-            pickle_save(path_AUC_CMA,df_saved)
-            df       = df_saved
-
-
-
-        path_d = path+'data_CMA/'
-        if (os.path.exists(path_d) == False):
-            os.mkdir(path_d)
-
-        path_n = path_d + '/nr_'+str(len(os.listdir(path_d)))
-        if (os.path.exists(path_n) == False):
-            os.mkdir(path_n)
-
-        path_b = dict_['path_o']+'best/'
-        if (os.path.exists(path_b) == False):
-            os.mkdir(path_b)
-
-        string = 'experiment_'+str(len(os.listdir(path))-1)
-        path   = path+string
-
-        pickle_save_(path_n+'/dict.p',dict_)
-        fig = plt.figure(figsize=(16, 4))
-
-        ax1 = plt.subplot(141)
-        ax1.plot(dict_['FPR'],dict_['TPR'], label = 'train')
-        ax1.plot(dict_['FPR_v'],dict_['TPR_v'], label = 'val')
-        ax1.plot(dict_['FPR_t'],dict_['TPR_t'], label = 'test')
-
-        plt.xlabel('FPR')
-        plt.ylabel('TPR')
-        plt.legend()
-        plt.title('AUC CMA at epoch: '+str(dict_['epoch']))
-
-
-        ax2 = plt.subplot(142)
-        ax2.hist(dict_['df_f_train'], label = 'False',color = 'g', alpha = 0.5, bins = 50)
-        ax2.hist(dict_['df_t_train'], label = 'True', color = 'r', alpha = 0.5, bins = 50)
-        plt.xlabel('Error')
-        plt.ylabel('Frequency')
-        plt.legend()
-        plt.title('Train distribution: '+str(round(dict_['AUC'],3))+' at epoch: '+str(dict_['epoch']))
-
-
-        ax2 = plt.subplot(143)
-        ax2.hist(dict_['df_f_val'], label = 'False',color = 'g', alpha = 0.5, bins = 50)
-        ax2.hist(dict_['df_t_val'], label = 'True',color = 'r', alpha = 0.5, bins = 50)
-        plt.xlabel('Error')
-        plt.ylabel('Frequency')
-        plt.legend()
-        plt.title('val distribution: '+str(round(dict_['AUC_v'],3)))
-
-        ax3 = plt.subplot(144)
-        ax3.hist(dict_['df_f_test'], label = 'False',color = 'g', alpha = 0.5, bins = 50)
-        ax3.hist(dict_['df_t_test'], label = 'True',color = 'r', alpha = 0.5, bins = 50)
-        plt.xlabel('Error')
-        plt.ylabel('Frequency')
-        plt.legend()
-        plt.title('test distribution: '+str(round(dict_['AUC_t'],3)))
-        plt.savefig(path_n +'/distribution.png')
-
-
-        if (dict_['AUC_v'] >= max(list(df['AUC_v']))):
-            plt.savefig(path_b+'AUC_best_cma_dist.png')
-
-        fig = plt.figure(figsize=(16, 4))
-        plt.plot(dict_['x'], color = 'k', linewidth = 3)
-        plt.xlabel('weigths')
-        plt.ylabel('value')
-        plt.title('Weights cma')
-
-        plt.savefig(path_n+'/weights.png')
-
-        if (dict_['AUC_v'] >= max(list(df['AUC_v']))):
-            plt.savefig(path_b+'best_weights.png')
-        plt.close('all')
-
     def _get_error_m(self, row):
 
         y     = row[0]
@@ -380,6 +527,4 @@ class OPS_LSTM(AUC):
         del f_t_y,f_t_yp,f_e_t
 
         return loss_t_tr,loss_t_v,loss_t_t,loss_f_t
-
-
 
