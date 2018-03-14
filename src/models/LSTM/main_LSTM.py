@@ -1,8 +1,8 @@
 
 import os
 from src.models.LSTM.model_a.s2s import LSTM_
-from src.models.LSTM.outputhandler.OPS import OPS_LSTM
-from src.models.LSTM.optimizers.CMA_ES import CMA_ES
+from src.models.LSTM.OPS import OPS_LSTM
+from src.models.LSTM.CMA_ES import CMA_ES
 
 from src.models.LSTM.configure import return_dict_bounds
 import multiprocessing as mp

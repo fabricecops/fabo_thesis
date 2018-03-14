@@ -11,8 +11,6 @@ from sklearn.preprocessing import MinMaxScaler
 import matplotlib.pyplot as plt
 
 
-
-
 class get_df():
 
     def __init__(self,path):
@@ -24,41 +22,64 @@ class get_df():
         array_f   = []
 
         count_unlabeled_data = 0
-        count_labeled_data = 0
-        count_movie = 0
-
+        count_labeled_data   = 0
+        count_movie          = 0
+        array_p              = []
+        sum_                 = 0
         for name in list_names:
             path = self.path + name + '/passages.json'
             passages = pd.read_json(path)
+
             for i in range(len(passages['passages'])):
+
                 try:
                     dict_ = {'label': passages['passages'][i]['label']['anomaly'],
                              'count': passages['passages'][i]['label']['personCountDelta'],
                              'frames': passages['passages'][i]['frames'],
+                             'segmentation': passages['passages'][i]['label']['segmentation'],
                              'name': name,
                              'movieID': count_movie}
                     count_labeled_data += 1
                     count_movie += 1
 
                 except Exception as e:
-
-                    dict_ = {'label': 'und',
-                             'count': 'und',
-                             'frames': passages['passages'][i]['frames'],
-                             'name': name,
-                             'movieID': count_movie}
+                    if(e == 'personCountDelta'):
+                        dict_ = {'label': passages['passages'][i]['label']['anomaly'],
+                                 'count': 'und',
+                                 'frames': passages['passages'][i]['frames'],
+                                 'name': name,
+                                 'segmentation': passages['passages'][i]['label']['segmentation'],
+                                 'movieID': count_movie}
+                    else:
+                        dict_ = {'label': 'und',
+                                 'count': 'und',
+                                 'frames': passages['passages'][i]['frames'],
+                                 'name': name,
+                                 'segmentation': passages['passages'][i]['label']['segmentation'],
+                                 'movieID': count_movie}
 
                     count_movie += 1
                     count_unlabeled_data += 1
 
-                if(dict_['frames'] not in array_f):
-                    array_f.append(dict_['frames'])
-                    list_data.append(dict_)
 
-        df_data = pd.DataFrame(list_data, columns=['label', 'count', 'frames', 'name', 'movieID'])
 
+                list_data.append(dict_)
+
+
+
+            if(str(passages['passages']) not in array_p):
+                array_p.append(str(passages['passages']))
+            else:
+                src  = self.path + name
+                dst  = './data/raw/exces/'+name
+                shutil.copytree(src,dst)
+                # shutil.rmtree(src)
+
+
+        df_data = pd.DataFrame(list_data, columns=['label', 'count', 'frames', 'name', 'movieID','segmentation'])
         df_data = df_data.apply(self.apply_countFrames, axis=1)
-        df_data = df_data[df_data['countFrames']>5]
+        df_data = df_data[df_data['countFrames']>6]
+
 
         return df_data
 
@@ -93,7 +114,6 @@ class Move_p():
         for i in array:
             df.drop(df.index[i], inplace=True)
         return df
-
 
 class BGS():
 
@@ -556,7 +576,6 @@ class tracker():
 
             self.track_frame[heigth] = 10000
 
-
 class scaler():
 
     def __init__(self):
@@ -599,7 +618,6 @@ class scaler():
         row[name] = scaler.transform(row[name])
 
         return row
-
 
 class PCA_():
 

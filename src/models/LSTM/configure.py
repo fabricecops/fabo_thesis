@@ -29,7 +29,7 @@ def return_dict_bounds():
         'PCA_components'   : 50,
 
         #### Data manager  #########
-        'mode_data'        : ['p','PCA'],
+        'mode_data'        : ['p','v','PCA'],
         'train'            : 'df_f_tr',
         'val'              : 'df_f_val',
         'anomaly'          : 'df_t',

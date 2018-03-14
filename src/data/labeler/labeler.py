@@ -11,7 +11,7 @@ sys.path.insert(0, PATH_P)
 import cv2
 import time
 import pandas as pd
-
+from src.data.dimensionality_reduction.HCF.preprocessing import get_df
 class restructure_FS():
 
     def __init__(self):
@@ -158,7 +158,6 @@ class labeler():
         j = 0
         k = 0
         while (1):
-            # print(self.df.head()):
             try:
                 i, j,k  = self._control_ijk(i, j,k)
 
@@ -316,6 +315,248 @@ class labeler():
 
         return i,j,k
 
+
+class add_segmentation():
+
+    def __init__(self,path):
+
+        self.path       = path
+        self.list_names = os.listdir(path)
+        self.df         = get_df(self.path).get_df_data(self.list_names)
+        print(len(self.df))
+
+    def main(self):
+        sum_ = 0
+        for i in range(len(self.list_names)):
+
+
+            path = self.path + self.list_names[i] + '/passages.json'
+            passages = pd.read_json(path)
+
+            for j in range(len(passages['passages'])):
+                passages['passages'][j]['label']['segmentation'] = 'None'
+
+
+            passages.to_json(path)
+
+
+class anomaly_segmenter():
+
+    def __init__(self,path,list_names):
+        self.path       = path
+        self.list_names = list_names
+        self.pause      = False
+
+        self.df_anom    = get_df(path).get_df_data(list_names)
+        self.df_anom    = self.df_anom[self.df_anom['label'] == True]
+
+
+        self.df         = None
+        self.len_df     = None
+
+        self.track_i      = None
+        self.track_rmt    = None
+        self.segmentation = None
+        self.label        = None
+    def play_videos(self):
+
+        i = 0
+        j = 0
+        while (1):
+            # print(self.df.head()):
+            i, j  = self._control_ijk(i, j)
+
+
+            path    = self.path+self.df_anom['name'].iloc[i]+ '/visualized/' +  self.df_anom['frames'].iloc[i][j]
+            img     = cv2.imread(path, -1)
+            img     = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+            img     = cv2.resize(img,(600,800))
+
+
+            path_p           = self.path + self.df_anom['name'].iloc[i] + '/passages.json'
+            dict_ ,passages  = self.get_json(i,path_p)
+            self.write_data(img,i,j,dict_)
+            self.save_json(i,self.label,self.segmentation,dict_,passages,path_p)
+
+
+            cv2.imshow('frame', img)
+            time.sleep(0.04)
+
+
+
+            # Controls GUI
+            if (self.pause == False):
+                j += 1
+            key = cv2.waitKey(1) & 0xFF
+            if key == ord('q'):
+                break
+
+            i, j = self._control_videos(key, i, j)
+        cv2.destroyAllWindows()
+
+    def save_json(self,i,label,segmentation,dict_,passages,path_p):
+        if(label != None):
+            passages['passages'][dict_['index']]['label']['anomaly'] = label
+
+        print(passages['passages'][dict_['index']]['label']['segmentation'])
+        if (segmentation != None):
+
+            if(segmentation != 'None'):
+
+                if (passages['passages'][dict_['index']]['label']['segmentation'] == None):
+                    passages['passages'][dict_['index']]['label']['segmentation'] = [segmentation]
+
+
+                if (segmentation not in passages['passages'][dict_['index']]['label']['segmentation']):
+                    passages['passages'][dict_['index']]['label']['segmentation'].append(segmentation)
+
+            else:
+
+                passages['passages'][dict_['index']]['label']['segmentation'] = None
+
+
+        passages.to_json(path_p)
+
+    def get_json(self,i,path):
+        passages    = pd.read_json(path)
+
+        for index,passage in enumerate(passages['passages']):
+
+            if(passage['frames'] == self.df_anom.iloc[i]['frames']):
+
+                dict_ = {'label' : passage['label']['anomaly'],
+                         'frames': passage['frames'],
+                         'segment':passage['label']['segmentation'],
+                         'name'  : self.df_anom['name'].iloc[i],
+                         'index' : passage['id']}
+
+
+
+
+        return dict_,passages
+
+    def write_data(self,frame,i,j,dict_):
+        scenario = self.df_anom['name'].iloc[i]
+        label    = dict_['label']
+        segment  = dict_['segment']
+
+        if(type(segment) == list):
+            string  = ''
+            for seq in segment:
+                if(seq == None):
+                    string += str(seq)+'/ '
+                else:
+                    string += seq+'/ '
+
+            segment = string
+        else:
+
+            segment = str(segment)
+
+        string   = ' scenerio: '+str(scenario)
+        cv2.putText(frame,
+                    string,
+                    (20, 40),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    0.5,
+                    (255, 255, 255), 1,
+                    cv2.LINE_AA)
+        string = str(i)+'/'+str(len(self.df_anom)) +' Frame: '+str(j)+'/'+str(len(dict_['frames']))+' Label: '+str(label)+' segment: '+segment
+        cv2.putText(frame,
+                    string,
+                    (20, 60),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    0.5,
+                    (255, 255, 255), 1,
+                    cv2.LINE_AA)
+
+    def _control_videos(self,key,i,j):
+
+            if key == ord('r'):
+                if(i< len(self.df_anom)-1):
+                    i += 1
+                else:
+                    i  = 0
+
+                j  = 0
+
+            if key == ord('e'):
+                if i == 0:
+                    i = len(self.df_anom) - 1
+                else:
+                    i -= 1
+
+                j = 0
+
+
+            if key == ord('p'):
+                self.pause = True
+
+            if key == ord('o'):
+                self.pause = False
+
+            if key == ord('t'):
+                self.label = True
+
+            if key == ord('f'):
+                self.label = False
+
+            if key == ord('k'):
+                j -= 1
+
+            if key == ord('l'):
+                j += 1
+
+            if key == ord('t'):
+                self.label = True
+
+            if key == ord('f'):
+                self.label = False
+            
+            if key == ord('x'):
+                self.segmentation = 'boven'
+
+            if key == ord('c'):
+                self.segmentation = 'onder'
+
+            if key == ord('v'):
+                self.segmentation = 'object'
+
+            if key == ord('b'):
+                self.segmentation = 'gooien'
+
+            if key == ord('n'):
+                self.segmentation = 'muren'
+
+            if key == ord('z'):
+                self.segmentation = 'sneaky'
+                
+            if key == ord('m'):
+                self.segmentation = 'None'
+
+ 
+            return i,j
+
+    def _control_ijk(self,i,j):
+        if(i != self.track_i):
+
+            self.df               = pd.read_json(self.path+self.df_anom['name'].iloc[i]+'/passages.json')
+            self.len_df           = len(self.df)
+            self.track_i          = i
+            self.track_rmt        = False
+            self.label            = None
+            self.segmentation     = None
+
+
+        if (i >= len(self.df_anom)):
+            i = 0
+        if (j >= len(self.df_anom['frames'].iloc[i])):
+            j = 0
+
+
+        return i,j
+
+
 class relocate():
 
     def __init__(self,path_in,path_out):
@@ -357,11 +598,15 @@ if __name__ == '__main__':
 
 
 
-    path = './data/raw/conf_FS/hallway/'
+    path = './data/raw/configured_raw/'
+
+    # add_segmentation(path).main()
+
+
 
     list_names = os.listdir(path)
-
-    lab = labeler(path,list_names)
+    #
+    lab = anomaly_segmenter(path,list_names)
     lab.play_videos()
     #
     # path_in  = './data/raw/conf_FS/'

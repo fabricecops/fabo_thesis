@@ -1,7 +1,7 @@
 
 
 from src.dst.datamanager.data_manager import data_manager
-from src.models.LSTM.optimizers.CMA_ES import CMA_ES
+from src.models.LSTM.CMA_ES import CMA_ES
 from src.models.baseline.v0.configure import return_dict_bounds
 import numpy as np
 import functools
