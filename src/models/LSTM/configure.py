@@ -33,7 +33,7 @@ def return_dict_bounds():
         ###### CMA_ES    ######
         'verbose_CMA'      : 0,
         'verbose_CMA_log'  : 0,
-        'evals'            : 2000,
+        'evals'            : 1000,
         'bounds'           : [-100,100.],
         'sigma'            : 0.4222222222222225,
         'progress_ST'      : 0.3,
@@ -48,7 +48,7 @@ def return_dict_bounds():
 
         #### optimizer         #####
         'optimizer'        : 'adam',
-        'lr'               : 0.001,
+        'lr'               : 0.0001,
 
         ##### model definition  #####
         'window'           : 0,
