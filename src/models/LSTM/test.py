@@ -9,7 +9,7 @@ class model_tests():
 
     def __init__(self,dict_c):
         self.dict_c    = dict_c
-        self.iteration = 2
+        self.iteration = 15
 
 
     def variance_calculation(self):
@@ -27,15 +27,17 @@ class model_tests():
                             }
         }
 
-        self.dict_c['path_save']     = './models/variance/shuffle_random/'
-        self.dict_c['shuffle_style'] = 'testing'
+        self.dict_c['path_save']     = './models/variance/shuffle_segmentated/'
+        self.dict_c['shuffle_style'] = 'segmentated'
         ##### normal shuffle
         for i in range(self.iteration):
-
             tic()
             mm = model_mng(self.dict_c)
             AUC_tr,AUC_v,AUC_t = mm.main(mm.Queue_cma)
             elapsed = toc()
+            print('x'*50)
+            print(i)
+            print('x'*50)
 
             dict_['shuffle_random']['train'].append(AUC_tr)
             dict_['shuffle_random']['val'].append(AUC_v)
@@ -48,8 +50,8 @@ class model_tests():
         dict_['shuffle_random']['val_mean']   = np.mean(dict_['shuffle_random']['val'])
         dict_['shuffle_random']['val_std']    = np.std(dict_['shuffle_random']['val'])
 
-        self.dict_c['path_save']     = './models/variance/shuffle_segmentated/'
-        self.dict_c['shuffle_style'] = 'testing'
+        self.dict_c['path_save']     = './models/variance/shuffle_random/'
+        self.dict_c['shuffle_style'] = 'shuffle_random'
         ##### normal shuffle
         for i in range(self.iteration):
 
@@ -57,6 +59,11 @@ class model_tests():
             mm = model_mng(self.dict_c)
             AUC_tr,AUC_v,AUC_t = mm.main(mm.Queue_cma)
             elapsed = toc()
+
+            print('x'*50)
+            print(i)
+            print('x'*50)
+
 
             dict_['shuffle_segmentated']['train'].append(AUC_tr)
             dict_['shuffle_segmentated']['val'].append(AUC_v)
