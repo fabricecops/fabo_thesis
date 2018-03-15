@@ -9,7 +9,7 @@ def return_dict_bounds():
 
         ##### Filesystem manager ####
         'path_data'        : './data/raw/configured_raw/',
-        'path_save'        : './models/LSTM/stateful/',
+        'path_save'        : './models/LSTM/',
         'name'             : None,
 
         #### Preprocessing ############
@@ -67,6 +67,8 @@ def return_dict_bounds():
         'verbose'          : 0,
         'epochs'           : 10000,
         'batch_size'       : 500,
+
+        'stop_iterations'  : 1,
 
 
         #### data gathering statefull ####
