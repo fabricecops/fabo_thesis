@@ -83,9 +83,9 @@ class LSTM_(model, data_manager):
     def _create_model_unstateful(self):
         model = Sequential()
 
-        hidden1 = 350
+        hidden1 = 400
         hidden2 = 300
-        hidden3 = 100
+        hidden3 = 200
 
         model.add(LSTM(hidden1,
                input_shape       = self.input_shape,

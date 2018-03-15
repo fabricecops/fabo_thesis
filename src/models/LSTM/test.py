@@ -28,10 +28,12 @@ class model_tests():
         }
 
         self.dict_c['path_save']     = './models/variance/shuffle_random/'
-        self.dict_c['shuffle_style'] = 'random'
+        self.dict_c['shuffle_style'] = 'testing'
         ##### normal shuffle
         for i in range(self.iteration):
-
+            print('x'*50)
+            print(i)
+            print('x'*50)
             tic()
             mm = model_mng(self.dict_c)
             AUC_tr,AUC_v,AUC_t = mm.main(mm.Queue_cma)
@@ -49,9 +51,12 @@ class model_tests():
         dict_['shuffle_random']['val_std']    = np.std(dict_['shuffle_random']['val'])
 
         self.dict_c['path_save']     = './models/variance/shuffle_segmentated/'
-        self.dict_c['shuffle_style'] = 'segmentated'
+        self.dict_c['shuffle_style'] = 'testing'
         ##### normal shuffle
         for i in range(self.iteration):
+            print('x'*50)
+            print(i)
+            print('x'*50)
 
             tic()
             mm = model_mng(self.dict_c)
@@ -74,7 +79,6 @@ class model_tests():
 
         path = './models/variance/'
         pickle_save_(path+'variance.p',dict_)
-        print(dict_)
         fig = plt.figure(figsize=(16, 4))
 
         ax1 = plt.subplot(131)
