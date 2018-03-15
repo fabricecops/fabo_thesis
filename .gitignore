@@ -6,6 +6,7 @@ TODO.txt
 models/LSTM/
 models/Results/
 models/BO_BL/
+models/variance/
 
 data/interim/
 data/processed/
