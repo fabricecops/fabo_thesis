@@ -1,8 +1,9 @@
 from src.models.LSTM.configure import return_dict_bounds
 from src.models.LSTM.main_LSTM import model_mng
-from src.dst.outputhandler.pickle import tic,toc,pickle_save_
+from src.dst.outputhandler.pickle import tic,toc,pickle_save_,pickle_load
 import numpy as np
 import matplotlib.pyplot as plt
+import os
 
 class model_tests():
 
@@ -12,7 +13,8 @@ class model_tests():
         self.iteration = 15
 
 
-    def variance_calculation(self):
+
+    def get_rest_of_data(self):
         dict_ ={
             'shuffle_random': {
                 'train': [],
@@ -27,22 +29,31 @@ class model_tests():
                             }
         }
 
-        self.dict_c['path_save']     = './models/variance/shuffle_random/'
-        self.dict_c['shuffle_style'] = 'testing'
-        ##### normal shuffle
-        for i in range(self.iteration):
-            print('x'*50)
-            print(i)
-            print('x'*50)
-            tic()
-            mm = model_mng(self.dict_c)
-            AUC_tr,AUC_v,AUC_t = mm.main(mm.Queue_cma)
-            elapsed = toc()
+        path = 'models/variance/shuffle_random/'
+        dir_ = os.listdir(path)
+
+        for directory in dir_:
+            path_v = path+directory+'/AUC_CMA.p'
+            hist   = pickle_load(path_v,None)
+            AUC_tr = np.max(hist['AUC'])
+            AUC_v  = np.max(hist['AUC_v'])
+            AUC_t  = np.max(hist['AUC_t'])
+
 
             dict_['shuffle_random']['train'].append(AUC_tr)
             dict_['shuffle_random']['val'].append(AUC_v)
             dict_['shuffle_random']['val'].append(AUC_t)
-            dict_['shuffle_random']['time'].append(elapsed)
+
+
+        return dict_
+
+    def variance_calculation(self):
+        dict_ = self.get_rest_of_data()
+
+        ##### normal shuffle
+        for i in range(self.iteration):
+            dict_ = self.train_model(dict_,'random')
+
 
         dict_['shuffle_random']['train_mean'] = np.mean(dict_['shuffle_random']['train'])
         dict_['shuffle_random']['train_std']  = np.std(dict_['shuffle_random']['train'])
@@ -50,23 +61,11 @@ class model_tests():
         dict_['shuffle_random']['val_mean']   = np.mean(dict_['shuffle_random']['val'])
         dict_['shuffle_random']['val_std']    = np.std(dict_['shuffle_random']['val'])
 
-        self.dict_c['path_save']     = './models/variance/shuffle_segmentated/'
-        self.dict_c['shuffle_style'] = 'testing'
+
         ##### normal shuffle
         for i in range(self.iteration):
-            print('x'*50)
-            print(i)
-            print('x'*50)
+            dict_ = self.train_model(dict_,'segmentated')
 
-            tic()
-            mm = model_mng(self.dict_c)
-            AUC_tr,AUC_v,AUC_t = mm.main(mm.Queue_cma)
-            elapsed = toc()
-
-            dict_['shuffle_segmentated']['train'].append(AUC_tr)
-            dict_['shuffle_segmentated']['val'].append(AUC_v)
-            dict_['shuffle_segmentated']['val'].append(AUC_t)
-            dict_['shuffle_segmentated']['time'].append(elapsed)
 
         dict_['shuffle_segmentated']['train_mean'] = np.mean(dict_['shuffle_segmentated']['train'])
         dict_['shuffle_segmentated']['train_std']  = np.std(dict_['shuffle_segmentated']['train'])
@@ -78,7 +77,6 @@ class model_tests():
 
 
         path = './models/variance/'
-        pickle_save_(path+'variance.p',dict_)
         fig = plt.figure(figsize=(16, 4))
 
         ax1 = plt.subplot(131)
@@ -111,9 +109,36 @@ class model_tests():
 
         plt.close('all')
 
+    def train_model(self,dict_,mode):
+        if(mode == 'random'):
+            self.dict_c['path_save']     = './models/variance/shuffle_random/'
+            self.dict_c['shuffle_style'] = 'random'
+        else:
+            self.dict_c['path_save'] = './models/variance/shuffle_segmentated/'
+            self.dict_c['shuffle_style'] = 'segmentated'
+
+        tic()
+        mm = model_mng(self.dict_c)
+        AUC_tr, AUC_v, AUC_t = mm.main(mm.Queue_cma)
+        elapsed = toc()
+
+        if(mode == 'random'):
+
+            dict_['shuffle_random']['train'].append(AUC_tr)
+            dict_['shuffle_random']['val'].append(AUC_v)
+            dict_['shuffle_random']['val'].append(AUC_t)
+            dict_['shuffle_random']['time'].append(elapsed)
+        else:
+            dict_['shuffle_segmentated']['train'].append(AUC_tr)
+            dict_['shuffle_segmentated']['val'].append(AUC_v)
+            dict_['shuffle_segmentated']['val'].append(AUC_t)
+            dict_['shuffle_segmentated']['time'].append(elapsed)
+
+        path = './models/variance/'
+        pickle_save_(path+'variance.p',dict_)
 
 
-
+        return dict_
 
 
 

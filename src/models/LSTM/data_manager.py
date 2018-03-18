@@ -262,13 +262,14 @@ class data_manager(pipe_line_data):
             self.df_t_test = self.df_t.iloc[val_samples_t:val_samples_t + test_samples_t].iloc[0:5]
 
         elif(self.dict_c['shuffle_style'] == 'random'):
-
+            print('random!!!!')
 
             self.df_t_train = self.df_t.iloc[val_samples_t + test_samples_t:len(self.df_t)]
             self.df_t_val = self.df_t.iloc[0:val_samples_t]
             self.df_t_test = self.df_t.iloc[val_samples_t:val_samples_t + test_samples_t]
 
         elif (self.dict_c['shuffle_style'] == 'segmentated'):
+            print('segmentated!!!!')
 
 
 

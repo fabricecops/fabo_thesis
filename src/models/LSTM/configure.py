@@ -68,7 +68,7 @@ def return_dict_bounds():
         'epochs'           : 10000,
         'batch_size'       : 500,
 
-        'stop_iterations'  : 1,
+        'stop_iterations'  : 8,
 
 
         #### data gathering statefull ####
