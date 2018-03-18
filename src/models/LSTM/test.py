@@ -48,10 +48,10 @@ class model_tests():
         return dict_
 
     def variance_calculation(self):
-        dict_ = self.get_rest_of_data()
+        dict_ = pickle_load('./models/variance/variance.p', None)
 
         ##### normal shuffle
-        for i in range(self.iteration):
+        for i in range(51):
             dict_ = self.train_model(dict_,'random')
 
 
