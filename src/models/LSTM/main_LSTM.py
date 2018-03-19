@@ -7,6 +7,7 @@ from src.models.LSTM.CMA_ES import CMA_ES
 from src.models.LSTM.configure import return_dict_bounds
 import multiprocessing as mp
 
+import time
 
 class model_mng():
 
@@ -17,42 +18,40 @@ class model_mng():
         self.model       = LSTM_(dict_c)
 
         self.dict_data   = None
-        self.Queue_cma   = mp.Queue(maxsize=10)
+        self.Queue_cma   = mp.Queue()
 
         self.count       = 0
         self.max_AUC_val = 0
         self.max_AUC_tr  = 0
         self.max_AUC_t   = 0
 
-        self.boolean     = True
 
     def main(self,Queue_cma):
 
         for i in range(self.dict_c['epochs']):
-
-            if(self.count > self.dict_c['stop_iterations']):
-                self.boolean = False
 
 
             dict_data    = self.process_LSTM(i)
             self.process_Queue(Queue_cma)
 
             if(i==0):
-                p = mp.Process(target=self.process_output, args=(Queue_cma,dict_data))
-                p.daemon = False
+                p        = mp.Process(target=self.process_output, args=(Queue_cma,dict_data))
+                p.daemon = True
                 p.start()
 
             else:
                 if p.is_alive() == False:
                     p.terminate()
 
-                    p = mp.Process(target=self.process_output, args= (Queue_cma,dict_data))
-                    p.daemon = False
+                    p        = mp.Process(target=self.process_output, args= (Queue_cma,dict_data))
+                    p.daemon = True
                     p.start()
 
             if(self.count > self.dict_c['stop_iterations']):
                 p.terminate()
                 break
+
+        p.terminate()
 
         return self.max_AUC_tr,self.max_AUC_val,self.max_AUC_val
 
@@ -93,7 +92,6 @@ class model_mng():
         return dict_data
 
     def process_output(self,Queue_cma,dict_data):
-
 
             CMA_ES_    = CMA_ES(self.dict_c)
             dict_      = CMA_ES_.main_CMA_ES(dict_data)

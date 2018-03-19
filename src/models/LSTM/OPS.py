@@ -283,9 +283,9 @@ class OPS_LSTM(AUC):
             plt.xlabel('FPR')
             plt.ylabel('TPR')
             plt.savefig(path_save+'segmented_ROC.png')
-
-
             plt.close('all')
+
+            pickle_save(path_save+'data_segment_ROC.p',dict_data)
             if(dict_data['epoch'] == 0):
                 fig = plt.figure(figsize=(16, 4))
 
@@ -301,13 +301,6 @@ class OPS_LSTM(AUC):
                 plt.ylabel('Frequency')
                 plt.title('Distribution segmentation')
                 plt.savefig(dict_data['path_o']+'dist_segmentation.png')
-
-
-
-
-
-
-
 
 
     def _get_data_segmented(self,dict_data):
@@ -380,9 +373,6 @@ class OPS_LSTM(AUC):
 
 
         return dict_data
-
-
-
 
     def _get_data_no_cma(self,dict_data):
         i               = dict_data['epoch']

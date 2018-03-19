@@ -5,6 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 from memory_profiler import profile
+import multiprocessing as mp
 
 class model_tests():
 
@@ -48,33 +49,33 @@ class model_tests():
 
         return dict_
 
-    @profile
+
     def variance_calculation(self):
         dict_ = pickle_load('./models/variance/variance.p', None)
+        ##### normal shuffle
+        for i in range(5):
+            dict_ = self.train_model('random',dict_ = dict_)
 
-        # ##### normal shuffle
-        # for i in range(0):
-        #     dict_ = self.train_model(dict_,'random')
-        #
-        #
-        # dict_['shuffle_random']['train_mean'] = np.mean(dict_['shuffle_random']['train'])
-        # dict_['shuffle_random']['train_std']  = np.std(dict_['shuffle_random']['train'])
-        #
-        # dict_['shuffle_random']['val_mean']   = np.mean(dict_['shuffle_random']['val'])
-        # dict_['shuffle_random']['val_std']    = np.std(dict_['shuffle_random']['val'])
-        #
-        #
-        # ##### normal shuffle
-        # for i in range(self.iteration):
-        #     dict_ = self.train_model(dict_,'segmentated')
-        #
-        #
-        # dict_['shuffle_segmentated']['train_mean'] = np.mean(dict_['shuffle_segmentated']['train'])
-        # dict_['shuffle_segmentated']['train_std']  = np.std(dict_['shuffle_segmentated']['train'])
-        #
-        # dict_['shuffle_segmentated']['val_mean']   = np.mean(dict_['shuffle_segmentated']['val'])
-        # dict_['shuffle_segmentated']['val_std']    = np.std(dict_['shuffle_segmentated']['val'])
 
+        dict_['shuffle_random']['train_mean'] = np.mean(dict_['shuffle_random']['train'])
+        dict_['shuffle_random']['train_std']  = np.std(dict_['shuffle_random']['train'])
+
+        dict_['shuffle_random']['val_mean']   = np.mean(dict_['shuffle_random']['val'])
+        dict_['shuffle_random']['val_std']    = np.std(dict_['shuffle_random']['val'])
+
+
+        ##### normal shuffle
+        for i in range(20):
+            dict_ = self.train_model('segmented',dict_ = dict_)
+
+
+
+
+        dict_['shuffle_segmentated']['train_mean'] = np.mean(dict_['shuffle_segmentated']['train'])
+        dict_['shuffle_segmentated']['train_std']  = np.std(dict_['shuffle_segmentated']['train'])
+
+        dict_['shuffle_segmentated']['val_mean']   = np.mean(dict_['shuffle_segmentated']['val'])
+        dict_['shuffle_segmentated']['val_std']    = np.std(dict_['shuffle_segmentated']['val'])
 
 
 
@@ -112,20 +113,26 @@ class model_tests():
 
         plt.close('all')
 
-    @profile
-    def train_model(self,dict_,mode):
+    def train_model(self,mode,dict_ = None):
 
-        if(mode == 'random'):
+        if mode == 'random':
             self.dict_c['path_save']     = './models/variance/shuffle_random/'
             self.dict_c['shuffle_style'] = 'random'
-        else:
-            self.dict_c['path_save'] = './models/variance/shuffle_segmentated/'
+        elif mode == 'segmentated':
+            self.dict_c['path_save']     = './models/variance/shuffle_segmentated/'
             self.dict_c['shuffle_style'] = 'segmentated'
+        else:
+            self.dict_c['path_save']     = './models/variance/testing/'
+            self.dict_c['shuffle_style'] = 'testing'
+            self.dict_c['evals']         = 2
+            self.dict_c['epochs']        = 3
+
+
 
         tic()
         mm = model_mng(self.dict_c)
         AUC_tr, AUC_v, AUC_t = mm.main(mm.Queue_cma)
-        del mm
+
 
         elapsed = toc()
 
