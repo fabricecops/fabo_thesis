@@ -86,7 +86,6 @@ class model_mng():
         dict_data['epoch']      = i
 
         OPS_LSTM_ = OPS_LSTM(self.dict_c)
-        OPS_LSTM_.save_output(dict_data, i)
         dict_data['epoch'] = i
         OPS_LSTM_.main(dict_data)
 
