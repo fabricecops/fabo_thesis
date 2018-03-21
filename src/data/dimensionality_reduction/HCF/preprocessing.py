@@ -38,8 +38,8 @@ class get_df():
                              'frames': passages['passages'][i]['frames'],
                              'segmentation': passages['passages'][i]['label']['segmentation'],
                              'name': name,
-                             'movieID': count_movie,
-                             'location': self.get_location(name)}
+                             'movieID': count_movie}
+                             # 'location': self.get_location(name)}
                     count_labeled_data += 1
                     count_movie += 1
 
@@ -54,7 +54,13 @@ class get_df():
                                  'location': self.get_location(name)}
 
                     else:
-                        pass
+                        dict_ = {'label': 'und',
+                                 'count': 'und',
+                                 'frames': passages['passages'][i]['frames'],
+                                 'name': name,
+                                 'segmentation': passages['passages'][i]['label']['segmentation'],
+                                 'movieID': count_movie,
+                                 'location': 'und'}
 
                     count_movie += 1
                     count_unlabeled_data += 1
@@ -77,6 +83,7 @@ class get_df():
         df_data = pd.DataFrame(list_data, columns=['label', 'count', 'frames', 'name', 'movieID','segmentation','location'])
         df_data = df_data.apply(self.apply_countFrames, axis=1)
         df_data = df_data[df_data['countFrames']>6]
+        df_data = df_data[df_data['label'] != 'und']
 
         return df_data
 
@@ -96,7 +103,6 @@ class get_df():
             if(name in list_):
                 location = dir_
         return location
-
 
 class Move_p():
 
