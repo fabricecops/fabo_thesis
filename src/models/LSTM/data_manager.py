@@ -42,7 +42,6 @@ class data_manager(pipe_line_data):
 
 
         self.df           = pickle_load(path_df,self.peak_derivation, ())
-        self.df           = self.df[self.df['countFrames']>5]
         self.len_df       = len(self.df)
 
 
@@ -51,11 +50,11 @@ class data_manager(pipe_line_data):
         self.df =  self.df[self.df['data_X'] != '']
         self.df =  self.df[self.df['data_y'] != '']
         self.count_t = len(self.df)
-        self.df =  self.df[['name','label','frames','data_X','data_y','segmentation']]
+        self.df =  self.df[['name','label','frames','data_X','data_y','segmentation','location']]
         self._print_data()
 
-        df_t = shuffle(self.df[self.df['label'] == True])
-        df_f = shuffle(self.df[self.df['label'] == False])
+        df_f     = self.df[self.df['label'] == False]
+        df_t     = self.df[self.df['label'] == True]
 
 
         dict_ = {
@@ -242,11 +241,6 @@ class data_manager(pipe_line_data):
         self.df_f = shuffle(self.df_f,random_state = self.dict_c['random_state'])
 
 
-        lol = shuffle(self.df_t,random_state = self.dict_c['random_state'])
-        pop = shuffle(self.df_t,random_state = self.dict_c['random_state'])
-
-
-
         val_samples_f  = int(len(self.df_f) * self.dict_c['val_split_f'])
         test_samples_f = int(len(self.df_f) * self.dict_c['test_split_f'])
         val_samples_t  = int(len(self.df_t) * self.dict_c['val_split_t'])
@@ -283,10 +277,10 @@ class data_manager(pipe_line_data):
             self.df_t_val   = pd.DataFrame()
             self.df_t_test  = pd.DataFrame()
 
-            for i,group in enumerate(self.df_t.groupby('segmentation')):
+            for i,group in enumerate(self.df_t.groupby(['segmentation'])):
 
-                val_samples_t  = round(len(group[1]) * self.dict_c['val_split_t'])
-                test_samples_t = round(len(group[1]) * self.dict_c['test_split_f'])
+                val_samples_t  = round(len(group[1]) * self.dict_c['val_split_f'])
+                test_samples_t = round(len(group[1]) * self.dict_c['test_split_t'])
 
                 if(i==0):
                     self.df_t_train = group[1].iloc[val_samples_t + test_samples_t:len(group[1])]

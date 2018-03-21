@@ -28,7 +28,7 @@ def return_dict_bounds():
 
         #### Data manager  #########
         'mode_data'        : ['p','PCA'],
-        'shuffle_style'    : 'testing',
+        'shuffle_style'    : 'segmentated',
 
         ###### CMA_ES    ######
         'verbose_CMA'      : 0,

@@ -25,7 +25,6 @@ class model_mng():
         self.max_AUC_tr  = 0
         self.max_AUC_t   = 0
 
-
     def main(self,Queue_cma):
 
         for i in range(self.dict_c['epochs']):
@@ -54,8 +53,6 @@ class model_mng():
         p.terminate()
 
         return self.max_AUC_tr,self.max_AUC_val,self.max_AUC_val
-
-
 
     def process_Queue(self,Queue_cma):
         if (Queue_cma.empty() == False):
