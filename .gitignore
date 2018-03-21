@@ -1,5 +1,6 @@
 .env
 .idea
+.ipynb_checkpoints
 TODO.txt
 
 models/LSTM/
