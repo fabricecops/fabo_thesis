@@ -38,7 +38,8 @@ class get_df():
                              'frames': passages['passages'][i]['frames'],
                              'segmentation': passages['passages'][i]['label']['segmentation'],
                              'name': name,
-                             'movieID': count_movie}
+                             'movieID': count_movie,
+                             'location': self.get_location(name)}
                     count_labeled_data += 1
                     count_movie += 1
 
@@ -49,14 +50,11 @@ class get_df():
                                  'frames': passages['passages'][i]['frames'],
                                  'name': name,
                                  'segmentation': passages['passages'][i]['label']['segmentation'],
-                                 'movieID': count_movie}
+                                 'movieID': count_movie,
+                                 'location': self.get_location(name)}
+
                     else:
-                        dict_ = {'label': 'und',
-                                 'count': 'und',
-                                 'frames': passages['passages'][i]['frames'],
-                                 'name': name,
-                                 'segmentation': passages['passages'][i]['label']['segmentation'],
-                                 'movieID': count_movie}
+                        pass
 
                     count_movie += 1
                     count_unlabeled_data += 1
@@ -76,16 +74,29 @@ class get_df():
                 # shutil.rmtree(src)
 
 
-        df_data = pd.DataFrame(list_data, columns=['label', 'count', 'frames', 'name', 'movieID','segmentation'])
+        df_data = pd.DataFrame(list_data, columns=['label', 'count', 'frames', 'name', 'movieID','segmentation','location'])
         df_data = df_data.apply(self.apply_countFrames, axis=1)
         df_data = df_data[df_data['countFrames']>6]
-
 
         return df_data
 
     def apply_countFrames(self,row):
         row['countFrames'] = len(row['frames'])
         return row
+
+    def get_location(self,name):
+        path = './data/raw/conf_FS/'
+
+        dirs = os.listdir(path)
+
+        for dir_ in dirs:
+            path_dir = path+dir_
+            list_    = os.listdir(path_dir)
+
+            if(name in list_):
+                location = dir_
+        return location
+
 
 class Move_p():
 
@@ -666,5 +677,10 @@ class PCA_():
 
 
 if __name__ == '__main__':
-    pass
 
+
+    path       = './data/raw/configured_raw/'
+
+    list_names = os.listdir(path)
+    GD         =  get_df(path)
+    df         =  GD.get_df_data(list_names)

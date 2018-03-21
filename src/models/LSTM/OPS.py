@@ -289,18 +289,37 @@ class OPS_LSTM(AUC):
             if(dict_data['epoch'] == 0):
                 fig = plt.figure(figsize=(16, 4))
 
-                bottom2 = [x+y for x,y in zip(dict_data['dict_bar']['train'],dict_data['dict_bar']['val'])]
+                ax1 = plt.subplot(121)
 
-                indexes = range(len(dict_data['dict_bar']['train']))
-                plt.bar(indexes,dict_data['dict_bar']['train'], align = 'center',label = 'train')
-                plt.bar(indexes,dict_data['dict_bar']['val'], align="center",bottom = dict_data['dict_bar']['train'],label = 'val')
-                plt.bar(indexes,dict_data['dict_bar']['test'], align="center",bottom = bottom2,label = 'test')
-                plt.xticks(range(len(dict_data['dict_bar']['groups'])), dict_data['dict_bar']['groups'])
+                bottom2 = [x+y for x,y in zip(dict_data['dict_bar_classes']['train'],dict_data['dict_bar_classes']['val'])]
+
+                indexes = range(len(dict_data['dict_bar_classes']['train']))
+                ax1.bar(indexes,dict_data['dict_bar_classes']['train'], align = 'center',label = 'train')
+                ax1.bar(indexes,dict_data['dict_bar_classes']['val'], align="center",bottom = dict_data['dict_bar_classes']['train'],label = 'val')
+                ax1.bar(indexes,dict_data['dict_bar_classes']['test'], align="center",bottom = bottom2,label = 'test')
+                plt.xticks(range(len(dict_data['dict_bar_classes']['groups'])), dict_data['dict_bar_classes']['groups'])
                 plt.legend()
                 plt.xlabel('Groups')
                 plt.ylabel('Frequency')
-                plt.title('Distribution segmentation')
-                plt.savefig(dict_data['path_o']+'dist_segmentation.png')
+                plt.title('Distribution classes')
+
+                ax2 = plt.subplot(122)
+
+                bottom2 = [x+y for x,y in zip(dict_data['dict_bar_location']['train'],dict_data['dict_bar_location']['val'])]
+
+                indexes = range(len(dict_data['dict_bar_location']['train']))
+                ax2.bar(indexes,dict_data['dict_bar_location']['train'], align = 'center',label = 'train')
+                ax2.bar(indexes,dict_data['dict_bar_location']['val'], align="center",bottom = dict_data['dict_bar_location']['train'],label = 'val')
+                ax2.bar(indexes,dict_data['dict_bar_location']['test'], align="center",bottom = bottom2,label = 'test')
+                plt.xticks(range(len(dict_data['dict_bar_location']['groups'])), dict_data['dict_bar_location']['groups'])
+                plt.legend()
+                plt.xlabel('Groups')
+                plt.ylabel('Frequency')
+                plt.title('Distribution location')
+                plt.savefig(dict_data['path_o']+'dist_classes_segmentation.png')
+
+
+
 
 
     def _get_data_segmented(self,dict_data):
@@ -344,22 +363,39 @@ class OPS_LSTM(AUC):
             dict_combined[group[0]]  =  [AUC,FPR,TPR,len(group[0])]
 
         groups   = ['gooien','onder','boven','muren','sneaky','object']
-        array_tr = [0,0,0,0,0,0]
-        array_v  = [0,0,0,0,0,0]
-        array_t  = [0,0,0,0,0,0]
+        array_c_tr = [0,0,0,0,0,0]
+        array_c_v  = [0,0,0,0,0,0]
+        array_c_t  = [0,0,0,0,0,0]
 
 
         for i,group in enumerate(groups):
 
-            array_tr[i] = len(df_t_train[df_t_train['segmentation'] == group])
-            array_v[i]  = len(df_t_val[df_t_val['segmentation'] == group])
-            array_t[i]  = len(df_t_test[df_t_test['segmentation'] == group])
+            array_c_tr[i] = len(df_t_train[df_t_train['segmentation'] == group])
+            array_c_v[i]  = len(df_t_val[df_t_val['segmentation'] == group])
+            array_c_t[i]  = len(df_t_test[df_t_test['segmentation'] == group])
 
-        dict_bar  = {
+        dict_bar_classes  = {
                     'groups': groups,
-                    'train' : array_tr,
-                    'val'   : array_v,
-                    'test'  : array_t
+                    'train' : array_c_tr,
+                    'val'   : array_c_v,
+                    'test'  : array_c_t
+        }
+        array_l_tr = [0,0,0,0,0,0]
+        array_l_v  = [0,0,0,0,0,0]
+        array_l_t  = [0,0,0,0,0,0]
+
+        locations = ['bnp_1','bnp_2','first_data','hallway','robovision']
+        for i,group in enumerate(locations):
+
+            array_l_tr[i] = len(df_t_train[df_t_train['location'] == group])
+            array_l_v[i]  = len(df_t_val[df_t_val['location'] == group])
+            array_l_t[i]  = len(df_t_test[df_t_test['location'] == group])
+
+        dict_bar_location  = {
+                    'groups': locations,
+                    'train' : array_l_tr,
+                    'val'   : array_l_v,
+                    'test'  : array_l_t
         }
 
 
@@ -368,7 +404,8 @@ class OPS_LSTM(AUC):
         dict_data['dict_val']       = dict_val
         dict_data['dict_test']      = dict_test
         dict_data['dict_combined']  = dict_combined
-        dict_data['dict_bar']       = dict_bar
+        dict_data['dict_bar_classes']       = dict_bar_classes
+        dict_data['dict_bar_location']       = dict_bar_location
 
 
 

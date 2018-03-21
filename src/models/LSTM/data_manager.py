@@ -238,8 +238,14 @@ class data_manager(pipe_line_data):
         self.df_f = self.Series_data['df_f']
         self.df_t = self.Series_data['df_t']
 
-        self.df_t = shuffle(self.df_t)
-        self.df_f = shuffle(self.df_f)
+        self.df_t = shuffle(self.df_t,random_state = self.dict_c['random_state'])
+        self.df_f = shuffle(self.df_f,random_state = self.dict_c['random_state'])
+
+
+        lol = shuffle(self.df_t,random_state = self.dict_c['random_state'])
+        pop = shuffle(self.df_t,random_state = self.dict_c['random_state'])
+
+
 
         val_samples_f  = int(len(self.df_f) * self.dict_c['val_split_f'])
         test_samples_f = int(len(self.df_f) * self.dict_c['test_split_f'])

@@ -178,3 +178,4 @@ class CMA_ES(AUC):
         self.df_f_test['error_m']      = list(map(self._get_error_m,array_f))
         self.df_f_test.drop(['data_X','data_y'],axis = 1,inplace = True)
 
+
