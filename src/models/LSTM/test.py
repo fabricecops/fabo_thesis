@@ -47,6 +47,7 @@ class model_tests():
             dict_['shuffle_random']['val'].append(AUC_t)
 
 
+
         path = 'models/variance/shuffle_segmentated/'
         dir_ = os.listdir(path)
         for directory in dir_:
@@ -57,40 +58,41 @@ class model_tests():
             AUC_t  = np.max(hist['AUC_t'])
 
 
+
             dict_['shuffle_segmentated']['train'].append(AUC_tr)
             dict_['shuffle_segmentated']['val'].append(AUC_v)
             dict_['shuffle_segmentated']['val'].append(AUC_t)
 
-        fig = plt.figure(figsize=(16, 4))
-
-        ax1 = plt.subplot(131)
-        ax1.hist(dict_['shuffle_random']['train'], label='random', color='g', alpha=0.5, bins=10)
-        ax1.hist(dict_['shuffle_segmentated']['train'], label='segmentated', color='r', alpha=0.5, bins=10)
-        plt.xlabel('AUC')
-        plt.ylabel('Frequency')
-        plt.legend()
-        plt.title('Train distribution')
-
-        ax2 = plt.subplot(132)
-        ax2.hist(dict_['shuffle_random']['val'], label='random', color='g', alpha=0.5, bins=10)
-        ax2.hist(dict_['shuffle_segmentated']['val'], label='segmentated', color='r', alpha=0.5, bins=10)
-        plt.xlabel('AUC')
-        plt.ylabel('Frequency')
-        plt.legend()
-        plt.title('val distribution')
-
-        ax3 = plt.subplot(133)
-        ax3.hist(dict_['shuffle_random']['time'], label='random', color='g', alpha=0.5, bins=10)
-        ax3.hist(dict_['shuffle_segmentated']['time'], label='segmentated', color='r', alpha=0.5, bins=10)
-        plt.xlabel('AUC')
-        plt.ylabel('Frequency')
-        plt.legend()
-        plt.title('Time distribution')
-
-        plt.savefig('models/variance/distribution.png')
-        plt.show()
-
-        plt.close('all')
+        # fig = plt.figure(figsize=(16, 4))
+        #
+        # ax1 = plt.subplot(131)
+        # ax1.hist(dict_['shuffle_random']['train'], label='random', color='g', alpha=0.5, bins=10)
+        # ax1.hist(dict_['shuffle_segmentated']['train'], label='segmentated', color='r', alpha=0.5, bins=10)
+        # plt.xlabel('AUC')
+        # plt.ylabel('Frequency')
+        # plt.legend()
+        # plt.title('Train distribution')
+        #
+        # ax2 = plt.subplot(132)
+        # ax2.hist(dict_['shuffle_random']['val'], label='random', color='g', alpha=0.5, bins=10)
+        # ax2.hist(dict_['shuffle_segmentated']['val'], label='segmentated', color='r', alpha=0.5, bins=10)
+        # plt.xlabel('AUC')
+        # plt.ylabel('Frequency')
+        # plt.legend()
+        # plt.title('val distribution')
+        #
+        # ax3 = plt.subplot(133)
+        # ax3.hist(dict_['shuffle_random']['time'], label='random', color='g', alpha=0.5, bins=10)
+        # ax3.hist(dict_['shuffle_segmentated']['time'], label='segmentated', color='r', alpha=0.5, bins=10)
+        # plt.xlabel('AUC')
+        # plt.ylabel('Frequency')
+        # plt.legend()
+        # plt.title('Time distribution')
+        #
+        # plt.savefig('models/variance/distribution.png')
+        # plt.show()
+        #
+        # plt.close('all')
 
 
         return dict_
