@@ -8,7 +8,6 @@ import numpy as np
 import imageio
 
 
-
 class get_df_vs():
 
     def __init__(self):
@@ -22,10 +21,39 @@ class get_df_vs():
         df_data['countFrames'].plot(kind='hist', ax=axes[2], title='count frames')
         plt.show()
         tmp = df_data['label'].value_counts()
-        nr_false, nr_true= tmp[0], tmp[1]
+        nr_false, nr_true = tmp[0], tmp[1]
 
         print('Nr_True: ', nr_true)
         print('Nr_false: ', nr_false)
+
+    def plot_label_dist(self, df_data):
+        fig = plt.figure(figsize=(6, 4))
+
+        df_data['label'].value_counts().plot(kind='bar',
+                                             color='r')
+        print(df_data['label'].value_counts())
+        plt.ylabel('Nr samples')
+        plt.savefig('./plots/introduction/distribution_data.png')
+
+    def plot_count_frames(self, df_data):
+        fig = plt.figure(figsize=(6, 4))
+
+        df_data = df_data[df_data['countFrames'] < 500]
+
+        plt.hist(df_data['countFrames'], color='r', bins=100)
+
+        plt.xlabel('Number of frames')
+        plt.ylabel('Nr samples')
+        plt.savefig('./plots/introduction/count_frames.png')
+        plt.show()
+
+    def plot_segmentation(self, df_data):
+        fig = plt.figure(figsize=(6, 4))
+        df_true = df_data[df_data['label'] == True]
+        df_true['segmentation'].value_counts().plot(kind='bar', color='r')
+        plt.ylabel('Nr samples')
+        plt.savefig('./plots/introduction/segmentation.png')
+        plt.show()
 
 
 class bgs_vs():

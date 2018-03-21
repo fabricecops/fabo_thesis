@@ -279,8 +279,8 @@ class data_manager(pipe_line_data):
 
             for i,group in enumerate(self.df_t.groupby('segmentation')):
 
-                val_samples_t  = int(len(group[1]) * self.dict_c['val_split_t'])
-                test_samples_t = int(len(group[1]) * self.dict_c['test_split_f'])
+                val_samples_t  = round(len(group[1]) * self.dict_c['val_split_t'])
+                test_samples_t = round(len(group[1]) * self.dict_c['test_split_f'])
 
                 if(i==0):
                     self.df_t_train = group[1].iloc[val_samples_t + test_samples_t:len(group[1])]

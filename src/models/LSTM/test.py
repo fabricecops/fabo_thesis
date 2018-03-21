@@ -47,13 +47,59 @@ class model_tests():
             dict_['shuffle_random']['val'].append(AUC_t)
 
 
+        path = 'models/variance/shuffle_segmentated/'
+        dir_ = os.listdir(path)
+        for directory in dir_:
+            path_v = path+directory+'/AUC_CMA.p'
+            hist   = pickle_load(path_v,None)
+            AUC_tr = np.max(hist['AUC'])
+            AUC_v  = np.max(hist['AUC_v'])
+            AUC_t  = np.max(hist['AUC_t'])
+
+
+            dict_['shuffle_segmentated']['train'].append(AUC_tr)
+            dict_['shuffle_segmentated']['val'].append(AUC_v)
+            dict_['shuffle_segmentated']['val'].append(AUC_t)
+
+        fig = plt.figure(figsize=(16, 4))
+
+        ax1 = plt.subplot(131)
+        ax1.hist(dict_['shuffle_random']['train'], label='random', color='g', alpha=0.5, bins=10)
+        ax1.hist(dict_['shuffle_segmentated']['train'], label='segmentated', color='r', alpha=0.5, bins=10)
+        plt.xlabel('AUC')
+        plt.ylabel('Frequency')
+        plt.legend()
+        plt.title('Train distribution')
+
+        ax2 = plt.subplot(132)
+        ax2.hist(dict_['shuffle_random']['val'], label='random', color='g', alpha=0.5, bins=10)
+        ax2.hist(dict_['shuffle_segmentated']['val'], label='segmentated', color='r', alpha=0.5, bins=10)
+        plt.xlabel('AUC')
+        plt.ylabel('Frequency')
+        plt.legend()
+        plt.title('val distribution')
+
+        ax3 = plt.subplot(133)
+        ax3.hist(dict_['shuffle_random']['time'], label='random', color='g', alpha=0.5, bins=10)
+        ax3.hist(dict_['shuffle_segmentated']['time'], label='segmentated', color='r', alpha=0.5, bins=10)
+        plt.xlabel('AUC')
+        plt.ylabel('Frequency')
+        plt.legend()
+        plt.title('Time distribution')
+
+        plt.savefig('models/variance/distribution.png')
+        plt.show()
+
+        plt.close('all')
+
+
         return dict_
 
 
     def variance_calculation(self):
         dict_ = pickle_load('./models/variance/variance.p', None)
         ##### normal shuffle
-        for i in range(5):
+        for i in range(0):
             dict_ = self.train_model('random',dict_ = dict_)
 
 
@@ -66,7 +112,7 @@ class model_tests():
 
         ##### normal shuffle
         for i in range(20):
-            dict_ = self.train_model('segmented',dict_ = dict_)
+            dict_ = self.train_model('segmentated',dict_ = dict_)
 
 
 
@@ -166,4 +212,5 @@ if __name__ == '__main__':
         dict_c, bounds = return_dict_bounds()
 
         mm = model_tests(dict_c)
+        mm.get_rest_of_data()
         mm.variance_calculation()
