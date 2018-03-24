@@ -18,13 +18,13 @@ def return_dict_bounds():
         'nr_contours'      : 2,
 
         ## Peak derivation #############
-        'resolution'       : 50,
+        'resolution'       : 6,
         'area'             : 200,
         'min_h'            : 20,
         'max_h'            : 200,
 
         ## PCA componentes #########
-        'PCA_components'   : 10,
+        'PCA_components'   : 40,
 
         #### Data manager  #########
         'mode_data'        : ['p','PCA'],
@@ -33,7 +33,7 @@ def return_dict_bounds():
         ###### CMA_ES    ######
         'verbose_CMA'      : 0,
         'verbose_CMA_log'  : 0,
-        'evals'            : 3,
+        'evals'            : 3000,
         'bounds'           : [-100,100.],
         'sigma'            : 0.4222222222222225,
         'progress_ST'      : 0.3,
@@ -69,7 +69,7 @@ def return_dict_bounds():
         'epochs'           : 10000,
         'batch_size'       : 500,
 
-        'stop_iterations'  : 15,
+        'stop_iterations'  : 10,
 
 
         #### data gathering statefull ####

@@ -38,8 +38,8 @@ class get_df():
                              'frames': passages['passages'][i]['frames'],
                              'segmentation': passages['passages'][i]['label']['segmentation'],
                              'name': name,
-                             'movieID': count_movie}
-                             # 'location': self.get_location(name)}
+                             'movieID': count_movie,
+                             'location': self.get_location(name)}
                     count_labeled_data += 1
                     count_movie += 1
 
