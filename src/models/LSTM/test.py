@@ -100,7 +100,7 @@ class model_tests():
         return dict_
 
 
-    def _plot_results(self,dict_):
+    def _plot_results(self,dict_,CMA = 'cma'):
         fig = plt.figure(figsize=(16, 4))
 
         ax1 = plt.subplot(131)
@@ -129,7 +129,7 @@ class model_tests():
         plt.title('Time distribution')
 
 
-        plt.savefig(self.path+'distribution.png')
+        plt.savefig(self.path+'distribution'+CMA+'.png')
         # plt.show()
 
         plt.close('all')
@@ -156,55 +156,46 @@ class model_tests():
 
         return dict_
 
-   # def _get_rest_of_data(self):
-    #     dict_ ={
-    #         'shuffle_random': {
-    #             'train': [],
-    #             'val' : [],
-    #             'time' : [],
-    #                         },
-    #
-    #         'shuffle_segmentated': {
-    #             'train': [],
-    #             'val'  : [],
-    #             'time' : [],
-    #                         }
-    #     }
-    #
-    #     path = 'models/variance/shuffle_random/'
-    #     dir_ = os.listdir(path)
-    #
-    #     for directory in dir_:
-    #         path_v = path+directory+'/AUC_CMA.p'
-    #         hist   = pickle_load(path_v,None)
-    #         AUC_tr = np.max(hist['AUC'])
-    #         AUC_v  = np.max(hist['AUC_v'])
-    #         AUC_t  = np.max(hist['AUC_t'])
-    #
-    #
-    #         dict_['shuffle_random']['train'].append(AUC_tr)
-    #         dict_['shuffle_random']['val'].append(AUC_v)
-    #         dict_['shuffle_random']['val'].append(AUC_t)
-    #
-    #
-    #
-    #     path = 'models/variance/shuffle_segmentated/'
-    #     dir_ = os.listdir(path)
-    #     for directory in dir_:
-    #         path_v = path+directory+'/AUC_CMA.p'
-    #         hist   = pickle_load(path_v,None)
-    #         AUC_tr = np.max(hist['AUC'])
-    #         AUC_v  = np.max(hist['AUC_v'])
-    #         AUC_t  = np.max(hist['AUC_t'])
-    #
-    #
-    #
-    #         dict_['shuffle_segmentated']['train'].append(AUC_tr)
-    #         dict_['shuffle_segmentated']['val'].append(AUC_v)
-    #         dict_['shuffle_segmentated']['val'].append(AUC_t)
-    #
-    #
-    #     return dict_
+    def _get_rest_of_data(self):
+        dict_ = self._return_dict_()
+
+        path = 'models/variance/shuffle_random/'
+        dir_ = os.listdir(path)
+
+        for directory in dir_:
+            path_v = path+directory+'/hist.p'
+            hist   = pickle_load(path_v,None)
+            AUC_tr = np.max(hist['AUC'])
+            AUC_v  = np.max(hist['AUC_v'])
+            AUC_t  = np.max(hist['AUC_t'])
+
+
+            dict_['shuffle_random']['train'].append(AUC_tr)
+            dict_['shuffle_random']['val'].append(AUC_v)
+            dict_['shuffle_random']['val'].append(AUC_t)
+
+
+
+        path = 'models/variance/shuffle_segmentated/'
+        dir_ = os.listdir(path)
+        for directory in dir_:
+            path_v = path+directory+'/hist.p'
+            hist   = pickle_load(path_v,None)
+            AUC_tr = np.max(hist['AUC'])
+            AUC_v  = np.max(hist['AUC_v'])
+            AUC_t  = np.max(hist['AUC_t'])
+
+
+
+            dict_['shuffle_segmentated']['train'].append(AUC_tr)
+            dict_['shuffle_segmentated']['val'].append(AUC_v)
+            dict_['shuffle_segmentated']['val'].append(AUC_t)
+
+
+            self._plot_results(dict_,CMA = 'no_cma')
+
+
+        return dict_
 
 
 if __name__ == '__main__':
@@ -212,5 +203,5 @@ if __name__ == '__main__':
         dict_c, bounds = return_dict_bounds()
 
         mm = model_tests(dict_c)
-        # mm.get_rest_of_data()
-        mm.variance_calculation()
+        mm._get_rest_of_data()
+        # mm.variance_calculation()
