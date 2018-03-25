@@ -287,8 +287,6 @@ class OPS_LSTM(AUC):
 
             pickle_save(path_save+'data_segment_ROC_'+groupby+'.p',dict_data)
 
-
-
     def plot_dist(self,dict_data):
         if (dict_data['epoch'] == 0):
     

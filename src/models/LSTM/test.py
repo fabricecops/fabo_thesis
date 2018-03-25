@@ -22,7 +22,7 @@ class model_tests():
         dict_ = pickle_load('./models/variance/variance.p', None)
         # dict_   = self._return_dict_()
 
-        for i in range(self.iteration-13):
+        for i in range(0):
             self.dict_c['random_state']  = (i+13)*50
             self.dict_c['path_save']     = './models/variance/shuffle_segmentated/'
             self.dict_c['shuffle_style'] = 'segmentated'
@@ -35,7 +35,7 @@ class model_tests():
         dict_['shuffle_segmentated']['val_std'] = np.std(dict_['shuffle_segmentated']['val'])
 
 
-        for i in range(self.iteration):
+        for i in range(0):
             self.dict_c['random_state']  = i*50
             self.dict_c['shuffle_style'] = 'random'
             self.dict_c['path_save']     = './models/variance/shuffle_random/'
@@ -48,10 +48,21 @@ class model_tests():
 
         dict_['shuffle_random']['val_mean']   = np.mean(dict_['shuffle_random']['val'])
         dict_['shuffle_random']['val_std']    = np.std(dict_['shuffle_random']['val'])
-        pickle_save_(self.path+'variance.p', dict_)
+
+        for i in range(20):
+            self.dict_c['random_state']  = 50
+            self.dict_c['shuffle_style'] = 'segmentated'
+            self.dict_c['path_save']     = './models/variance/no_shuffle/'
+
+            dict_ = self._train_model(dict_=dict_)
+
+        dict_['no_shuffle']['train_mean'] = np.mean(dict_['no_shuffle']['train'])
+        dict_['no_shuffle']['train_std'] = np.std(dict_['no_shuffle']['train'])
+
+        dict_['no_shuffle']['val_mean'] = np.mean(dict_['no_shuffle']['val'])
+        dict_['no_shuffle']['val_std'] = np.std(dict_['no_shuffle']['val'])
 
 
-        pickle_save_(self.path+'variance.p', dict_)
 
 
 
