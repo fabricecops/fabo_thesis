@@ -49,7 +49,7 @@ class model_tests():
         dict_['shuffle_random']['val_mean']   = np.mean(dict_['shuffle_random']['val'])
         dict_['shuffle_random']['val_std']    = np.std(dict_['shuffle_random']['val'])
 
-        for i in range(20):
+        for i in range(13):
             self.dict_c['random_state']  = 50
             self.dict_c['shuffle_style'] = 'segmentated'
             self.dict_c['path_save']     = './models/variance/no_shuffle/'
@@ -203,5 +203,5 @@ if __name__ == '__main__':
         dict_c, bounds = return_dict_bounds()
 
         mm = model_tests(dict_c)
-        mm._get_rest_of_data()
-        # mm.variance_calculation()
+        # mm._get_rest_of_data()
+        mm.variance_calculation()
