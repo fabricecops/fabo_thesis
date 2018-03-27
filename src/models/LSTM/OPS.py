@@ -225,6 +225,20 @@ class OPS_LSTM(AUC):
 
             plt.close('all')
 
+            dict_ = {
+                'error_f_train': np.array(dict_['df_f_train']['error_m']),
+                'error_t_train': np.array(dict_['df_t_train']['error_m']),
+
+                'error_f_val'  : np.array(dict_['df_f_val']['error_m']),
+                'error_t_val'  : np.array(dict_['df_t_val']['error_m']),
+
+                'error_f_test' : np.array(dict_['df_f_test']['error_m']),
+                'error_t_test' : np.array(dict_['df_t_test']['error_m']),
+
+            }
+
+            pickle_save_(path_b+'best_error.p',dict_)
+
     def save_ROC_segment(self,dict_data,groupby):
 
         path         = dict_data['path_o']
@@ -374,8 +388,6 @@ class OPS_LSTM(AUC):
         df_f_val   = dict_data['df_f_val']
         df_f_test  = dict_data['df_f_test']
 
-
-
         dict_train = {}
         for group in df_t_train.groupby(groupby):
 
@@ -408,8 +420,6 @@ class OPS_LSTM(AUC):
         dict_data['dict_val']       = dict_val
         dict_data['dict_test']      = dict_test
         dict_data['dict_combined']  = dict_combined
-
-
 
         return dict_data
 

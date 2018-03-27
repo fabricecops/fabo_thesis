@@ -4,8 +4,8 @@ from src.dst.outputhandler.pickle import tic,toc,pickle_save_,pickle_load
 import numpy as np
 import matplotlib.pyplot as plt
 import os
-from memory_profiler import profile
-import multiprocessing as mp
+
+import GPyOpt
 
 class model_tests():
 
@@ -198,10 +198,107 @@ class model_tests():
         return dict_
 
 
+
+class BayesionOpt():
+
+    def __init__(self,bounds,dict_c):
+        self.bounds     = bounds
+        self.dict_c     = dict_c
+
+        self.len_space  = 30
+
+    #### public functions   ##############
+
+    def main(self):
+
+        train = GPyOpt.methods.BayesianOptimization(f                      = self.opt_function,
+                                                    domain                 = self.bounds,
+                                                    maximize               = self.dict_c['maximize'],
+                                                    initial_design_numdata = self.dict_c['initial_n'],
+                                                    initial_design_type    = self.dict_c['initial_dt'],
+                                                    eps                    = self.dict_c['eps']
+
+                                                    )
+
+
+        train.run_optimization(max_iter=self.dict_c['max_iter'])
+
+        print("optimized parameters: {0}".format(train.x_opt))
+        print("optimized loss: {0}".format(train.fx_opt))
+
+    #### private functions   ################
+
+    def opt_function(self,x):
+
+            mm = model_mng(self.dict_c)
+            AUC_tr, AUC_v, AUC_t = mm.main(mm.Queue_cma)
+
+            return AUC_v
+
+    def configure_bounds(self,x):
+
+        print('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX')
+        print('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX')
+        print()
+
+        array_filters = []
+
+        for i,bound in enumerate(self.bounds):
+
+
+            key   = bound['name']
+            type_ = bound['type']
+
+            boolean       = True
+
+            if('filter' not in key):
+
+                if(type_ == 'continuous'):
+                    self.dict_p[key] = float(x[:,i])
+
+                elif(type_ == 'discrete'):
+                    self.dict_p[key] = int(x[:,i])
+
+
+                len_space = self.len_space-len(key)
+                string    = key+' '*len_space+': '
+                print(string+str(self.dict_p[key]))
+
+            else:
+
+                if('filter_o' in key):
+
+
+                    if(x[:,i]==0):
+                        boolean = False
+
+                    if(boolean == True):
+                        tuple_ = (int(x[:,i]),
+                                  int(x[:,i+1]),
+                                  int(x[:,i+1]),
+                                  int(x[:,i+2]),
+                                  'relu')
+
+                        len_space = self.len_space - len('filter')
+                        string = 'filter' + ' ' * len_space + ': ',tuple_
+                        print(string)
+
+                        array_filters.append(tuple_)
+
+        self.dict_p['filters'] = array_filters
+
+        print()
+        print('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX')
+        print('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX')
+
+
+
 if __name__ == '__main__':
     if __name__ == '__main__':
         dict_c, bounds = return_dict_bounds()
 
-        mm = model_tests(dict_c)
+        # mm = model_tests(dict_c)
         # mm._get_rest_of_data()
-        mm.variance_calculation()
+        # mm.variance_calculation()
+
+        bo = BayesionOpt(dict_c,bounds)

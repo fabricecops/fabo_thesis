@@ -2,8 +2,6 @@
 .idea
 .ipynb_checkpoints
 TODO.txt
-__pychache__
-.pyc
 
 models/LSTM/
 models/Results/
@@ -15,7 +13,3 @@ data/processed/
 data/raw/
 
 plots/
-
-
-
-
