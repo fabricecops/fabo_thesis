@@ -6,7 +6,7 @@ from src.models.LSTM.CMA_ES import CMA_ES
 
 from src.models.LSTM.configure import return_dict_bounds
 import multiprocessing as mp
-
+import matplotlib.pyplot as plt
 import time
 
 class model_mng():
@@ -49,8 +49,8 @@ class model_mng():
             if(self.count > self.dict_c['stop_iterations']):
                 p.terminate()
                 break
-
         p.terminate()
+        plt.close('all')
 
 
 
@@ -59,23 +59,20 @@ class model_mng():
     def process_Queue(self,Queue_cma):
         if (Queue_cma.empty() == False):
             dict_ = self.Queue_cma.get()
-            if(dict_ != None):
-                OPS_LSTM_ = OPS_LSTM(self.dict_c)
-                OPS_LSTM_.save_output_CMA(dict_)
-                OPS_LSTM_.save_ROC_segment(dict_,'segmentation')
-                OPS_LSTM_.save_ROC_segment(dict_,'location')
-                OPS_LSTM_.plot_dist(dict_)
+            OPS_LSTM_ = OPS_LSTM(self.dict_c)
+            OPS_LSTM_.save_output_CMA(dict_)
+            OPS_LSTM_.save_ROC_segment(dict_,'segmentation')
+            OPS_LSTM_.save_ROC_segment(dict_,'location')
+            OPS_LSTM_.plot_dist(dict_)
 
-                if(dict_['AUC_v']> self.max_AUC_val):
-                    self.max_AUC_val = dict_['AUC_v']
-                    self.max_AUC_tr  = dict_['AUC']
-                    self.max_AUC_t   = dict_['AUC_t']
-                    self.count       = 0
-                else:
-                    self.count      += 1
-
+            if(dict_['AUC_v']> self.max_AUC_val):
+                self.max_AUC_val = dict_['AUC_v']
+                self.max_AUC_tr  = dict_['AUC']
+                self.max_AUC_t   = dict_['AUC_t']
+                self.count       = 0
             else:
-                self.memory_error = True
+                self.count      += 1
+
 
         # check if AUC is better, plot train/val/test seperate
         # plot together
@@ -98,12 +95,9 @@ class model_mng():
 
     def process_output(self,Queue_cma,dict_data):
 
-                CMA_ES_    = CMA_ES(self.dict_c)
-                dict_      = CMA_ES_.main_CMA_ES(dict_data)
-
-
-
-            Queue_cma.put(dict_)
+        CMA_ES_    = CMA_ES(self.dict_c)
+        dict_      = CMA_ES_.main_CMA_ES(dict_data)
+        Queue_cma.put(dict_)
 
 
 

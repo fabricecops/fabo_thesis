@@ -19,9 +19,6 @@ class data_manager(pipe_line_data):
         self.count_t      = None
 
 
-
-
-
         self.df_f_val   = None
         self.df_f_test  = None
         self.df_f_train = None
@@ -228,7 +225,7 @@ class data_manager(pipe_line_data):
 
         path,_,_          = self._return_path_dict_data(self.dict_c)
 
-        self.Series_data = pickle_load(path, self.main_data_conf, ())
+        self.Series_data  = self.main_data_conf()
 
         self.df_f = self.Series_data['df_f']
         self.df_t = self.Series_data['df_t']

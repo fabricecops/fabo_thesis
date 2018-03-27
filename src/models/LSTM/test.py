@@ -199,12 +199,11 @@ class BayesionOpt():
         self.dict_c     = dict_c
 
         self.len_space  = 30
-        self.dict_c['shuffle_style'] = 'testing'
-        self.dict_c['epoch']         = 2
-        self.dict_c['eval']          = 2
+        # self.dict_c['shuffle_style'] = 'testing'
+        # self.dict_c['epochs']         = 50
+        # self.dict_c['eval']          = 2
 
     #### public functions   ##############
-
     def main(self):
 
         train = GPyOpt.methods.BayesianOptimization(f                      = self.opt_function,
@@ -224,17 +223,29 @@ class BayesionOpt():
     #### private functions   ################
 
     def opt_function(self,x):
-            dict_c = self.configure_bounds(self.dict_c,x)
-            self.print_parameters(dict_c)
-            try:
-                mm = model_mng(self.dict_c)
-                _, opt_value, _ = mm.main(mm.Queue_cma)
-            except:
-                opt_value       = 0.5
+            opt_value = self._opt_function(x)
 
-
-            opt_value = 0.5
             return opt_value
+
+    def _opt_function(self,x):
+        dict_c = self.configure_bounds(self.dict_c, x)
+        self.print_parameters(dict_c)
+        try:
+            mm = model_mng(self.dict_c)
+            _, opt_value, _ = mm.main(mm.Queue_cma)
+        except Exception as e:
+            print(e)
+            opt_value = 0.5
+
+        # self.delete_data()
+
+        print('OPT VALUE '*3)
+        print('OPT VALUE '*3)
+        print(opt_value)
+        print('OPT VALUE '*3)
+        print('OPT VALUE '*3)
+
+        return opt_value
 
     def configure_bounds(self,dict_c,x):
 
@@ -244,15 +255,6 @@ class BayesionOpt():
         dict_c['vector']      =int(x[:,7])
 
 
-
-        dict_c['mode_data']  = []
-        if(int(x[:,11]== 1)):
-            dict_c['mode_data'].append('p')
-        if(int(x[:,12]== 1)):
-            dict_c['mode_data'].append('v')
-        if(int(x[:,13]== 1)):
-            dict_c['mode_data'].append('PCA')
-
         array_decoder = []
         for value in x[:,-3:][0]:
             if(int(value) == 1):
@@ -260,8 +262,8 @@ class BayesionOpt():
             else:
                 break
 
-        array_encoder = []
-        for value in x[:,-7:-3][0]:
+        array_encoder = [0]
+        for value in x[:,-6:-3][0]:
             if(int(value) == 1):
                 array_encoder.append(0)
             else:
@@ -304,14 +306,8 @@ class BayesionOpt():
         print('x'*50)
 
     def delete_data(self):
-        path_pd = './data/processed/df/df_pd/'
-        path_r  = './data/processed/df/df_pd/'
-
-        list_pd = os.listdir(path_pd)
+        path_r  = './data/processed/df/df_r/'
         list_r  = os.listdir(path_r)
-
-        for name in list_pd:
-            shutil.rmtree(path_pd+name)
         for name in list_r:
             shutil.rmtree(path_r+name)
 

@@ -86,17 +86,21 @@ class LSTM_(model, data_manager):
 
         for i,dimension in enumerate(self.dict_c['encoder']):
 
-            if(i==0):
+            if(i==0 and len(self.dict_c['encoder']) != 1):
                 model.add(LSTM(dimension,
                        input_shape       = self.input_shape,
-                       return_sequences  = True,
-                       stateful          = False
-                           ))
+                       return_sequences  = True ))
+
+            elif(i>0 and i != (len(self.dict_c['encoder'])-1)):
+                model.add(LSTM(dimension,return_sequences  = True))
+
+
             else:
-                model.add(LSTM(dimension,
-                       return_sequences  = False,
-                       stateful          = False
-                           ))
+                if(len(self.dict_c['encoder']) == 1):
+                    model.add(LSTM(dimension,input_shape       = self.input_shape,
+                                              return_sequences=False))
+                else:
+                    model.add(LSTM(dimension, return_sequences=False))
 
         model.add(Dense(self.dict_c['vector']))
         model.add(RepeatVector(self.input_shape[0]))
@@ -109,9 +113,7 @@ class LSTM_(model, data_manager):
                         stateful           = False))
 
         model.add(LSTM(self.dimension,
-                    return_sequences   = True,
-                    stateful           = False))
-
+                    return_sequences   = True))
 
         optimizer = self.conf_optimizer()
         model.compile(optimizer, 'mse')

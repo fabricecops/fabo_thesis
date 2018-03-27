@@ -149,7 +149,7 @@ class OPS_LSTM(AUC):
 
 
 
-        plt.close('all')
+        # plt.close('all')
 
     def save_output_CMA(self,dict_):
 
@@ -223,17 +223,17 @@ class OPS_LSTM(AUC):
 
             plt.savefig(path_b+'best_weights.png')
 
-            plt.close('all')
+            # plt.close('all')
 
             dict_ = {
-                'error_f_train': np.array(dict_['df_f_train']['error_m']),
-                'error_t_train': np.array(dict_['df_t_train']['error_m']),
+                'error_f_train': np.array(dict_['df_f_train'][['error_m','location','segmentation']]),
+                'error_t_train': np.array(dict_['df_t_train'][['error_m','location','segmentation']]),
 
-                'error_f_val'  : np.array(dict_['df_f_val']['error_m']),
-                'error_t_val'  : np.array(dict_['df_t_val']['error_m']),
+                'error_f_val'  : np.array(dict_['df_f_val'][['error_m','location','segmentation']]),
+                'error_t_val'  : np.array(dict_['df_t_val'][['error_m','location','segmentation']]),
 
-                'error_f_test' : np.array(dict_['df_f_test']['error_m']),
-                'error_t_test' : np.array(dict_['df_t_test']['error_m']),
+                'error_f_test' : np.array(dict_['df_f_test'][['error_m','location','segmentation']]),
+                'error_t_test' : np.array(dict_['df_t_test'][['error_m','location','segmentation']]),
 
             }
 
@@ -297,7 +297,7 @@ class OPS_LSTM(AUC):
             plt.xlabel('FPR')
             plt.ylabel('TPR')
             plt.savefig(path_save+'segmented_ROC'+groupby+'.png')
-            plt.close('all')
+            # plt.close('all')
 
             pickle_save(path_save+'data_segment_ROC_'+groupby+'.p',dict_data)
 
@@ -376,7 +376,7 @@ class OPS_LSTM(AUC):
             plt.title('Distribution location')
             plt.savefig(dict_data['path_o'] + 'dist_classes_segmentation.png')
 
-            plt.close('all')
+            # plt.close('all')
 
     def _get_data_segmented(self,dict_data,groupby):
 
