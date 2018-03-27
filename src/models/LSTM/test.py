@@ -5,7 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 
-import GPyOpt
+# import GPyOpt
 
 class model_tests():
 
@@ -103,9 +103,10 @@ class model_tests():
     def _plot_results(self,dict_,CMA = 'cma'):
         fig = plt.figure(figsize=(16, 4))
 
-        ax1 = plt.subplot(131)
+        ax1 = plt.subplot(121)
         ax1.hist(dict_['shuffle_random']['train'],      label = 'random',color = 'g', alpha = 0.5, bins = 10)
         ax1.hist(dict_['shuffle_segmentated']['train'],      label = 'segmentated',color = 'b', alpha = 0.5, bins = 10)
+        ax1.hist(dict_['no_shuffle']['train'],      label = 'no_shuffle',color = 'r', alpha = 0.5, bins = 10)
 
         plt.xlabel('AUC')
         plt.ylabel('Amount')
@@ -113,21 +114,15 @@ class model_tests():
         plt.title('Train distribution')
 
 
-        ax2 = plt.subplot(132)
+        ax2 = plt.subplot(122)
         ax2.hist(dict_['shuffle_random']['val'],      label = 'random',color = 'g', alpha = 0.5, bins = 10)
         ax2.hist(dict_['shuffle_segmentated']['val'],      label = 'segmentated',color = 'b', alpha = 0.5, bins = 10)
+        ax2.hist(dict_['no_shuffle']['val'],      label = 'no_shuffle',color = 'r', alpha = 0.5, bins = 10)
 
         plt.xlabel('AUC')
         plt.ylabel('Amount')
         plt.legend()
         plt.title('Val/test distribution')
-
-        ax3 = plt.subplot(133)
-        ax3.hist(dict_['time'],      label = 'random',color = 'g', alpha = 0.5, bins = 10)
-        plt.xlabel('Time')
-        plt.ylabel('amount')
-        plt.title('Time distribution')
-
 
         plt.savefig(self.path+'distribution'+CMA+'.png')
         # plt.show()
@@ -150,20 +145,28 @@ class model_tests():
                 'train' : [],
                 'val'   : [],
             },
+            'no_shuffle': {
+                'train': [],
+                'val': [],
+            },
 
-            'time'    : []
         }
 
         return dict_
 
-    def _get_rest_of_data(self):
+    def _get_rest_of_data(self,cma='cma'):
         dict_ = self._return_dict_()
 
         path = 'models/variance/shuffle_random/'
         dir_ = os.listdir(path)
 
+        if(cma == 'cma'):
+            string = '/AUC_CMA.p'
+        else:
+            string = '/hist.p'
+
         for directory in dir_:
-            path_v = path+directory+'/hist.p'
+            path_v = path+directory+string
             hist   = pickle_load(path_v,None)
             AUC_tr = np.max(hist['AUC'])
             AUC_v  = np.max(hist['AUC_v'])
@@ -179,7 +182,7 @@ class model_tests():
         path = 'models/variance/shuffle_segmentated/'
         dir_ = os.listdir(path)
         for directory in dir_:
-            path_v = path+directory+'/hist.p'
+            path_v = path+directory+string
             hist   = pickle_load(path_v,None)
             AUC_tr = np.max(hist['AUC'])
             AUC_v  = np.max(hist['AUC_v'])
@@ -191,8 +194,21 @@ class model_tests():
             dict_['shuffle_segmentated']['val'].append(AUC_v)
             dict_['shuffle_segmentated']['val'].append(AUC_t)
 
+        path = 'models/variance/no_shuffle/'
+        dir_ = os.listdir(path)
+        for directory in dir_:
+            path_v = path + directory + string
+            hist = pickle_load(path_v, None)
+            AUC_tr = np.max(hist['AUC'])
+            AUC_v = np.max(hist['AUC_v'])
+            AUC_t = np.max(hist['AUC_t'])
 
-            self._plot_results(dict_,CMA = 'no_cma')
+            dict_['no_shuffle']['train'].append(AUC_tr)
+            dict_['no_shuffle']['val'].append(AUC_v)
+            dict_['no_shuffle']['val'].append(AUC_t)
+
+
+        self._plot_results(dict_,CMA = cma)
 
 
         return dict_
@@ -297,8 +313,8 @@ if __name__ == '__main__':
     if __name__ == '__main__':
         dict_c, bounds = return_dict_bounds()
 
-        # mm = model_tests(dict_c)
-        # mm._get_rest_of_data()
+        mm = model_tests(dict_c)
+        mm._get_rest_of_data(cma= 'no_cma')
         # mm.variance_calculation()
 
-        bo = BayesionOpt(dict_c,bounds)
+        # bo = BayesionOpt(dict_c,bounds)
