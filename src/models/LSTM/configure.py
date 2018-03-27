@@ -18,7 +18,7 @@ def return_dict_bounds():
         'nr_contours'      : 2,
 
         ## Peak derivation #############
-        'resolution'       : 5,
+        'resolution'       : 3,
         'area'             : 200,
         'min_h'            : 20,
         'max_h'            : 200,
@@ -27,7 +27,7 @@ def return_dict_bounds():
         'PCA_components'   : 40,
 
         #### Data manager  #########
-        'mode_data'        : ['p','PCA'],
+        'mode_data'        : ['p','v','PCA'],
         'shuffle_style'    : 'segmentated',
 
         ###### CMA_ES    ######
@@ -52,13 +52,13 @@ def return_dict_bounds():
 
         ##### model definition  #####
         'window'           : 0,
-        'time_dim'         : 3,
+        'time_dim'         : 20,
         'pred_seq'         : True,
         'stateful'         : False,
 
-        'encoder'          : [100,200,300],
-        'vector'           : 100,
-        'decoder'          : [100,200,300],
+        'encoder'          : [500,500,500,500],
+        'vector'           : 500,
+        'decoder'          : [500,500,500],
 
 
         ##### fit                    #####

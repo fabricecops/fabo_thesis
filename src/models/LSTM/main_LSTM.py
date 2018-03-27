@@ -25,7 +25,6 @@ class model_mng():
         self.max_AUC_tr  = 0
         self.max_AUC_t   = 0
 
-        self.memory_error=False
 
     def main(self,Queue_cma):
 
@@ -47,14 +46,13 @@ class model_mng():
                     p.daemon = True
                     p.start()
 
-            if(self.count > self.dict_c['stop_iterations'] or self.memory_error == True):
+            if(self.count > self.dict_c['stop_iterations']):
                 p.terminate()
                 break
 
         p.terminate()
 
-        if(self.memory_error == True):
-            self.max_AUC_val = 0.5
+
 
         return self.max_AUC_tr,self.max_AUC_val,self.max_AUC_val
 
@@ -99,18 +97,10 @@ class model_mng():
         return dict_data
 
     def process_output(self,Queue_cma,dict_data):
-            try:
 
                 CMA_ES_    = CMA_ES(self.dict_c)
                 dict_      = CMA_ES_.main_CMA_ES(dict_data)
-            except Exception as e:
-                dict_      = None
 
-                print('x'*50)
-                print('x'*50)
-                print(e)
-                print('x'*50)
-                print('x'*50)
 
 
             Queue_cma.put(dict_)
