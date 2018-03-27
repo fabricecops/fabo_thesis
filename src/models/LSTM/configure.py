@@ -18,7 +18,7 @@ def return_dict_bounds():
         'nr_contours'      : 2,
 
         ## Peak derivation #############
-        'resolution'       : 6,
+        'resolution'       : 5,
         'area'             : 200,
         'min_h'            : 20,
         'max_h'            : 200,
@@ -55,6 +55,10 @@ def return_dict_bounds():
         'time_dim'         : 3,
         'pred_seq'         : True,
         'stateful'         : False,
+
+        'encoder'          : [100,200,300],
+        'vector'           : 100,
+        'decoder'          : [100,200,300],
 
 
         ##### fit                    #####
@@ -122,10 +126,38 @@ def return_dict_bounds():
 
     }
 
-    bounds = [{'name': 'dropout',  'type': 'continuous', 'domain': (0.0, 0.4)},
-              {'name': 'lr',       'type': 'continuous', 'domain': (0.0001, 0.01)},
-              {'name': 'time_dim', 'type': 'discrete',   'domain': (5, 10, 20, 40)},
-              {'name': 'latent',   'type': 'discrete',   'domain': (100, 150, 200, 250, 300)}]
+    bounds = [
+                {'name': 'lr',           'type': 'continuous', 'domain': (0.0001, 0.1)},
+                {'name': 'sigma',        'type': 'continuous', 'domain': (0.0001,2)},
+                {'name': 'time_dim',     'type': 'continuous', 'domain': (10, 20)},
+
+                {'name': 'hidden_e_1', 'type': 'continuous', 'domain': (0, 500)},
+                {'name': 'hidden_e_2', 'type': 'continuous', 'domain': (0, 500)},
+                {'name': 'hidden_e_3', 'type': 'continuous', 'domain': (0, 500)},
+                {'name': 'hidden_e_4', 'type': 'continuous', 'domain': (0, 500)},
+
+                {'name': 'vector',     'type': 'continuous', 'domain': (0, 500)},
+
+                {'name': 'hidden_d_1', 'type': 'continuous', 'domain': (0, 500)},
+                {'name': 'hidden_d_2', 'type': 'continuous', 'domain': (0, 500)},
+                {'name': 'hidden_d_3', 'type': 'continuous', 'domain': (0, 500)},
+
+                {'name': 'position',     'type': 'discrete',   'domain': (0,1)},
+                {'name': 'PCA',          'type': 'discrete',   'domain': (0,1)},
+                {'name': 'v',            'type': 'discrete',   'domain': (0,1)},
+
+                {'name': 'hidden_e_1',   'type': 'discrete',   'domain': (0,1)},
+                {'name': 'hidden_e_2',   'type': 'discrete',   'domain': (0,1)},
+                {'name': 'hidden_e_3',   'type': 'discrete',   'domain': (0,1)},
+                {'name': 'hidden_e_4',   'type': 'discrete', 'domain': (0, 1)},
+
+                {'name': 'hidden_e_1',   'type': 'discrete',   'domain': (0,1)},
+                {'name': 'hidden_e_2',   'type': 'discrete',   'domain': (0,1)},
+                {'name': 'hidden_e_3',   'type': 'discrete',   'domain': (0,1)},
+
+
+
+    ]
 
     return dict_c,bounds
 

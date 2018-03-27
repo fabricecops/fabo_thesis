@@ -4,6 +4,7 @@ from src.dst.outputhandler.pickle import tic,toc,pickle_save_,pickle_load
 import numpy as np
 import matplotlib.pyplot as plt
 import os
+import shutil
 
 import GPyOpt
 
@@ -15,12 +16,11 @@ class model_tests():
         self.iteration = 20
         self.path      = './models/variance/'
 
-        self.testing   = False
-
+        self.testing   = True
 
     def variance_calculation(self):
-        dict_ = pickle_load('./models/variance/variance.p', None)
-        # dict_   = self._return_dict_()
+        # dict_ = pickle_load('./models/variance/variance.p', None)
+        dict_   = self._return_dict_()
 
         for i in range(0):
             self.dict_c['random_state']  = (i+13)*50
@@ -35,7 +35,7 @@ class model_tests():
         dict_['shuffle_segmentated']['val_std'] = np.std(dict_['shuffle_segmentated']['val'])
 
 
-        for i in range(0):
+        for i in range(2):
             self.dict_c['random_state']  = i*50
             self.dict_c['shuffle_style'] = 'random'
             self.dict_c['path_save']     = './models/variance/shuffle_random/'
@@ -49,7 +49,7 @@ class model_tests():
         dict_['shuffle_random']['val_mean']   = np.mean(dict_['shuffle_random']['val'])
         dict_['shuffle_random']['val_std']    = np.std(dict_['shuffle_random']['val'])
 
-        for i in range(13):
+        for i in range(2):
             self.dict_c['random_state']  = 50
             self.dict_c['shuffle_style'] = 'segmentated'
             self.dict_c['path_save']     = './models/variance/no_shuffle/'
@@ -62,14 +62,10 @@ class model_tests():
         dict_['no_shuffle']['val_mean'] = np.mean(dict_['no_shuffle']['val'])
         dict_['no_shuffle']['val_std'] = np.std(dict_['no_shuffle']['val'])
 
-
-
-
-
     def _train_model(self,dict_):
 
         if self.testing == True:
-            self.dict_c['shuffle_style'] = 'testing'
+            # self.dict_c['shuffle_style'] = 'testing'
             self.dict_c['evals']         = 2
             self.dict_c['epochs']        = 3
 
@@ -98,7 +94,6 @@ class model_tests():
 
 
         return dict_
-
 
     def _plot_results(self,dict_,CMA = 'cma'):
         fig = plt.figure(figsize=(16, 4))
@@ -133,8 +128,6 @@ class model_tests():
         # plt.show()
 
         plt.close('all')
-
-
 
     def _return_dict_(self):
 
@@ -201,11 +194,14 @@ class model_tests():
 
 class BayesionOpt():
 
-    def __init__(self,bounds,dict_c):
+    def __init__(self,dict_c,bounds):
         self.bounds     = bounds
         self.dict_c     = dict_c
 
         self.len_space  = 30
+        self.dict_c['shuffle_style'] = 'testing'
+        self.dict_c['epoch']         = 2
+        self.dict_c['eval']          = 2
 
     #### public functions   ##############
 
@@ -217,7 +213,6 @@ class BayesionOpt():
                                                     initial_design_numdata = self.dict_c['initial_n'],
                                                     initial_design_type    = self.dict_c['initial_dt'],
                                                     eps                    = self.dict_c['eps']
-
                                                     )
 
 
@@ -229,68 +224,96 @@ class BayesionOpt():
     #### private functions   ################
 
     def opt_function(self,x):
-
-            mm = model_mng(self.dict_c)
-            AUC_tr, AUC_v, AUC_t = mm.main(mm.Queue_cma)
-
-            return AUC_v
-
-    def configure_bounds(self,x):
-
-        print('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX')
-        print('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX')
-        print()
-
-        array_filters = []
-
-        for i,bound in enumerate(self.bounds):
+            dict_c = self.configure_bounds(self.dict_c,x)
+            self.print_parameters(dict_c)
+            try:
+                mm = model_mng(self.dict_c)
+                _, opt_value, _ = mm.main(mm.Queue_cma)
+            except:
+                opt_value       = 0.5
 
 
-            key   = bound['name']
-            type_ = bound['type']
+            opt_value = 0.5
+            return opt_value
 
-            boolean       = True
+    def configure_bounds(self,dict_c,x):
 
-            if('filter' not in key):
-
-                if(type_ == 'continuous'):
-                    self.dict_p[key] = float(x[:,i])
-
-                elif(type_ == 'discrete'):
-                    self.dict_p[key] = int(x[:,i])
+        dict_c['lr']         = float(x[:,0])
+        dict_c['sigma']      = float(x[:,1])
+        dict_c['time_dim']   = int(x[:,2])
+        dict_c['vector']      =int(x[:,7])
 
 
-                len_space = self.len_space-len(key)
-                string    = key+' '*len_space+': '
-                print(string+str(self.dict_p[key]))
 
+        dict_c['mode_data']  = []
+        if(int(x[:,11]== 1)):
+            dict_c['mode_data'].append('p')
+        if(int(x[:,12]== 1)):
+            dict_c['mode_data'].append('v')
+        if(int(x[:,13]== 1)):
+            dict_c['mode_data'].append('PCA')
+
+        array_decoder = []
+        for value in x[:,-3:][0]:
+            if(int(value) == 1):
+                array_decoder.append(0)
             else:
+                break
 
-                if('filter_o' in key):
+        array_encoder = []
+        for value in x[:,-7:-3][0]:
+            if(int(value) == 1):
+                array_encoder.append(0)
+            else:
+                break
+
+        for i in range(len(array_encoder)):
+            array_encoder[i] = int(x[:,i+3])
+
+        for i in range(len(array_decoder)):
+            array_decoder[i] = int(x[:,i+8])
 
 
-                    if(x[:,i]==0):
-                        boolean = False
+        dict_c['encoder'] = array_encoder
+        dict_c['decoder'] = array_decoder
 
-                    if(boolean == True):
-                        tuple_ = (int(x[:,i]),
-                                  int(x[:,i+1]),
-                                  int(x[:,i+1]),
-                                  int(x[:,i+2]),
-                                  'relu')
+        return dict_c
 
-                        len_space = self.len_space - len('filter')
-                        string = 'filter' + ' ' * len_space + ': ',tuple_
-                        print(string)
+    def print_parameters(self,dict_c):
+        print('x'*50)
+        print('x'*50)
+        print('x'*50)
+        print()
 
-                        array_filters.append(tuple_)
+        len_space = 30
+        for element in self.bounds:
 
-        self.dict_p['filters'] = array_filters
+            try:
+                len_space_t = len_space - len(element['name'])
+                string      =   element['name'] + ' ' * len_space_t + ': ', dict_c[element['name']]
+                print(string)
+            except Exception as e:
+                pass
+        print(dict_c['encoder'])
+        print(dict_c['decoder'])
+        print(dict_c['mode_data'])
 
         print()
-        print('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX')
-        print('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX')
+        print('x'*50)
+        print('x'*50)
+        print('x'*50)
 
+    def delete_data(self):
+        path_pd = './data/processed/df/df_pd/'
+        path_r  = './data/processed/df/df_pd/'
+
+        list_pd = os.listdir(path_pd)
+        list_r  = os.listdir(path_r)
+
+        for name in list_pd:
+            shutil.rmtree(path_pd+name)
+        for name in list_r:
+            shutil.rmtree(path_r+name)
 
 
 if __name__ == '__main__':
@@ -300,5 +323,5 @@ if __name__ == '__main__':
         # mm = model_tests(dict_c)
         # mm._get_rest_of_data()
         # mm.variance_calculation()
-
         bo = BayesionOpt(dict_c,bounds)
+        bo.main()

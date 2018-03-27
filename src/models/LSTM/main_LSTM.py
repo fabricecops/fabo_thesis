@@ -25,10 +25,11 @@ class model_mng():
         self.max_AUC_tr  = 0
         self.max_AUC_t   = 0
 
+        self.memory_error=False
+
     def main(self,Queue_cma):
 
         for i in range(self.dict_c['epochs']):
-
 
             dict_data    = self.process_LSTM(i)
             self.process_Queue(Queue_cma)
@@ -46,30 +47,37 @@ class model_mng():
                     p.daemon = True
                     p.start()
 
-            if(self.count > self.dict_c['stop_iterations']):
+            if(self.count > self.dict_c['stop_iterations'] or self.memory_error == True):
                 p.terminate()
                 break
 
         p.terminate()
+
+        if(self.memory_error == True):
+            self.max_AUC_val = 0.5
 
         return self.max_AUC_tr,self.max_AUC_val,self.max_AUC_val
 
     def process_Queue(self,Queue_cma):
         if (Queue_cma.empty() == False):
             dict_ = self.Queue_cma.get()
-            OPS_LSTM_ = OPS_LSTM(self.dict_c)
-            OPS_LSTM_.save_output_CMA(dict_)
-            OPS_LSTM_.save_ROC_segment(dict_,'segmentation')
-            OPS_LSTM_.save_ROC_segment(dict_,'location')
-            OPS_LSTM_.plot_dist(dict_)
+            if(dict_ != None):
+                OPS_LSTM_ = OPS_LSTM(self.dict_c)
+                OPS_LSTM_.save_output_CMA(dict_)
+                OPS_LSTM_.save_ROC_segment(dict_,'segmentation')
+                OPS_LSTM_.save_ROC_segment(dict_,'location')
+                OPS_LSTM_.plot_dist(dict_)
 
-            if(dict_['AUC_v']> self.max_AUC_val):
-                self.max_AUC_val = dict_['AUC_v']
-                self.max_AUC_tr  = dict_['AUC']
-                self.max_AUC_t   = dict_['AUC_t']
-                self.count       = 0
+                if(dict_['AUC_v']> self.max_AUC_val):
+                    self.max_AUC_val = dict_['AUC_v']
+                    self.max_AUC_tr  = dict_['AUC']
+                    self.max_AUC_t   = dict_['AUC_t']
+                    self.count       = 0
+                else:
+                    self.count      += 1
+
             else:
-                self.count      += 1
+                self.memory_error = True
 
         # check if AUC is better, plot train/val/test seperate
         # plot together
@@ -91,9 +99,18 @@ class model_mng():
         return dict_data
 
     def process_output(self,Queue_cma,dict_data):
+            try:
 
-            CMA_ES_    = CMA_ES(self.dict_c)
-            dict_      = CMA_ES_.main_CMA_ES(dict_data)
+                CMA_ES_    = CMA_ES(self.dict_c)
+                dict_      = CMA_ES_.main_CMA_ES(dict_data)
+            except Exception as e:
+                dict_      = None
+
+                print('x'*50)
+                print('x'*50)
+                print(e)
+                print('x'*50)
+                print('x'*50)
 
 
             Queue_cma.put(dict_)

@@ -83,39 +83,35 @@ class LSTM_(model, data_manager):
     def _create_model_unstateful(self):
         model = Sequential()
 
-        hidden1 = 400
-        hidden2 = 300
-        hidden3 = 200
 
-        model.add(LSTM(hidden1,
-               input_shape       = self.input_shape,
-               return_sequences  = True,
-               stateful          = False
-                   ))
+        for i,dimension in enumerate(self.dict_c['encoder']):
 
+            if(i==0):
+                model.add(LSTM(dimension,
+                       input_shape       = self.input_shape,
+                       return_sequences  = True,
+                       stateful          = False
+                           ))
+            else:
+                model.add(LSTM(dimension,
+                       return_sequences  = False,
+                       stateful          = False
+                           ))
 
-        model.add(LSTM(hidden2,
-               return_sequences  = False,
-               stateful          = False
-                   ))
-
-        model.add(Dense(hidden3))
-
-
+        model.add(Dense(self.dict_c['vector']))
         model.add(RepeatVector(self.input_shape[0]))
 
 
+        for i,dimension in enumerate(self.dict_c['encoder']):
 
-        model.add(LSTM(hidden2,
-                    return_sequences   = True,
-                    stateful           = False))
-
+            model.add(LSTM(dimension,
+                        return_sequences   = True,
+                        stateful           = False))
 
         model.add(LSTM(self.dimension,
                     return_sequences   = True,
                     stateful           = False))
 
-        # model.add(TimeDistributed(Dense(self.output_dim)))
 
         optimizer = self.conf_optimizer()
         model.compile(optimizer, 'mse')
