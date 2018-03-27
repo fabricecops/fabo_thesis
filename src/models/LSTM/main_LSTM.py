@@ -59,7 +59,9 @@ class model_mng():
             dict_ = self.Queue_cma.get()
             OPS_LSTM_ = OPS_LSTM(self.dict_c)
             OPS_LSTM_.save_output_CMA(dict_)
-            OPS_LSTM_.save_ROC_segment(dict_)
+            OPS_LSTM_.save_ROC_segment(dict_,'segmentation')
+            OPS_LSTM_.save_ROC_segment(dict_,'location')
+            OPS_LSTM_.plot_dist(dict_)
 
             if(dict_['AUC_v']> self.max_AUC_val):
                 self.max_AUC_val = dict_['AUC_v']

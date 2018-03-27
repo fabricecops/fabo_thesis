@@ -38,18 +38,14 @@ class data_manager(pipe_line_data):
 
     def main_data_conf(self,*args):
         path_df,path_sc_p,path_sc_v,_ = self.return_path_pd(self.dict_c)
-
-
-
         self.df           = pickle_load(path_df,self.peak_derivation, ())
         self.len_df       = len(self.df)
-
-
 
         self.df =  apply_by_multiprocessing(self.df, self._configure_data_movie, axis=1, workers=12)
         self.df =  self.df[self.df['data_X'] != '']
         self.df =  self.df[self.df['data_y'] != '']
         self.count_t = len(self.df)
+        print(self.df.columns)
         self.df =  self.df[['name','label','frames','data_X','data_y','segmentation','location']]
         self._print_data()
 
@@ -277,10 +273,22 @@ class data_manager(pipe_line_data):
             self.df_t_val   = pd.DataFrame()
             self.df_t_test  = pd.DataFrame()
 
-            for i,group in enumerate(self.df_t.groupby(['segmentation'])):
+            state_var       = True
+            for i,group in enumerate(self.df_t.groupby(['segmentation','location'])):
 
-                val_samples_t  = round(len(group[1]) * self.dict_c['val_split_f'])
+
+                val_samples_t  = round(len(group[1]) * self.dict_c['val_split_t'])
                 test_samples_t = round(len(group[1]) * self.dict_c['test_split_t'])
+
+                if(val_samples_t == 0 and test_samples_t == 0 and group[0][1] == 'bnp_1' ):
+                    if(state_var == True):
+                        val_samples_t = 1
+                        state_var     = False
+                    else:
+                        test_samples_t = 1
+                        state_var      = True
+
+
 
                 if(i==0):
                     self.df_t_train = group[1].iloc[val_samples_t + test_samples_t:len(group[1])]
@@ -288,10 +296,12 @@ class data_manager(pipe_line_data):
                     self.df_t_test  = group[1].iloc[val_samples_t:val_samples_t + test_samples_t]
 
                 else:
-
                     self.df_t_train = self.df_t_train.append(group[1].iloc[val_samples_t + test_samples_t:len(group[1])],ignore_index=True)
                     self.df_t_val   = self.df_t_val.append(group[1].iloc[0:val_samples_t],ignore_index=True)
                     self.df_t_test  = self.df_t_test.append(group[1].iloc[val_samples_t:val_samples_t + test_samples_t],ignore_index=True)
+
+
+
 
 
         self.df_f_train = self.df_f_train.reset_index()
