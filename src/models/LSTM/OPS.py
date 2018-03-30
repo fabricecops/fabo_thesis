@@ -18,6 +18,7 @@ class OPS_LSTM(AUC):
 
         dict_data2           = self._get_data_no_cma(dict_data)
         self.save_plots_no_cma(dict_data2)
+        plt.close('all')
 
         return dict_data2['AUC_v']
     def save_output(self,dict_data,i):

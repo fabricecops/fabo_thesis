@@ -31,9 +31,10 @@ def return_dict_bounds():
         'shuffle_style'    : 'segmentated',
 
         ###### CMA_ES    ######
+        'CMA_ES'           : True,
         'verbose_CMA'      : 0,
         'verbose_CMA_log'  : 0,
-        'evals'            : 10,
+        'evals'            : 5000,
         'bounds'           : [-100,100.],
         'sigma'            : 0.4222222222222225,
         'progress_ST'      : 0.3,
@@ -71,11 +72,11 @@ def return_dict_bounds():
 
         'verbose'          : 2,
         'epochs'           : 10000,
-        'batch_size'       : 500,
+        'batch_size'       : 1024,
 
         'SI_cma'           : 15,
-        'SI_no_cma'        : 2,
-        'SI_no_cma_AUC' : 2,
+        'SI_no_cma'        : 80,
+        'SI_no_cma_AUC'    : 150,
 
         'TH_loss'          : 0.025,
 

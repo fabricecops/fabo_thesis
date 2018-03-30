@@ -306,16 +306,40 @@ class model_tuning():
 
     def main(self,dict_c):
 
-        dict_c['shuffle_style'] = 'testing'
         self.DEEP_1(dict_c)
+        self.DEEP_2(dict_c)
+        self.DEEP_3(dict_c)
 
+    def DEEP_3(self,dict_c):
+        dict_c['path_save'] = './models/ensemble/DEEP3/lr/'
+        dict_c['decoder']   = [300,350]
+        dict_c['encoder']   = [400,350,300]
+        dict_c['vector']    = 400
+        dict_c['CMA_ES']    = False
 
+        lr_mapping = self.LR_test(dict_c)
+        lr_mapping.sort(key=lambda tup: tup[1])
+
+        dict_c['lr'] = lr_mapping[0][0]
+
+        dict_c['path_save'] = './models/ensemble/DEEP3/hidden/'
+        encoder_a = [[350,300,250],[400,350,300],[450,400,350],[300,250,200],[250,200,150]]
+        vector_a  = [300, 400, 500,600]
+
+        for encoder in encoder_a:
+            for vector in vector_a:
+                dict_c['CMA_ES']  = True
+                dict_c['decoder'] = [encoder[1],encoder[0]]
+                dict_c['encoder'] = encoder
+                dict_c['vector']  = vector
+                self.train_model(dict_c)
 
     def DEEP_2(self,dict_c):
-        dict_c['path_save'] = './models/DEEP1/lr/'
-        dict_c['decoder'] = []
-        dict_c['encoder'] = [300]
+        dict_c['path_save'] = './models/ensemble/DEEP2/lr/'
+        dict_c['decoder'] = [350]
+        dict_c['encoder'] = [400,300]
         dict_c['vector'] = 400
+        dict_c['CMA_ES'] = False
 
         lr_mapping = self.LR_test(dict_c)
         lr_mapping.sort(key=lambda tup: tup[1])
@@ -323,22 +347,26 @@ class model_tuning():
         print(lr_mapping)
         dict_c['lr'] = lr_mapping[0][0]
 
-        dict_c['path_save'] = './models/DEEP1/hidden/'
-        encoder_a = [200, 250, 300, 350, 400]
+        dict_c['path_save'] = './models/ensemble/DEEP2/hidden/'
+        encoder_a = [[250,200],[300,250],[400,350],[500,400]]
+
+
         vector_a = [300, 400, 500]
 
         for encoder in encoder_a:
             for vector in vector_a:
-                dict_c['decoder'] = []
-                dict_c['encoder'] = [encoder]
-                dict_c['vector'] = vector
-
+                dict_c['CMA_ES']  = True
+                dict_c['decoder'] = [encoder[0]]
+                dict_c['encoder'] = encoder
+                dict_c['vector']  = vector
+                self.train_model(dict_c)
 
     def DEEP_1(self,dict_c):
-            dict_c['path_save'] = './models/DEEP1/lr/'
-            dict_c['decoder']   = []
-            dict_c['encoder']   = [300]
+            dict_c['path_save'] = './models/ensemble/DEEP1/lr/'
+            dict_c['decoder']   = [400]
+            dict_c['encoder']   = [350,400]
             dict_c['vector']    = 400
+            dict_c['CMA_ES']    = False
 
             lr_mapping = self.LR_test(dict_c)
             lr_mapping.sort(key=lambda tup: tup[1])
@@ -347,17 +375,17 @@ class model_tuning():
             dict_c['lr'] = lr_mapping[0][0]
 
 
-            dict_c['path_save'] = './models/DEEP1/hidden/'
+            dict_c['path_save'] = './models/ensemble/DEEP1/hidden/'
             encoder_a = [200,250,300,350,400]
             vector_a  = [300,400,500]
 
             for encoder in encoder_a:
                 for vector in vector_a:
+                    dict_c['CMA_ES']  = True
                     dict_c['decoder'] = []
                     dict_c['encoder'] = [encoder]
                     dict_c['vector']  = vector
                     self.train_model(dict_c)
-
 
     def LR_test(self,dict_c):
 
