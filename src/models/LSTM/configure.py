@@ -73,7 +73,11 @@ def return_dict_bounds():
         'epochs'           : 10000,
         'batch_size'       : 500,
 
-        'stop_iterations'  : 15,
+        'SI_cma'           : 15,
+        'SI_no_cma'        : 2,
+        'SI_no_cma_AUC' : 2,
+
+        'TH_loss'          : 0.025,
 
 
         #### data gathering statefull ####

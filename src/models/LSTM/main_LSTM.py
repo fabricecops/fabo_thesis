@@ -20,11 +20,16 @@ class model_mng():
         self.dict_data   = None
         self.Queue_cma   = mp.Queue()
 
-        self.count       = 0
-        self.count_LSTM  = 0
+        self.count_cma    = 0
+        self.count_no_cma = 0
+        self.count_no_cma_AUC = 0.
+
+
         self.max_AUC_val = 0
         self.max_AUC_tr  = 0
         self.max_AUC_t   = 0
+
+        self.AUC_no_cma  = 0
 
 
         self.state_loss  = 0.
@@ -49,25 +54,25 @@ class model_mng():
                     p.daemon = True
                     p.start()
 
-            if(self.count > self.dict_c['stop_iterations'] and self.count_LSTM > self.dict_c['stop_iterations_LSTM']  ):
+            print('x'*50)
+            print('x'*50)
+            print(self.count_cma ,self.count_no_cma,self.count_no_cma_AUC)
+            print('x'*50)
+            print('x'*50)
+
+            if(self.count_cma > self.dict_c['SI_cma'] or
+               self.count_no_cma > self.dict_c['SI_no_cma'] or
+               self.count_no_cma_AUC > self.dict_c['SI_no_cma_AUC']):
                 break
             plt.close('all')
 
         p.terminate()
 
         while p.is_alive():
-            print('lol')
             time.sleep(1)
 
         p.terminate()
 
-        if(p.is_alive() == True):
-            print('p is alive')
-        else:
-            print('p is dead')
-        print('x'*50)
-        print(mp.current_process())
-        print('x'*50)
 
         return self.max_AUC_tr,self.max_AUC_val,self.max_AUC_val
 
@@ -105,15 +110,23 @@ class model_mng():
 
         OPS_LSTM_ = OPS_LSTM(self.dict_c)
         dict_data['epoch'] = i
-        OPS_LSTM_.main(dict_data)
+        AUC_v = OPS_LSTM_.main(dict_data)
 
 
 
 
         if(loss[0] > self.dict_c['TH_loss']):
-            self.count_LSTM
+            self.count_no_cma += 1
+        else:
+            self.count_no_cma  = 0
 
 
+
+        if(AUC_v > self.AUC_no_cma):
+            self.AUC_no_cma    = AUC_v
+            self.count_no_cma_AUC  = 0
+        else:
+            self.count_no_cma_AUC  += 1
 
 
 

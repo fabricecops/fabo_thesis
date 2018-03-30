@@ -9,7 +9,6 @@ import time
 import GPyOpt
 import psutil
 import signal
-from memory_profiler import profile
 
 class model_tests():
 
@@ -193,8 +192,6 @@ class model_tests():
 
         return dict_
 
-
-
 class BayesionOpt():
 
     def __init__(self,dict_c,bounds):
@@ -224,7 +221,6 @@ class BayesionOpt():
         print("optimized loss: {0}".format(train.fx_opt))
 
     #### private functions   ################
-    @profile
     def opt_function(self,x):
             opt_value = self.train_model(x)
             time.sleep(3)
@@ -302,14 +298,101 @@ class BayesionOpt():
         for name in list_r:
             shutil.rmtree(path_r+name)
 
+class model_tuning():
+
+    def __init__(self):
+        pass
+
+
+    def main(self,dict_c):
+
+        dict_c['shuffle_style'] = 'testing'
+        self.DEEP_1(dict_c)
+
+
+
+    def DEEP_2(self,dict_c):
+        dict_c['path_save'] = './models/DEEP1/lr/'
+        dict_c['decoder'] = []
+        dict_c['encoder'] = [300]
+        dict_c['vector'] = 400
+
+        lr_mapping = self.LR_test(dict_c)
+        lr_mapping.sort(key=lambda tup: tup[1])
+
+        print(lr_mapping)
+        dict_c['lr'] = lr_mapping[0][0]
+
+        dict_c['path_save'] = './models/DEEP1/hidden/'
+        encoder_a = [200, 250, 300, 350, 400]
+        vector_a = [300, 400, 500]
+
+        for encoder in encoder_a:
+            for vector in vector_a:
+                dict_c['decoder'] = []
+                dict_c['encoder'] = [encoder]
+                dict_c['vector'] = vector
+
+
+    def DEEP_1(self,dict_c):
+            dict_c['path_save'] = './models/DEEP1/lr/'
+            dict_c['decoder']   = []
+            dict_c['encoder']   = [300]
+            dict_c['vector']    = 400
+
+            lr_mapping = self.LR_test(dict_c)
+            lr_mapping.sort(key=lambda tup: tup[1])
+
+            print(lr_mapping)
+            dict_c['lr'] = lr_mapping[0][0]
+
+
+            dict_c['path_save'] = './models/DEEP1/hidden/'
+            encoder_a = [200,250,300,350,400]
+            vector_a  = [300,400,500]
+
+            for encoder in encoder_a:
+                for vector in vector_a:
+                    dict_c['decoder'] = []
+                    dict_c['encoder'] = [encoder]
+                    dict_c['vector']  = vector
+                    self.train_model(dict_c)
+
+
+    def LR_test(self,dict_c):
+
+        lr_a     = [0.1,0.01,0.001,0.0001]
+        result_a = []
+        for lr in lr_a:
+
+            dict_c['lr'] = lr
+            opt_value = self.train_model(dict_c)
+            result_a.append((lr,opt_value))
+
+        return result_a
+
+    def train_model(self,dict_c):
+        mm = model_mng(dict_c)
+        _, opt_value, _ = mm.main(mm.Queue_cma)
+
+        # print()
+        # print('OPT VALUE ' * 3)
+        # print('OPT VALUE ' * 3)
+        # print(opt_value)
+        # print('OPT VALUE ' * 3)
+        # print('OPT VALUE ' * 3)
+        # print()
+        return opt_value
+
 
 if __name__ == '__main__':
-    if __name__ == '__main__':
-        dict_c, bounds = return_dict_bounds()
+    dict_c, bounds = return_dict_bounds()
 
-        # mm = model_tests(dict_c)
-        # mm._get_rest_of_data()
-        # mm.variance_calculation()
-        bo = BayesionOpt(dict_c,bounds)
-        bo.main()
+    # mm = model_tests(dict_c)
+    # mm._get_rest_of_data()
+    # mm.variance_calculation()
+    # bo = BayesionOpt(dict_c,bounds)
+    # bo.main()
 
+
+    model_tuning().main(dict_c)
