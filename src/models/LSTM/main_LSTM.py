@@ -21,10 +21,13 @@ class model_mng():
         self.Queue_cma   = mp.Queue()
 
         self.count       = 0
+        self.count_LSTM  = 0
         self.max_AUC_val = 0
         self.max_AUC_tr  = 0
         self.max_AUC_t   = 0
 
+
+        self.state_loss  = 0.
 
     def main(self,Queue_cma):
 
@@ -46,13 +49,25 @@ class model_mng():
                     p.daemon = True
                     p.start()
 
-            if(self.count > self.dict_c['stop_iterations']):
-                p.terminate()
+            if(self.count > self.dict_c['stop_iterations'] and self.count_LSTM > self.dict_c['stop_iterations_LSTM']  ):
                 break
+            plt.close('all')
+
         p.terminate()
-        plt.close('all')
 
+        while p.is_alive():
+            print('lol')
+            time.sleep(1)
 
+        p.terminate()
+
+        if(p.is_alive() == True):
+            print('p is alive')
+        else:
+            print('p is dead')
+        print('x'*50)
+        print(mp.current_process())
+        print('x'*50)
 
         return self.max_AUC_tr,self.max_AUC_val,self.max_AUC_val
 
@@ -80,15 +95,26 @@ class model_mng():
     def process_LSTM(self,i):
 
         loss,val_loss            = self.model.fit()
-
         dict_data               = self.model.predict()
+
         dict_data['loss_f_tr']  = loss[0]
         dict_data['loss_f_v']   = val_loss[0]
         dict_data['epoch']      = i
 
+
+
         OPS_LSTM_ = OPS_LSTM(self.dict_c)
         dict_data['epoch'] = i
         OPS_LSTM_.main(dict_data)
+
+
+
+
+        if(loss[0] > self.dict_c['TH_loss']):
+            self.count_LSTM
+
+
+
 
 
         return dict_data

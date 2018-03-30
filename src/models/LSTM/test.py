@@ -5,8 +5,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 import shutil
-
+import time
 import GPyOpt
+import psutil
+import signal
+from memory_profiler import profile
 
 class model_tests():
 
@@ -221,13 +224,14 @@ class BayesionOpt():
         print("optimized loss: {0}".format(train.fx_opt))
 
     #### private functions   ################
-
+    @profile
     def opt_function(self,x):
-            opt_value = self._opt_function(x)
+            opt_value = self.train_model(x)
+            time.sleep(3)
 
             return opt_value
 
-    def _opt_function(self,x):
+    def train_model(self,x):
         dict_c = self.configure_bounds(self.dict_c, x)
         self.print_parameters(dict_c)
         try:
@@ -252,28 +256,15 @@ class BayesionOpt():
         dict_c['lr']         = float(x[:,0])
         dict_c['sigma']      = float(x[:,1])
         dict_c['time_dim']   = int(x[:,2])
-        dict_c['vector']      =int(x[:,7])
+        dict_c['vector']      =int(x[:,-1])
 
+        array_encoder = []
+        for i in range(3):
+            array_encoder.append(int(x[:,i+3]))
 
         array_decoder = []
-        for value in x[:,-3:][0]:
-            if(int(value) == 1):
-                array_decoder.append(0)
-            else:
-                break
-
-        array_encoder = [0]
-        for value in x[:,-6:-3][0]:
-            if(int(value) == 1):
-                array_encoder.append(0)
-            else:
-                break
-
-        for i in range(len(array_encoder)):
-            array_encoder[i] = int(x[:,i+3])
-
-        for i in range(len(array_decoder)):
-            array_decoder[i] = int(x[:,i+8])
+        for i in range(2):
+            array_decoder.append(int(x[:,i+6]))
 
 
         dict_c['encoder'] = array_encoder
@@ -321,3 +312,4 @@ if __name__ == '__main__':
         # mm.variance_calculation()
         bo = BayesionOpt(dict_c,bounds)
         bo.main()
+

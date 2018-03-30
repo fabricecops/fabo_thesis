@@ -106,7 +106,7 @@ class LSTM_(model, data_manager):
         model.add(RepeatVector(self.input_shape[0]))
 
 
-        for i,dimension in enumerate(self.dict_c['encoder']):
+        for i,dimension in enumerate(self.dict_c['decoder']):
 
             model.add(LSTM(dimension,
                         return_sequences   = True,
