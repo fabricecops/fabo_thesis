@@ -29,6 +29,8 @@ class model_mng():
         self.max_AUC_tr  = 0
         self.max_AUC_t   = 0
 
+        self.min_val_loss = 10
+
         self.AUC_no_cma  = 0
 
 
@@ -134,11 +136,11 @@ class model_mng():
 
 
 
-        if(loss[0] > self.dict_c['TH_loss']):
+        if(val_loss[0] >= self.min_val_loss):
             self.count_no_cma += 1
         else:
             self.count_no_cma  = 0
-
+            self.min_val_loss  = val_loss[0]
 
 
         return dict_data

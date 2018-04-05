@@ -323,8 +323,8 @@ class model_tuning():
         dict_c['lr'] = lr_mapping[0][0]
 
         dict_c['path_save'] = './models/ensemble/DEEP3/hidden/'
-        encoder_a = [[350,300,250],[400,350,300],[450,400,350],[300,250,200],[250,200,150]]
-        vector_a  = [300, 400, 500,600]
+        encoder_a = [[350,300,250],[400,350,300]]
+        vector_a  = [300]
 
         for encoder in encoder_a:
             for vector in vector_a:
@@ -337,7 +337,7 @@ class model_tuning():
     def DEEP_2(self,dict_c):
         dict_c['path_save'] = './models/ensemble/DEEP2/lr/'
         dict_c['decoder'] = [350]
-        dict_c['encoder'] = [400,300]
+        dict_c['encoder'] = [400]
         dict_c['vector'] = 400
         dict_c['CMA_ES'] = False
 
@@ -348,10 +348,10 @@ class model_tuning():
         dict_c['lr'] = lr_mapping[0][0]
 
         dict_c['path_save'] = './models/ensemble/DEEP2/hidden/'
-        encoder_a = [[250,200],[300,250],[400,350],[500,400]]
+        encoder_a = [[250,200]]
 
 
-        vector_a = [300, 400, 500]
+        vector_a = [300]
 
         for encoder in encoder_a:
             for vector in vector_a:
@@ -376,8 +376,8 @@ class model_tuning():
 
 
             dict_c['path_save'] = './models/ensemble/DEEP1/hidden/'
-            encoder_a = [200,250,300,350,400]
-            vector_a  = [300,400,500]
+            encoder_a = [200]
+            vector_a  = [300]
 
             for encoder in encoder_a:
                 for vector in vector_a:
@@ -389,7 +389,7 @@ class model_tuning():
 
     def LR_test(self,dict_c):
 
-        lr_a     = [0.1,0.01,0.001,0.0001]
+        lr_a     = [0.1,0.2]
         result_a = []
         for lr in lr_a:
 

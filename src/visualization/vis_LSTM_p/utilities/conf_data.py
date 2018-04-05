@@ -6,15 +6,12 @@ import numpy as np
 
 class conf_data():
 
-    def __init__(self, path,epoch):
-        self.path        = path
-        self.epoch       = epoch
-        self.dict_c      = pickle_load(path + 'dict.p',None)
+    def __init__(self, dict_c):
+        self.path           = dict_c['path']
+        self.dict_c         = pickle_load(dict_c['path_dict'],None)
+        self.dict_c['mode'] = dict_c['mode']
 
 
-
-        self.df_true     = None
-        self.df_false    = None
         self.AUC_max     = None
         self.x           = None
         self.df          = None
@@ -43,39 +40,39 @@ class conf_data():
         return output, pred, error
 
     def _configure_data(self):
-        path_o          = self.path+'output.p'
-        path_y          = self.path + '/pred.p'
-        path_csv        = self.path + 'hist.csv'
-
-        dict            = pickle_load(path_o,None)
-        df_o_t          = dict['df_o_t']
-        df_o_f          = dict['df_o_f']
-
-        dict            = pickle_load(path_y,None)
-        df_y_t          = dict['df_y_t']
-        df_y_f          = dict['df_y_f']
-
-        df_stats        = pd.read_csv(path_csv)
-
-
-
-
-        self.AUC        = max(np.array(df_stats['AUC_v']))
-        self.df_true    = df_o_t.join(df_y_t).sort_values(by = 'error_tm')
-
-
-
-        self.df_false   = df_o_f.join(df_y_f, how = 'inner').sort_values(by = 'error_tm')
-
-
-        self.x          = np.zeros(100)
-        self.df         = self.df_true
-
-        self.resolution = self.dict_c['resolution']
-        self.height     =  np.arange(self.dict_c['min_h'], self.dict_c['max_h'], self.dict_c['resolution'])[-1]
-
-        array_t = zip(list(df_o_t['data_y']), list(df_y_t['data_y_p']))
-        df_o_t['error_m'] = list(map(self._get_error_m, array_t))
+        # path_o          = self.path+'output.p'
+        # path_y          = self.path + '/pred.p'
+        # path_csv        = self.path + 'hist.csv'
+        #
+        # dict            = pickle_load(path_o,None)
+        # df_o_t          = dict['df_o_t']
+        # df_o_f          = dict['df_o_f']
+        #
+        # dict            = pickle_load(path_y,None)
+        # df_y_t          = dict['df_y_t']
+        # df_y_f          = dict['df_y_f']
+        #
+        # df_stats        = pd.read_csv(path_csv)
+        #
+        #
+        #
+        #
+        # self.AUC        = max(np.array(df_stats['AUC_v']))
+        # self.df_true    = df_o_t.join(df_y_t).sort_values(by = 'error_tm')
+        #
+        #
+        #
+        # self.df_false   = df_o_f.join(df_y_f, how = 'inner').sort_values(by = 'error_tm')
+        #
+        #
+        # self.x          = np.zeros(100)
+        # self.df         = self.df_true
+        #
+        # self.resolution = self.dict_c['resolution']
+        # self.height     =  np.arange(self.dict_c['min_h'], self.dict_c['max_h'], self.dict_c['resolution'])[-1]
+        #
+        # array_t = zip(list(df_o_t['data_y']), list(df_y_t['data_y_p']))
+        # df_o_t['error_m'] = list(map(self._get_error_m, array_t))
 
         # print('XXXXXXXXXXXXXXXXXXXXXXXXXXXx')
         # print(np.mean(list(map(np.mean,df_o_t['error_m']))))
@@ -85,6 +82,13 @@ class conf_data():
         # print(len(self.df_true))
         #
         # print(np.array(self.df_false['error_tm']))
+
+        path = self.path + 'best/best_error.p'
+        data = pickle_load(path,None)
+
+        data = data[self.dict_c['mode']]
+        self.df = data
+
 
     def _get_error_m(self, row):
         # y   = row['data_y']
@@ -96,3 +100,4 @@ class conf_data():
         # row['error_m'] = np.mean(e_f,axis = 1)
 
         return e_f
+

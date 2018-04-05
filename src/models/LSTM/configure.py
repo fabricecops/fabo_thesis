@@ -34,7 +34,7 @@ def return_dict_bounds():
         'CMA_ES'           : True,
         'verbose_CMA'      : 0,
         'verbose_CMA_log'  : 0,
-        'evals'            : 5000,
+        'evals'            : 5,
         'bounds'           : [-100,100.],
         'sigma'            : 0.4222222222222225,
         'progress_ST'      : 0.3,
@@ -74,9 +74,9 @@ def return_dict_bounds():
         'epochs'           : 10000,
         'batch_size'       : 1024,
 
-        'SI_cma'           : 15,
-        'SI_no_cma'        : 80,
-        'SI_no_cma_AUC'    : 150,
+        'SI_cma'           : 1,
+        'SI_no_cma'        : 3,
+        'SI_no_cma_AUC'    : 1,
 
         'TH_loss'          : 0.025,
 

@@ -67,6 +67,22 @@ class plot_Tool():
 
         return image
 
+    def get_plot_error_con(self,i,j,df):
+        fig = plt.figure(figsize=(16, 4))
+
+        plt.plot(np.array(df['error_e'].iloc[i]), label='prediction', color='blue', linewidth=3.3)
+        plt.plot([j],np.array(df['error_e'].iloc[i])[j], marker='o', markersize=6, color="black")
+
+        fig.canvas.draw()
+        image = np.array(fig.canvas.renderer._renderer)
+        image = np.array(fig.canvas.renderer._renderer)
+        plt.close()
+
+        image = cv2.resize(image, (960, 240))
+        image = cv2.cvtColor(image, cv2.COLOR_RGBA2RGB)
+
+        return image
+
     def get_plot_error(self,df_true,df_false):
 
         fig = plt.figure(figsize=(16, 4))

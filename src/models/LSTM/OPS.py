@@ -21,6 +21,7 @@ class OPS_LSTM(AUC):
         plt.close('all')
 
         return dict_data2['AUC_v']
+
     def save_output(self,dict_data,i):
         if(i==0):
 
@@ -189,7 +190,6 @@ class OPS_LSTM(AUC):
             plt.legend()
             plt.title('AUC CMA at epoch: '+str(dict_['epoch']))
 
-
             ax2 = plt.subplot(142)
             ax2.hist(dict_['df_f_train']['error_m'], label = 'False',color = 'g', alpha = 0.5, bins = 50)
             ax2.hist(dict_['df_t_train']['error_m'], label = 'True', color = 'r', alpha = 0.5, bins = 50)
@@ -228,14 +228,16 @@ class OPS_LSTM(AUC):
             # plt.close('all')
 
             dict_ = {
-                'error_f_train': np.array(dict_['df_f_train'][['error_m','location','segmentation']]),
-                'error_t_train': np.array(dict_['df_t_train'][['error_m','location','segmentation']]),
+                'error_f_train': dict_['df_f_train'][['error_e','location','segmentation','frames','label']],
+                'error_t_train': dict_['df_t_train'][['error_e','location','segmentation','frames','label']],
 
-                'error_f_val'  : np.array(dict_['df_f_val'][['error_m','location','segmentation']]),
-                'error_t_val'  : np.array(dict_['df_t_val'][['error_m','location','segmentation']]),
+                'error_f_val'  : dict_['df_f_val'][['error_e','location','segmentation','frames','label']],
+                'error_t_val'  : dict_['df_t_val'][['error_e','location','segmentation','frames','label']],
 
-                'error_f_test' : np.array(dict_['df_f_test'][['error_m','location','segmentation']]),
-                'error_t_test' : np.array(dict_['df_t_test'][['error_m','location','segmentation']]),
+                'error_f_test' : dict_['df_f_test'][['error_e','location','segmentation','frames','label']],
+                'error_t_test' : dict_['df_t_test'][['error_e','location','segmentation','frames','label']],
+
+                'AUC_v'        : dict_['AUC_v']
 
             }
 
@@ -491,6 +493,8 @@ class OPS_LSTM(AUC):
                         'train_t'        : loss_t_tr,
                         'val_t'          : loss_t_v,
                         'test_t'         : loss_t_t,
+
+
 
                         'path_o'         : dict_data['path_o'],
                         'epoch'          : dict_data['epoch'],

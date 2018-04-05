@@ -8,9 +8,10 @@ from src.visualization.vis_LSTM_p.utilities.plt_data import *
 
 class main_visualize(conf_data,plot_Tool,Path_gen):
 
-    def __init__(self,path,epoch):
+    def __init__(self,dict_c):
+        self.height          = 50
 
-        conf_data.__init__(self,path,epoch)
+        conf_data.__init__(self,dict_c)
         plot_Tool.__init__(self)
         Path_gen.__init__(self,self.df,self.dict_c)
 
@@ -30,8 +31,7 @@ class main_visualize(conf_data,plot_Tool,Path_gen):
 
         self.threshold       = 0.
         self.track_threshold = None
-
-        self.plot_mode   = 'error_t'
+        self.plot_mode   = dict_c['plot_mode']
 
     def play_videos(self):
         i     = 0
@@ -47,7 +47,7 @@ class main_visualize(conf_data,plot_Tool,Path_gen):
             frame_pd     = self.configure_frame(self.df,i,j, self.height)
             frame_fin    = np.concatenate((frame_pd,img),axis = 0)
 
-            self._write_auc( frame_fin,i)
+            # self._write_auc( frame_fin,i)
 
             cv2.imshow('frame', frame_fin)
             time.sleep(0.1)
@@ -129,8 +129,6 @@ class main_visualize(conf_data,plot_Tool,Path_gen):
     def _worker(self, i, feature):
         # try:
             for j in iter(self.work_queue.get,'STOP'):
-
-                print(j)
                 img      = self._get_plot(i,j,self.feature)
                 tuple_   = (j,img)
 
@@ -191,8 +189,13 @@ class main_visualize(conf_data,plot_Tool,Path_gen):
 
             img = self.plot_3(j,feature, output_A, pred_A, error_A,output_y, pred_y, error_y,output_x, pred_x, error_x)
 
-        else:
+        elif self.plot_mode == 'dist':
             img = self.get_plot_error(self.df_true,self.df_false)
+
+        elif self.plot_mode == 'error':
+            img = self.get_plot_error_con(i,j,self.df)
+
+
 
 
 
@@ -203,7 +206,6 @@ class main_visualize(conf_data,plot_Tool,Path_gen):
         max_f   = int(min_f+11)
 
         return min_f,max_f
-
 
     def _control_videos(self,key,i,j):
 
@@ -282,12 +284,17 @@ class main_visualize(conf_data,plot_Tool,Path_gen):
         return i,j
 
 if __name__ == '__main__':
+    dict_c = {
+            'path'       :'./models/ensemble/ensemble/',
+            'mode'       : 'error_f_train',
 
-    path  = 'models/Results/LSTM_unstatefull/'
-    epoch = 0
+            'path_dict'  : './models/ensemble/DEEP1/hidden/0/dict.p',
+        
+            'plot_mode'  : 'error'
 
 
+    }
 
-    vis = main_visualize(path, epoch)
+    vis = main_visualize(dict_c)
 
     vis.play_videos()

@@ -47,6 +47,15 @@ class CMA_ES(AUC):
         AUC_t, FPR_t, TPR_t = self._opt_function_(es[0], self.df_f_test['error_m'], self.df_t_test['error_m'])
 
 
+        self.df_f_train['error_e'] =  list(map(functools.partial(self._get_error_ensemble, x=es[0]), np.array(self.df_f_train['error_m'])))
+        self.df_f_val['error_e']   =  list(map(functools.partial(self._get_error_ensemble, x=es[0]), np.array(self.df_f_val['error_m'])))
+        self.df_f_test['error_e']  =  list(map(functools.partial(self._get_error_ensemble, x=es[0]), np.array(self.df_f_test['error_m'])))
+
+        self.df_t_train['error_e'] =  list(map(functools.partial(self._get_error_ensemble, x=es[0]), np.array(self.df_t_train['error_m'])))
+        self.df_t_val['error_e']   =  list(map(functools.partial(self._get_error_ensemble, x=es[0]), np.array(self.df_t_val['error_m'])))
+        self.df_t_test['error_e']  =  list(map(functools.partial(self._get_error_ensemble, x=es[0]), np.array(self.df_t_test['error_m'])))
+
+
         self.df_f_train['error_m'] =  list(map(functools.partial(self._get_error_max, x=es[0]), np.array(self.df_f_train['error_m'])))
         self.df_f_val['error_m']   =  list(map(functools.partial(self._get_error_max, x=es[0]), np.array(self.df_f_val['error_m'])))
         self.df_f_test['error_m']  =  list(map(functools.partial(self._get_error_max, x=es[0]), np.array(self.df_f_test['error_m'])))
@@ -139,6 +148,13 @@ class CMA_ES(AUC):
     def _get_error_max(self,e,x):
 
         eval_ = np.max(np.dot(e, x))
+
+
+        return eval_
+
+    def _get_error_ensemble(self,e,x):
+
+        eval_ = np.dot(e, x)
 
 
         return eval_
