@@ -35,14 +35,13 @@ class data_manager(pipe_line_data):
 
     def main_data_conf(self,*args):
         path_df,path_sc_p,path_sc_v,_ = self.return_path_pd(self.dict_c)
-        self.df           = pickle_load(path_df,self.peak_derivation, ()).iloc[:80]
+        self.df           = pickle_load(path_df,self.peak_derivation, ())
         self.len_df       = len(self.df)
 
         self.df =  apply_by_multiprocessing(self.df, self._configure_data_movie, axis=1, workers=12)
         self.df =  self.df[self.df['data_X'] != '']
         self.df =  self.df[self.df['data_y'] != '']
         self.count_t = len(self.df)
-        print(self.df.columns)
         self.df =  self.df[['name','label','frames','data_X','data_y','segmentation','location']]
         self._print_data()
 

@@ -2,8 +2,9 @@ from src.dst.metrics.AUC import AUC
 import numpy as np
 import functools
 import cma
-import pandas as pd
-###
+from src.models.CMA_ES.data_manager_CMA import data_manager
+
+
 class CMA_ES(AUC):
 
 
@@ -23,24 +24,36 @@ class CMA_ES(AUC):
         self.FPR      = None
         self.TPR      = None
 
+        self.data    = data_manager(dict_c).configure_data(dict_c)
+
+
+        self.df_f_train = self.data['df_f_train']
+        self.df_f_val   = self.data['df_f_val']
+        self.df_f_test  = self.data['df_f_test']
+
+        self.df_t_train = self.data['df_t_train']
+        self.df_t_val   = self.data['df_t_val']
+        self.df_t_test  = self.data['df_t_test']
+
+        print(self.df_f_train.columns)
 
 
 
-    def main_CMA_ES(self,dict_data):
-        self.configure_data(dict_data)
+    def main_CMA_ES(self):
 
-
-        dimension = self.df_f_train['error_m'].iloc[0].shape[1]
+        dimension = self.df_f_train['error_e'].iloc[0].shape[1]
         array = np.zeros(dimension)
 
+        es = cma.CMAEvolutionStrategy(dimension* [0.5], self.sigma,  {'bounds': self.bounds,
+                                                                       'maxfevals': self.evals,
+                                                                       'verb_disp': self.verbose,
+                                                                       'verb_log': self.verbose_log})
+        es.optimize(self._opt_function)
 
-        es = cma.fmin(self._opt_function,
-                      array,
-                      self.sigma,
-                      {'bounds': self.bounds,
-                       'maxfevals': self.evals,
-                       'verb_disp': self.verbose,
-                       'verb_log': self.verbose_log})
+        while True:
+            sol = es.ask_and_eval(self._opt_function)
+            print(sol[1])
+
 
         AUC, FPR, TPR       = self.AUC_max, self.FPR, self.TPR
         AUC_v, FPR_v, TPR_v = self._opt_function_(es[0], self.df_f_val['error_m'], self.df_t_val['error_m'])
@@ -123,27 +136,8 @@ class CMA_ES(AUC):
         return AUC, FPR, TPR
 
 
-    def _get_error_m(self, row):
-
-        y     = row[0]
-        y_p   = row[1]
 
 
-        e_f = np.mean(np.power((y - y_p),2),axis=1)
-
-
-        return e_f
-
-    def _get_error_mean(self, row):
-
-        y     = row[0]
-        y_p   = row[1]
-
-        e_f = np.mean(np.power((y - y_p), 2))
-
-
-
-        return e_f
 
     def _get_error_max(self,e,x):
 
@@ -159,39 +153,32 @@ class CMA_ES(AUC):
 
         return eval_
 
-    def configure_data(self,dict_data):
-        self.df_t_train      = dict_data['df_t_train']
-        self.df_t_val        = dict_data['df_t_val']
-        self.df_t_test       = dict_data['df_t_test']
-
-        self.df_f_train      = dict_data['df_f_train']
-        self.df_f_val        = dict_data['df_f_val']
-        self.df_f_test       = dict_data['df_f_test']
-
-        self.dimension    = self.df_t_train.iloc[0]['data_X'].shape[2]
-
-        array_t                        = zip(list(self.df_t_train['data_y']),list(self.df_t_train['data_y_p']))
-        self.df_t_train['error_m']     = list(map(self._get_error_m,array_t))
-        self.df_t_train.drop(['data_X','data_y'],axis = 1,inplace = True)
-
-        array_t                        = zip(list(self.df_t_val['data_y']),list(self.df_t_val['data_y_p']))
-        self.df_t_val['error_m']       = list(map(self._get_error_m,array_t))
-        self.df_t_val.drop(['data_X','data_y'],axis = 1,inplace = True)
-
-        array_t                        = zip(list(self.df_t_test['data_y']),list(self.df_t_test['data_y_p']))
-        self.df_t_test['error_m']      = list(map(self._get_error_m,array_t))
-        self.df_t_test.drop(['data_X','data_y'],axis = 1,inplace = True)
-
-        array_f                        = zip(list(self.df_f_train['data_y']),list(self.df_f_train['data_y_p']))
-        self.df_f_train['error_m']     = list(map(self._get_error_m,array_f))
-        self.df_f_train.drop(['data_X','data_y'],axis = 1,inplace = True)
-
-        array_f                        = zip(list(self.df_f_val['data_y']),list(self.df_f_val['data_y_p']))
-        self.df_f_val['error_m']       = list(map(self._get_error_m,array_f))
-        self.df_f_val.drop(['data_X','data_y'],axis = 1,inplace = True)
-
-        array_f                        = zip(list(self.df_f_test['data_y']),list(self.df_f_test['data_y_p']))
-        self.df_f_test['error_m']      = list(map(self._get_error_m,array_f))
-        self.df_f_test.drop(['data_X','data_y'],axis = 1,inplace = True)
 
 
+
+
+if __name__ == '__main__':
+    def return_dict():
+        dict_c = {
+            'path_i': './models/bayes_opt/DEEP1/',
+            'path_o': './models/ensemble/ensemble/',
+
+            'resolution_AUC': 1000,
+
+            ###### CMA_ES    ######
+            'CMA_ES': True,
+            'verbose_CMA': 1,
+            'verbose_CMA_log': 0,
+            'evals': 10000,
+            'bounds': [-100, 100.],
+            'sigma': 0.4222222222222225,
+            'progress_ST': 0.3,
+
+            'epoch': 0
+
+        }
+
+        return dict_c
+
+    dict_c = return_dict()
+    CMA_ES(dict_c).main_CMA_ES()

@@ -2,7 +2,7 @@ from keras.layers.recurrent import LSTM
 from keras.layers import Dense,RepeatVector
 from keras.models import Sequential
 
-from src.models.LSTM.data_manager import data_manager
+from src.models.LSTM.data_manager_LSTM import data_manager
 from src.dst.keras_model.model import model
 from tqdm import tqdm
 import numpy as np
@@ -12,8 +12,11 @@ import shutil
 class LSTM_(model, data_manager):
 
     def __init__(self, dict_c=None, path=None):
+
         model.__init__(self, dict_c=dict_c,path=path)
         data_manager.__init__(self,dict_c)
+
+
 
         self.dimension        = None
         self.time_dim         = None

@@ -1,14 +1,10 @@
-from src.models.LSTM.configure import return_dict_bounds
+from src.models.LSTM.conf_LSTM import return_dict_bounds
 from src.models.LSTM.main_LSTM import model_mng
 from src.dst.outputhandler.pickle import tic,toc,pickle_save_,pickle_load
 import numpy as np
 import matplotlib.pyplot as plt
 import os
-import shutil
-import time
 import GPyOpt
-import psutil
-import signal
 
 class model_tests():
 
@@ -194,14 +190,15 @@ class model_tests():
 
 class BayesionOpt():
 
-    def __init__(self,dict_c,bounds):
+    def __init__(self,dict_c,bounds,mode):
         self.bounds     = bounds
         self.dict_c     = dict_c
+        self.mode       = mode
 
-        self.len_space  = 30
-        # self.dict_c['shuffle_style'] = 'testing'
-        # self.dict_c['epochs']         = 50
-        # self.dict_c['eval']          = 2
+
+
+
+
 
     #### public functions   ##############
     def main(self):
@@ -222,51 +219,91 @@ class BayesionOpt():
 
     #### private functions   ################
     def opt_function(self,x):
-            opt_value = self.train_model(x)
-            time.sleep(3)
+        if(self.mode == 'DEEP1'):
+            dict_c = self.configure_bounds_DEEP1(self.dict_c, x)
+        elif(self.mode == 'DEEP2'):
+            dict_c = self.configure_bounds_DEEP2(self.dict_c, x)
+        else:
+            dict_c = self.configure_bounds_DEEP3(self.dict_c, x)
 
-            return opt_value
 
-    def train_model(self,x):
-        dict_c = self.configure_bounds(self.dict_c, x)
+
         self.print_parameters(dict_c)
-        try:
-            mm = model_mng(self.dict_c)
-            _, opt_value, _ = mm.main(mm.Queue_cma)
-        except Exception as e:
-            print(e)
-            opt_value = 0.5
 
-        # self.delete_data()
+        mm = model_mng(self.dict_c)
+        opt_value, _ = mm.main()
+        del mm
 
-        print('OPT VALUE '*3)
-        print('OPT VALUE '*3)
+        print('OPT VALUE ' * 3)
+        print('OPT VALUE ' * 3)
         print(opt_value)
-        print('OPT VALUE '*3)
-        print('OPT VALUE '*3)
-
+        print('OPT VALUE ' * 3)
+        print('OPT VALUE ' * 3)
         return opt_value
 
-    def configure_bounds(self,dict_c,x):
+
+
+    def configure_bounds_DEEP1(self,dict_c,x):
 
         dict_c['lr']         = float(x[:,0])
-        dict_c['sigma']      = float(x[:,1])
-        dict_c['time_dim']   = int(x[:,2])
-        dict_c['vector']      =int(x[:,-1])
+        dict_c['time_dim']   = int(x[:,1])
+        dict_c['vector']      =int(x[:,2])
 
         array_encoder = []
-        for i in range(3):
-            array_encoder.append(int(x[:,i+3]))
+        for i in range(1):
+            array_encoder.append(int(x[:,3]))
 
         array_decoder = []
-        for i in range(2):
-            array_decoder.append(int(x[:,i+6]))
+
 
 
         dict_c['encoder'] = array_encoder
         dict_c['decoder'] = array_decoder
 
         return dict_c
+
+    def configure_bounds_DEEP2(self,dict_c,x):
+
+
+        dict_c['lr']         = float(x[:,0])
+        dict_c['vector']     =int(x[:,1])
+
+        array_encoder = []
+        for i in range(2):
+            array_encoder.append(int(x[:,2]))
+
+        array_decoder = []
+        for i in range(2):
+            array_decoder.append(int(x[:,4]))
+
+
+        dict_c['encoder'] = array_encoder
+        dict_c['decoder'] = array_decoder
+
+        return dict_c
+
+    def configure_bounds_DEEP3(self,dict_c,x):
+
+
+        dict_c['lr']         = float(x[:,0])
+        dict_c['vector']     =int(x[:,1])
+
+        array_encoder = []
+        for i in range(3):
+            array_encoder.append(int(x[:,2]))
+
+        array_decoder = []
+        for i in range(2):
+            array_decoder.append(int(x[:,5]))
+
+
+        dict_c['encoder'] = array_encoder
+        dict_c['decoder'] = array_decoder
+
+        return dict_c
+
+
+
 
     def print_parameters(self,dict_c):
         print('x'*50)
@@ -291,12 +328,6 @@ class BayesionOpt():
         print('x'*50)
         print('x'*50)
         print('x'*50)
-
-    def delete_data(self):
-        path_r  = './data/processed/df/df_r/'
-        list_r  = os.listdir(path_r)
-        for name in list_r:
-            shutil.rmtree(path_r+name)
 
 class model_tuning():
 
@@ -414,13 +445,28 @@ class model_tuning():
 
 
 if __name__ == '__main__':
-    dict_c, bounds = return_dict_bounds()
 
     # mm = model_tests(dict_c)
     # mm._get_rest_of_data()
     # mm.variance_calculation()
-    # bo = BayesionOpt(dict_c,bounds)
-    # bo.main()
+
+    mode = 'DEEP1'
+    dict_c,bounds = return_dict_bounds(bounds = mode)
+    dict_c['path_save'] = './models/bayes_opt/DEEP1/'
+    bo = BayesionOpt(dict_c,bounds,mode)
+    bo.main()
 
 
-    model_tuning().main(dict_c)
+    mode = 'DEEP2'
+    dict_c,bounds = return_dict_bounds(bounds = mode)
+    dict_c['path_save'] = './models/bayes_opt/DEEP2/'
+    bo = BayesionOpt(dict_c,bounds,mode)
+    bo.main()
+
+    mode = 'DEEP3'
+    dict_c,bounds = return_dict_bounds(bounds = mode)
+    dict_c['path_save'] = './models/bayes_opt/DEEP3/'
+    bo = BayesionOpt(dict_c,bounds,mode)
+    bo.main()
+
+

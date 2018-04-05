@@ -3,7 +3,7 @@ from src.models.ensemble.config import return_dict
 from src.models.ensemble.CMA_ES import CMA_ES
 
 from src.dst.keras_model.FS_manager import FS_manager
-from src.models.LSTM.OPS import OPS_LSTM
+from src.models.LSTM.OPS_LSTM import OPS_LSTM
 
 class ensemble(data_manager,FS_manager):
 

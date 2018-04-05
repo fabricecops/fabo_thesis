@@ -2,7 +2,7 @@ import os
 
 import src.data.dimensionality_reduction.HCF.preprocessing as pp
 from src.dst.outputhandler.pickle import pickle_load,pickle_save
-from src.models.LSTM.configure import return_dict_bounds
+from src.models.LSTM.conf_LSTM import return_dict_bounds
 from sklearn.preprocessing import MinMaxScaler
 from src.dst.helper.apply_mp import *
 
