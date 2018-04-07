@@ -2,9 +2,16 @@ from src.models.LSTM.conf_LSTM import return_dict_bounds
 from src.models.LSTM.main_LSTM import model_mng
 from src.dst.outputhandler.pickle import tic,toc,pickle_save_,pickle_load
 import numpy as np
+import gc
+
+import objgraph
+
 import matplotlib.pyplot as plt
 import os
 import GPyOpt
+import time
+import psutil
+import multiprocessing as mp
 
 class model_tests():
 
@@ -125,7 +132,6 @@ class model_tests():
         plt.savefig(self.path+'distribution'+CMA+'.png')
         # plt.show()
 
-        plt.close('all')
 
     def _return_dict_(self):
 
@@ -195,10 +201,11 @@ class BayesionOpt():
         self.dict_c     = dict_c
         self.mode       = mode
 
+        self.time_      = []
+        self.AUC_v      = []
 
 
-
-
+        self.memory      = []
 
     #### public functions   ##############
     def main(self):
@@ -229,17 +236,50 @@ class BayesionOpt():
 
 
         self.print_parameters(dict_c)
+        time_1 = time.time()
 
-        mm = model_mng(self.dict_c)
-        opt_value, _ = mm.main()
-        del mm
+        opt_value = self.opt_function_SB()
+
+        time_2  = time.time()-time_1
+        self.time_.append(time_2)
+        self.AUC_v.append(opt_value)
+        self.plot(self.time_,self.AUC_v)
+        self.save_memory()
+        if(opt_value == 0):
+            opt_value = 0.5
+
 
         print('OPT VALUE ' * 3)
         print('OPT VALUE ' * 3)
         print(opt_value)
         print('OPT VALUE ' * 3)
         print('OPT VALUE ' * 3)
+
+        gc.collect()
+
+
         return opt_value
+
+    def opt_function_SB(self):
+        queue_opt = mp.Queue()
+
+        p = mp.Process(target=self.subprocess, args=(queue_opt,))
+        p.daemon = True
+        p.start()
+
+        while True:
+            if p.is_alive():
+                time.sleep(1)
+            else:
+                opt_value = queue_opt.get()
+                p.terminate()
+                break
+
+        return opt_value
+
+    def subprocess(self,queue_opt):
+        mm = model_mng(self.dict_c)
+        mm.main(queue_opt)
 
 
 
@@ -273,7 +313,7 @@ class BayesionOpt():
             array_encoder.append(int(x[:,2]))
 
         array_decoder = []
-        for i in range(2):
+        for i in range(1):
             array_decoder.append(int(x[:,4]))
 
 
@@ -303,8 +343,6 @@ class BayesionOpt():
         return dict_c
 
 
-
-
     def print_parameters(self,dict_c):
         print('x'*50)
         print('x'*50)
@@ -328,6 +366,42 @@ class BayesionOpt():
         print('x'*50)
         print('x'*50)
         print('x'*50)
+
+    def plot(self,time_,AUC_v):
+
+        fig = plt.figure(figsize=(16, 4))
+        ax1 = plt.subplot(121)
+        ax1.hist(time_,label = 'time')
+        plt.xlabel('time')
+        plt.ylabel('Amount')
+        plt.title('Distribution model fitting time')
+
+        ax2 = plt.subplot(122)
+        ax2.hist(AUC_v, label='AUC_v')
+        plt.xlabel('AUC_v')
+        plt.ylabel('Amount')
+        plt.title('Distribution AUC_v')
+
+        plt.savefig(self.dict_c['path_save']+'dist.png')
+
+    def save_memory(self):
+        fig = plt.figure(figsize=(16, 4))
+        # print('x'*50)
+        #
+        # print(psutil.virtual_memory())
+        # print(psutil.virtual_memory()[0])
+        # print(psutil.virtual_memory()[1])
+        # print(psutil.virtual_memory()[2])
+        # print(psutil.virtual_memory()[3]/1000000000.)
+        #
+        # print('x'*50)
+        self.memory.append(psutil.virtual_memory()[3] / 1000000000.)
+
+
+        plt.plot(self.memory)
+        plt.title('memory')
+        plt.savefig(self.dict_c['path_save']+'memory.png')
+
 
 class model_tuning():
 

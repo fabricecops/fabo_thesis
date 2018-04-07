@@ -35,7 +35,7 @@ class data_manager(pipe_line_data):
 
     def main_data_conf(self,*args):
         path_df,path_sc_p,path_sc_v,_ = self.return_path_pd(self.dict_c)
-        self.df           = pickle_load(path_df,self.peak_derivation, ())
+        self.df           = pickle_load(path_df,self.peak_derivation, ()).iloc[:]
         self.len_df       = len(self.df)
 
         self.df =  apply_by_multiprocessing(self.df, self._configure_data_movie, axis=1, workers=12)
@@ -295,9 +295,6 @@ class data_manager(pipe_line_data):
                     self.df_t_train = self.df_t_train.append(group[1].iloc[val_samples_t + test_samples_t:len(group[1])],ignore_index=True)
                     self.df_t_val   = self.df_t_val.append(group[1].iloc[0:val_samples_t],ignore_index=True)
                     self.df_t_test  = self.df_t_test.append(group[1].iloc[val_samples_t:val_samples_t + test_samples_t],ignore_index=True)
-
-
-
 
 
         self.df_f_train = self.df_f_train.reset_index()

@@ -31,8 +31,8 @@ def return_dict_bounds(bounds = 'DEEP1'):
         'shuffle_style'    : 'segmentated',
 
         ###### Bayes opt ######
-        'max_iter'         : 10,
-        'initial_n'        : 10,
+        'max_iter'         : 80,
+        'initial_n'        : 20,
         'initial_dt'       : 'latin',
         'eps'              : -1,
         'maximize'         : True,
@@ -61,14 +61,14 @@ def return_dict_bounds(bounds = 'DEEP1'):
         'val_split_t'        : 0.25,
         'test_split_t'       : 0.25,
 
-        'verbose'          : 2,
+        'verbose'          : 0.,
         'epochs'           : 10000,
         'batch_size'       : 1024,
 
-        'SI_no_cma'        : 10,
+        'SI_no_cma'        : 20.,
         'SI_no_cma_AUC'    : 40,
+        'TH_val_loss'      : 0.025,
 
-        'TH_loss'          : 0.025,
 
 
         #### data gathering statefull ####

@@ -67,7 +67,6 @@ class LSTM_(model, data_manager):
 
         dict_data    = {
                         'path_o'      : self.path_gen,
-                        'model'       : self.model,
 
                         'df_t_train'  : df_t_train,
                         'df_t_val'    : df_t_val,

@@ -7,6 +7,10 @@ plt.style.use('ggplot')
 import numpy as np
 from src.dst.metrics.AUC import AUC
 from src.dst.outputhandler.pickle import pickle_save_,pickle_load
+import matplotlib
+import gc
+
+matplotlib.use('Agg')
 
 class OPS_LSTM(AUC):
 
@@ -17,32 +21,30 @@ class OPS_LSTM(AUC):
     def main(self,dict_data):
 
         dict_data2           = self._get_data_no_cma(dict_data)
-        self.save_plots_no_cma(dict_data2)
-        self.plot_dist(dict_data)
-        plt.close('all')
+        self.plot_dist(dict_data2)
 
-        return dict_data2['AUC_v']
+
+        return dict_data2
 
 
     def save_plots_no_cma(self,dict_data):
-
+        path_o = dict_data['path_o']
         ### validation curve
-        df = pickle_load(dict_data['path_o']+'hist.p', None)
-        path_b = dict_data['path_o'] +'best/'
+        df = pickle_load(path_o+'hist.p', None)
+        path_b = path_o +'best/'
         if (os.path.exists(path_b) == False):
             os.mkdir(path_b)
 
         fig = plt.figure(figsize=(16, 4))
 
         ax1 = plt.subplot(121)
-        ax1.plot(np.array(df['train_t']),    color = 'm',   label = 'train_t')
-        ax1.plot(np.array(df['val_t']),    color = 'red',   label = 'val_t')
+        ax1.plot(np.array(df['train_val_t']),    color = 'm',   label = 'train_t_v')
         ax1.plot(np.array(df['test_t']),    color = 'k',   label = 'test_t')
 
         ax1.plot(np.array(df['train_f']),  color = 'blue',  label = 'train_f')
         ax1.plot(np.array(df['val_f']),    color = 'green', label = 'val_f')
         ax1.plot(np.array(df['test_f']),  color = 'yellow',  label = 'test_f')
-        ax1.set_ylim(0.0,0.025)
+        ax1.set_ylim(0.0,self.dict_c['TH_val_loss'])
 
         plt.legend()
         plt.title('validation/train curve')
@@ -58,77 +60,60 @@ class OPS_LSTM(AUC):
         plt.xlabel('epoch nr')
         plt.ylabel('AUC')
         plt.legend()
-        plt.savefig(dict_data['path_o'] + '/val_curve.png')
+        plt.savefig(path_o + '/val_curve.png')
 
 
+        fig = plt.figure(figsize=(16, 4))
+        ax1 = plt.subplot(141)
 
+        ax1.plot(dict_data['FPR'],dict_data['TPR'],label= 'train')
+        ax1.plot(dict_data['FPR_v'],dict_data['TPR_v'],label= 'val')
+        ax1.plot(dict_data['FPR_t'],dict_data['TPR_t'],label= 'test')
+        plt.legend()
 
-        if (dict_data['AUC_v'] >= max(list(df['AUC_v']))):
+        plt.title('ROC curve no CMA at epoch: '+str(dict_data['epoch']))
+        plt.xlabel('FPR')
+        plt.ylabel('TPR')
 
-            # fig = plt.figure(figsize=(16, 4))
-            ax1 = plt.subplot(141)
+        ax2 = plt.subplot(142)
+        ax2.hist(dict_data['df_t_train']['error_m'], label = 'True', color = 'red', alpha = 0.5 , bins = 50)
+        ax2.hist(dict_data['df_f_train']['error_m'],label = 'False',color = 'green', alpha = 0.5,bins = 50)
+        plt.legend()
+        plt.title('Train set: '+str(round(dict_data['AUC'],3)))
+        plt.xlabel('error')
+        plt.ylabel('frequency')
 
-            ax1.plot(dict_data['FPR'],dict_data['TPR'],label= 'train')
-            ax1.plot(dict_data['FPR_v'],dict_data['TPR_v'],label= 'val')
-            ax1.plot(dict_data['FPR_t'],dict_data['TPR_t'],label= 'test')
-            plt.legend()
+        ax3 = plt.subplot(143)
+        ax3.hist(dict_data['df_t_val']['error_m'], label = 'True', color = 'red', alpha = 0.5 , bins = 50)
+        ax3.hist(dict_data['df_f_val']['error_m'],label = 'False',color = 'green', alpha = 0.5,bins = 50)
+        plt.title('Val set: '+str(round(dict_data['AUC_v'],3)))
+        plt.xlabel('error')
+        plt.ylabel('frequency')
+        plt.legend()
 
-            plt.title('ROC curve no CMA at epoch: '+str(dict_data['epoch']))
-            plt.xlabel('FPR')
-            plt.ylabel('TPR')
+        ax4 = plt.subplot(144)
+        ax4.hist(dict_data['df_t_test']['error_m'], label = 'True', color = 'red', alpha = 0.5 , bins = 50)
+        ax4.hist(dict_data['df_f_test']['error_m'],label = 'False',color = 'green', alpha = 0.5,bins = 50)
+        plt.legend()
+        plt.title('test set: '+str(round(dict_data['AUC_t'],3)))
+        plt.xlabel('error')
+        plt.ylabel('frequency')
 
-            ax2 = plt.subplot(142)
-            ax2.hist(dict_data['df_t_train']['error_m'], label = 'True', color = 'red', alpha = 0.5 , bins = 50)
-            ax2.hist(dict_data['df_f_train']['error_m'],label = 'False',color = 'green', alpha = 0.5,bins = 50)
-            plt.legend()
-            plt.title('Train set: '+str(round(dict_data['AUC'],3)))
-            plt.xlabel('error')
-            plt.ylabel('frequency')
-            print(dict_data['df_f_val']['error_m'])
-            ax3 = plt.subplot(143)
-            ax3.hist(dict_data['df_t_val']['error_m'], label = 'True', color = 'red', alpha = 0.5 , bins = 50)
-            ax3.hist(dict_data['df_f_val']['error_m'],label = 'False',color = 'green', alpha = 0.5,bins = 50)
-            plt.title('Val set: '+str(round(dict_data['AUC_v'],3)))
-            plt.xlabel('error')
-            plt.ylabel('frequency')
-            plt.legend()
-
-            ax4 = plt.subplot(144)
-            ax4.hist(dict_data['df_t_test']['error_m'], label = 'True', color = 'red', alpha = 0.5 , bins = 50)
-            ax4.hist(dict_data['df_f_test']['error_m'],label = 'False',color = 'green', alpha = 0.5,bins = 50)
-            plt.legend()
-            plt.title('test set: '+str(round(dict_data['AUC_t'],3)))
-            plt.xlabel('error')
-            plt.ylabel('frequency')
-
-            plt.savefig(path_b+'AUC_best_no_CMA_val.png')
-
-
-            dict_data['df_t_train'] = dict_data['df_t_train'][['error_e','error_m','location','segmentation']]
-            dict_data['df_t_val']   = dict_data['df_t_val'][['error_e','error_m','location','segmentation']]
-            dict_data['df_t_test']  = dict_data['df_t_test'][['error_e','error_m','location','segmentation']]
-
-            dict_data['df_f_train'] = dict_data['df_f_train'][['error_e','error_m','location','segmentation']]
-            dict_data['df_f_val']   = dict_data['df_f_val'][['error_e','error_m','location','segmentation']]
-            dict_data['df_f_test']  = dict_data['df_f_test'][['error_e','error_m','location','segmentation']]
-
-
-            pickle_save_(path_b+'data_best.p',dict_data)
-            # plt.close(fig)
+        plt.savefig(path_b+'AUC_best_no_CMA_val.png')
 
 
 
     def _get_data_no_cma(self,dict_data):
-        i               = dict_data['epoch']
-        self.df_t_train = dict_data['df_t_train']
-        self.df_t_val   = dict_data['df_t_val']
-        self.df_t_test  = dict_data['df_t_test']
+        i          = dict_data['epoch']
+        df_t_train = dict_data['df_t_train']
+        df_t_val   = dict_data['df_t_val']
+        df_t_test  = dict_data['df_t_test']
 
-        self.df_f_train = dict_data['df_f_train']
-        self.df_f_val   = dict_data['df_f_val']
-        self.df_f_test  = dict_data['df_f_test']
+        df_f_train = dict_data['df_f_train']
+        df_f_val   = dict_data['df_f_val']
+        df_f_test  = dict_data['df_f_test']
 
-        self.dimension = self.df_t_train.iloc[0]['data_X'].shape[2]
+        dimension = df_t_train.iloc[0]['data_X'].shape[2]
 
 
         loss_f_tr       = dict_data['loss_f_tr']
@@ -139,36 +124,39 @@ class OPS_LSTM(AUC):
         self.AUC_min = 100
 
 
-        array_t                             = zip(list(self.df_t_train['data_y']),list(self.df_t_train['data_y_p']))
-        self.df_t_train['error_e']          = list(map(self._get_error_cma,array_t))
-        self.df_t_train['error_m']          = list(map(self._get_error_m,self.df_t_train['error_e']))
+        array_t                        = zip(list(df_t_train['data_y']),list(df_t_train['data_y_p']))
+        df_t_train['error_e']          = list(map(self._get_error_cma,array_t))
+        df_t_train['error_m']          = list(map(self._get_error_m,df_t_train['error_e']))
 
-        array_t                             = zip(list(self.df_t_val['data_y']),list(self.df_t_val['data_y_p']))
-        self.df_t_val['error_e']            = list(map(self._get_error_cma,array_t))
-        self.df_t_val['error_m']            = list(map(self._get_error_m,self.df_t_val['error_e']))
+        array_t                        = zip(list(df_t_val['data_y']),list(df_t_val['data_y_p']))
+        df_t_val['error_e']            = list(map(self._get_error_cma,array_t))
+        df_t_val['error_m']            = list(map(self._get_error_m,df_t_val['error_e']))
 
-        array_t                             = zip(list(self.df_t_test['data_y']),list(self.df_t_test['data_y_p']))
-        self.df_t_test['error_e']           = list(map(self._get_error_cma,array_t))
-        self.df_t_test['error_m']           = list(map(self._get_error_m,self.df_t_test['error_e']))
+        array_t                        = zip(list(df_t_test['data_y']),list(df_t_test['data_y_p']))
+        df_t_test['error_e']           = list(map(self._get_error_cma,array_t))
+        df_t_test['error_m']           = list(map(self._get_error_m,df_t_test['error_e']))
 
-        array_f                             = zip(list(self.df_f_train['data_y']),list(self.df_f_train['data_y_p']))
-        self.df_f_train['error_e']          = list(map(self._get_error_cma,array_f))
-        self.df_f_train['error_m']          = list(map(self._get_error_m,self.df_f_train['error_e']))
+        array_f                        = zip(list(df_f_train['data_y']),list(df_f_train['data_y_p']))
+        df_f_train['error_e']          = list(map(self._get_error_cma,array_f))
+        df_f_train['error_m']          = list(map(self._get_error_m,df_f_train['error_e']))
 
-        array_f                             = zip(list(self.df_f_val['data_y']),list(self.df_f_val['data_y_p']))
-        self.df_f_val['error_e']            = list(map(self._get_error_cma,array_f))
-        self.df_f_val['error_m']            = list(map(self._get_error_m, self.df_f_val['error_e']))
+        array_f                        = zip(list(df_f_val['data_y']),list(df_f_val['data_y_p']))
+        df_f_val['error_e']            = list(map(self._get_error_cma,array_f))
+        df_f_val['error_m']            = list(map(self._get_error_m, df_f_val['error_e']))
 
-        array_f                             = zip(list(self.df_f_test['data_y']), list(self.df_f_test['data_y_p']))
-        self.df_f_test['error_e']           = list(map(self._get_error_cma, array_f))
-        self.df_f_test['error_m']           = list(map(self._get_error_m, self.df_f_test['error_e']))
+        array_f                        = zip(list(df_f_test['data_y']), list(df_f_test['data_y_p']))
+        df_f_test['error_e']           = list(map(self._get_error_cma, array_f))
+        df_f_test['error_m']           = list(map(self._get_error_m, df_f_test['error_e']))
+
+        df_t_train_val= pd.concat([df_t_train,df_t_val])
 
 
-        AUC, FPR, TPR       = self.get_AUC_score( self.df_t_train['error_m'],  self.df_f_train['error_m'])
-        AUC_v, FPR_v, TPR_v = self.get_AUC_score( self.df_t_val['error_m'],    self.df_f_val['error_m'])
-        AUC_t, FPR_t, TPR_t = self.get_AUC_score( self.df_t_test['error_m'],   self.df_f_test['error_m'])
 
-        loss_t_tr, loss_t_v, loss_t_t, loss_f_t = self._calc_loss()
+        AUC, FPR, TPR       = self.get_AUC_score( df_t_train_val['error_m'],  df_f_train['error_m'])
+        AUC_v, FPR_v, TPR_v = self.get_AUC_score( df_t_train_val['error_m'],    df_f_val['error_m'])
+        AUC_t, FPR_t, TPR_t = self.get_AUC_score( df_t_test['error_m'],   df_f_test['error_m'])
+
+        loss_t_tr, loss_t_v, loss_t_t, loss_f_t,loss_t_v_tr = self._calc_loss(df_t_train,df_f_train,df_t_val,df_f_val,df_t_test,df_f_test)
         dict_data   =  {
                         'AUC'            : AUC,
                         'FPR'            : FPR,
@@ -191,25 +179,28 @@ class OPS_LSTM(AUC):
                         'val_t'          : loss_t_v,
                         'test_t'         : loss_t_t,
 
+                        'train_val_t'    : loss_t_v_tr,
+
                         'path_o'         : dict_data['path_o'],
                         'epoch'          : dict_data['epoch'],
 
-                        'df_t_train'     : self.df_t_train,
-                        'df_t_val'       : self.df_t_val,
-                        'df_t_test'      : self.df_t_test,
+                        'df_t_train'     : df_t_train,
+                        'df_t_val'       : df_t_val,
+                        'df_t_test'      : df_t_test,
 
-                        'df_f_train'     : self.df_f_train,
-                        'df_f_val'       : self.df_f_val,
-                        'df_f_test'      : self.df_f_test,
+                        'df_f_train'     : df_f_train,
+                        'df_f_val'       : df_f_val,
+                        'df_f_test'      : df_f_test,
                         }
 
         path = dict_data['path_o'] + 'hist.p'
         df = pd.DataFrame([dict_data])[['AUC','AUC_v','AUC_t',
-                                        'train_f','train_t','val_f','val_t','test_t','test_f']]
+                                        'train_f','train_t','val_f','val_t','test_t','test_f','train_val_t']]
 
 
 
-        if(i == 0):
+
+        if('hist.p' not in os.listdir(dict_data['path_o'])):
             pickle_save(path,df)
         else:
 
@@ -218,6 +209,23 @@ class OPS_LSTM(AUC):
 
 
             pickle_save(path,df_saved)
+
+        path_b = dict_data['path_o'] +'best/'
+
+        if (os.path.exists(path_b) == False):
+            os.mkdir(path_b)
+
+
+        if (dict_data['AUC_v'] >= max(list(df['AUC_v']))):
+            dict_data['df_t_train'] = dict_data['df_t_train'][['error_e', 'error_m', 'location', 'segmentation']]
+            dict_data['df_t_val'] = dict_data['df_t_val'][['error_e', 'error_m', 'location', 'segmentation']]
+            dict_data['df_t_test'] = dict_data['df_t_test'][['error_e', 'error_m', 'location', 'segmentation']]
+
+            dict_data['df_f_train'] = dict_data['df_f_train'][['error_e', 'error_m', 'location', 'segmentation']]
+            dict_data['df_f_val'] = dict_data['df_f_val'][['error_e', 'error_m', 'location', 'segmentation']]
+            dict_data['df_f_test'] = dict_data['df_f_test'][['error_e', 'error_m', 'location', 'segmentation']]
+
+            pickle_save_(path_b+'data_best.p',dict_data)
 
 
         return dict_data
@@ -240,33 +248,39 @@ class OPS_LSTM(AUC):
 
         return e_f
 
-    def _calc_loss(self):
-        t_tr_y    = np.concatenate(list(self.df_t_train['data_y']))
-        t_tr_yp   = np.concatenate(list(self.df_t_train['data_y_p']))
+    def _calc_loss(self,df_t_train,df_f_train,df_t_val,df_f_val,df_t_test,df_f_test):
+        t_tr_y    = np.concatenate(list(df_t_train['data_y']))
+        t_tr_yp   = np.concatenate(list(df_t_train['data_y_p']))
         t_e_tr    = np.mean(np.power((t_tr_y-t_tr_yp),2),axis = (1,2))
         loss_t_tr = np.mean(t_e_tr)
-        del t_tr_y,t_tr_yp,t_e_tr
+        del t_tr_y,t_tr_yp
 
-        t_v_y    = np.concatenate(list(self.df_t_val['data_y']))
-        t_v_yp   = np.concatenate(list(self.df_t_val['data_y_p']))
+        t_v_y    = np.concatenate(list(df_t_val['data_y']))
+        t_v_yp   = np.concatenate(list(df_t_val['data_y_p']))
         t_e_v    = np.mean(np.power((t_v_y-t_v_yp),2),axis = (1,2))
-        loss_t_v = np.mean(t_e_v)
-        del t_v_y,t_v_yp,t_e_v
 
-        t_t_y    = np.concatenate(list(self.df_t_test['data_y']))
-        t_t_yp   = np.concatenate(list(self.df_t_test['data_y_p']))
+        t_e_v_tr    = np.hstack((t_e_tr,t_e_v))
+
+
+
+        loss_t_v    = np.mean(t_e_v)
+        loss_t_v_tr = np.mean(t_e_v_tr)
+        del t_v_y,t_v_yp,t_e_v,t_e_tr
+
+        t_t_y    = np.concatenate(list(df_t_test['data_y']))
+        t_t_yp   = np.concatenate(list(df_t_test['data_y_p']))
         t_e_t    = np.mean(np.power((t_t_y-t_t_yp),2),axis = (1,2))
         loss_t_t = np.mean(t_e_t)
         del t_t_y,t_t_yp,t_e_t
 
 
-        f_t_y     = np.concatenate(list(self.df_f_test['data_y']))
-        f_t_yp    = np.concatenate(list(self.df_f_test['data_y_p']))
+        f_t_y     = np.concatenate(list(df_f_test['data_y']))
+        f_t_yp    = np.concatenate(list(df_f_test['data_y_p']))
         f_e_t     = np.mean(np.power((f_t_y-f_t_yp),2),axis = (1,2))
         loss_f_t  = np.mean(f_e_t)
         del f_t_y,f_t_yp,f_e_t
 
-        return loss_t_tr,loss_t_v,loss_t_t,loss_f_t
+        return loss_t_tr,loss_t_v,loss_t_t,loss_f_t,loss_t_v_tr
 
 
 
