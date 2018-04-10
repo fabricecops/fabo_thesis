@@ -8,11 +8,8 @@ import psutil
 import objgraph
 import numpy as np
 import gc
-from pympler import tracker
-import multiprocessing as mp
+from src.dst.outputhandler.pickle import pickle_save_,pickle_load
 import time
-import threading
-from queue import Queue
 
 def tic():
     global time_
@@ -45,7 +42,6 @@ class model_mng():
 
 
         self.dict_c      = dict_c
-
         self.model       = LSTM_(dict_c)
 
         self.dict_data   = None
@@ -78,7 +74,7 @@ class model_mng():
             self.obj_graph[obj[0]] = np.array([])
 
 
-        self.best_dict   = None
+        self.best_dict   = {}
 
         self.dict_loss   = {
                             'loss'    : [],
@@ -92,11 +88,11 @@ class model_mng():
 
 
             tic()
-            loss, val_loss = self.process_before_TH()
+            loss, val_loss = self.process_before_TH(i)
+            self.memory.append(psutil.virtual_memory()[3] / 1000000000.)
 
-            if(self.min_val_loss < self.dict_c['TH_val_loss']):
+            if(self.min_val_loss < self.dict_c['TH_val_loss'] and i%self.dict_c['mod_data'] == 0):
                 self.process_LSTM(i,loss,val_loss)
-                self.memory.append(psutil.virtual_memory()[3] / 1000000000.)
 
             self.plot_obj()
             plt.close('all')
@@ -105,25 +101,28 @@ class model_mng():
 
 
             if (self.count_no_cma > self.dict_c['SI_no_cma'] or self.count_no_cma_AUC > self.dict_c['SI_no_cma_AUC']):
+                epoch = i
                 break
 
 
-        K.clear_session()
-        if (self.min_val_loss < self.dict_c['TH_val_loss']):
-                self.plot_output(self.best_dict)
 
+
+        self.process_LSTM(epoch, loss, val_loss)
+        self.plot_output(self.best_dict)
         self.best_dict.clear()
+        K.clear_session()
         gc.collect()
 
         queue_opt.put(self.AUC_no_cma)
 
 
 
-    def process_before_TH(self):
+    def process_before_TH(self,i):
         loss, val_loss = self.model.fit()
         self.dict_loss['loss'].append(loss[0])
         self.dict_loss['val_loss'].append(val_loss[0])
         self.plot(self.dict_loss)
+        pickle_save_(self.path_o+'hist_no_cma.p',self.dict_loss)
 
         if (val_loss[0] >= self.min_val_loss):
             self.count_no_cma += 1
@@ -131,7 +130,7 @@ class model_mng():
             self.count_no_cma = 0
             self.min_val_loss = val_loss[0]
 
-        if (self.dict_c['TH_val_loss'] <= self.min_val_loss):
+        if (self.dict_c['TH_val_loss'] <= self.min_val_loss or i%self.dict_c['mod_data'] == 0):
 
             print(loss, val_loss,self.count_no_cma )
             print()
@@ -162,10 +161,11 @@ class model_mng():
     def update_states(self,dict_data):
         self.print_stats(dict_data)
 
+
         if (dict_data['AUC_v']  > self.AUC_no_cma):
             self.AUC_no_cma = dict_data['AUC_v']
             self.count_no_cma_AUC = 0
-            self.best_dict   = dict_data
+            self.best_dict        = dict_data
             self.best_dict['path_o'] = self.model.return_path()
         else:
             self.count_no_cma_AUC += 1
@@ -253,6 +253,7 @@ class model_mng():
 
 
 if __name__ == '__main__':
+
     dict_c, bounds = return_dict_bounds()
     mm    = model_mng(dict_c)
     mm.main()

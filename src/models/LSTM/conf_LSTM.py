@@ -22,7 +22,6 @@ def return_dict_bounds(bounds = 'DEEP1'):
         'area'             : 200,
         'min_h'            : 20,
         'max_h'            : 200,
-
         ## PCA componentes #########
         'PCA_components'   : 50,
 
@@ -31,8 +30,8 @@ def return_dict_bounds(bounds = 'DEEP1'):
         'shuffle_style'    : 'segmentated',
 
         ###### Bayes opt ######
-        'max_iter'         : 80,
-        'initial_n'        : 20,
+        'max_iter'         : 200,
+        'initial_n'        : 30,
         'initial_dt'       : 'latin',
         'eps'              : -1,
         'maximize'         : True,
@@ -43,7 +42,7 @@ def return_dict_bounds(bounds = 'DEEP1'):
 
         ##### model definition  #####
         'window'           : 0,
-        'time_dim'         : 10,
+        'time_dim'         : 25,
         'pred_seq'         : True,
         'stateful'         : False,
 
@@ -65,9 +64,11 @@ def return_dict_bounds(bounds = 'DEEP1'):
         'epochs'           : 10000,
         'batch_size'       : 1024,
 
-        'SI_no_cma'        : 20.,
+        'SI_no_cma'        : 25,
         'SI_no_cma_AUC'    : 40,
-        'TH_val_loss'      : 0.025,
+        'TH_val_loss'      : 0.01,
+
+        'mod_data'         : 5,
 
 
 
@@ -133,7 +134,9 @@ def return_dict_bounds(bounds = 'DEEP1'):
 
 
     bounds_DEEP2 = [
-                {'name': 'lr',           'type': 'continuous', 'domain': (0.0001, 0.1)},
+                 {'name': 'time_dim', 'type': 'continuous', 'domain': (15, 25)},
+
+                 {'name': 'lr',           'type': 'continuous', 'domain': (0.00001, 0.01)},
 
                 {'name': 'vector', 'type': 'continuous', 'domain': (200, 800)},
 
@@ -141,7 +144,12 @@ def return_dict_bounds(bounds = 'DEEP1'):
                 {'name': 'hidden_e_2', 'type': 'continuous', 'domain': (100, 500)},
 
 
-                {'name': 'hidden_d_1', 'type': 'continuous', 'domain': (100, 500)}]
+                {'name': 'hidden_d_1', 'type': 'continuous', 'domain': (100, 500)},
+
+                {'name': 'p', 'type': 'discrete', 'domain': [0, 1,2]},
+                {'name': 'v', 'type': 'discrete', 'domain': [0, 1]}
+
+                  ]
 
 
     bounds_DEEP3 = [

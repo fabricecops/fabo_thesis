@@ -42,6 +42,7 @@ class FS_manager():
         else:
             path_gen = self.path
 
+
         path_TB     =  path_gen +'tensorboard/'
         path_output =  path_gen + 'output/'
 

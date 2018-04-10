@@ -284,17 +284,18 @@ class main_visualize(conf_data,plot_Tool,Path_gen):
         return i,j
 
 if __name__ == '__main__':
+    path_best = './models/bayes_opt/DEEP2/21/'
     dict_c = {
-            'path'       :'./models/ensemble/ensemble/',
-            'mode'       : 'error_f_train',
+        'path': path_best,
+        'mode': 'df_t_train',
 
-            'path_dict'  : './models/ensemble/DEEP1/hidden/0/dict.p',
-        
-            'plot_mode'  : 'error'
+        'path_dict': path_best + 'dict.p',
 
+        'plot_mode': 'error'
 
     }
-
     vis = main_visualize(dict_c)
-
     vis.play_videos()
+    vis = main_visualize(dict_c)
+    vis.play_videos()
+

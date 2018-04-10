@@ -245,8 +245,6 @@ class BayesionOpt():
         self.AUC_v.append(opt_value)
         self.plot(self.time_,self.AUC_v)
         self.save_memory()
-        if(opt_value == 0):
-            opt_value = 0.5
 
 
         print('OPT VALUE ' * 3)
@@ -304,21 +302,34 @@ class BayesionOpt():
 
     def configure_bounds_DEEP2(self,dict_c,x):
 
-
-        dict_c['lr']         = float(x[:,0])
-        dict_c['vector']     =int(x[:,1])
+        dict_c['time_dim']   = int(x[:,0])
+        dict_c['lr']         = float(x[:,1])
+        dict_c['vector']     =int(x[:,2])
 
         array_encoder = []
         for i in range(2):
-            array_encoder.append(int(x[:,2]))
+            array_encoder.append(int(x[:,2+i]))
 
         array_decoder = []
         for i in range(1):
-            array_decoder.append(int(x[:,4]))
+            array_decoder.append(int(x[:,5]))
 
+        array_features = []
+        if(int(x[:,-1]) == 1):
+            array_features.append('PCA')
 
-        dict_c['encoder'] = array_encoder
-        dict_c['decoder'] = array_decoder
+        if (int(x[:, -2]) == 1):
+            array_features.append('p')
+        if (int(x[:, -2]) == 2):
+            array_features.append('v')
+
+        if(array_features == []):
+            array_features.append('p')
+        array_features = list(set(array_features))
+
+        dict_c['mode_data'] = array_features
+        dict_c['encoder']   = array_encoder
+        dict_c['decoder']   = array_decoder
 
         return dict_c
 
@@ -383,6 +394,11 @@ class BayesionOpt():
         plt.title('Distribution AUC_v')
 
         plt.savefig(self.dict_c['path_save']+'dist.png')
+
+        dict_data = {'AUC_v' : AUC_v,
+                     'time_' : time_}
+
+        pickle_save_(self.dict_c['path_save']+'dict_BO.p',dict_data)
 
     def save_memory(self):
         fig = plt.figure(figsize=(16, 4))
@@ -524,11 +540,11 @@ if __name__ == '__main__':
     # mm._get_rest_of_data()
     # mm.variance_calculation()
 
-    mode = 'DEEP1'
-    dict_c,bounds = return_dict_bounds(bounds = mode)
-    dict_c['path_save'] = './models/bayes_opt/DEEP1/'
-    bo = BayesionOpt(dict_c,bounds,mode)
-    bo.main()
+    # mode = 'DEEP1'
+    # dict_c,bounds = return_dict_bounds(bounds = mode)
+    # dict_c['path_save'] = './models/bayes_opt/DEEP1/'
+    # bo = BayesionOpt(dict_c,bounds,mode)
+    # bo.main()
 
 
     mode = 'DEEP2'

@@ -83,11 +83,14 @@ class conf_data():
         #
         # print(np.array(self.df_false['error_tm']))
 
-        path = self.path + 'best/best_error.p'
+        path = self.path + 'best/data_best.p'
         data = pickle_load(path,None)
+
 
         data = data[self.dict_c['mode']]
         self.df = data
+
+
 
 
     def _get_error_m(self, row):

@@ -254,6 +254,7 @@ class LSTM_(model, data_manager):
 
     def copy_experiment(self):
         src = 'src'
+        print(self.path_gen)
         dst = self.path_gen+'/src'
 
         shutil.copytree(src,dst)

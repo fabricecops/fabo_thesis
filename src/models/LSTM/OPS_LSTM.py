@@ -2,106 +2,24 @@ from src.dst.outputhandler.pickle import pickle_save
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
-import functools
 plt.style.use('ggplot')
 import numpy as np
-from src.dst.metrics.AUC import AUC
 from src.dst.outputhandler.pickle import pickle_save_,pickle_load
-import matplotlib
-import gc
+from src.dst.plots.plots import plotting_tool
 
-matplotlib.use('Agg')
 
-class OPS_LSTM(AUC):
+class OPS_LSTM(plotting_tool):
 
     def __init__(self,dict_c):
         self.dict_c = dict_c
-        AUC.__init__(self,dict_c)
+        plotting_tool.__init__(self,dict_c)
 
     def main(self,dict_data):
 
         dict_data2           = self._get_data_no_cma(dict_data)
-        self.plot_dist(dict_data2)
 
 
         return dict_data2
-
-
-    def save_plots_no_cma(self,dict_data):
-        path_o = dict_data['path_o']
-        ### validation curve
-        df = pickle_load(path_o+'hist.p', None)
-        path_b = path_o +'best/'
-        if (os.path.exists(path_b) == False):
-            os.mkdir(path_b)
-
-        fig = plt.figure(figsize=(16, 4))
-
-        ax1 = plt.subplot(121)
-        ax1.plot(np.array(df['train_val_t']),    color = 'm',   label = 'train_t_v')
-        ax1.plot(np.array(df['test_t']),    color = 'k',   label = 'test_t')
-
-        ax1.plot(np.array(df['train_f']),  color = 'blue',  label = 'train_f')
-        ax1.plot(np.array(df['val_f']),    color = 'green', label = 'val_f')
-        ax1.plot(np.array(df['test_f']),  color = 'yellow',  label = 'test_f')
-        ax1.set_ylim(0.0,self.dict_c['TH_val_loss'])
-
-        plt.legend()
-        plt.title('validation/train curve')
-        plt.xlabel('epoch nr')
-        plt.ylabel('average loss')
-
-        ax2 = plt.subplot(122)
-        ax2.plot(np.array(df['AUC']), color = 'r', label = 'train')
-        ax2.plot(np.array(df['AUC_v']), color = 'g', label = 'val')
-        ax2.plot(np.array(df['AUC_t']), color = 'b', label = 'test')
-
-        plt.title('train/val/test AUC no CMA')
-        plt.xlabel('epoch nr')
-        plt.ylabel('AUC')
-        plt.legend()
-        plt.savefig(path_o + '/val_curve.png')
-
-
-        fig = plt.figure(figsize=(16, 4))
-        ax1 = plt.subplot(141)
-
-        ax1.plot(dict_data['FPR'],dict_data['TPR'],label= 'train')
-        ax1.plot(dict_data['FPR_v'],dict_data['TPR_v'],label= 'val')
-        ax1.plot(dict_data['FPR_t'],dict_data['TPR_t'],label= 'test')
-        plt.legend()
-
-        plt.title('ROC curve no CMA at epoch: '+str(dict_data['epoch']))
-        plt.xlabel('FPR')
-        plt.ylabel('TPR')
-
-        ax2 = plt.subplot(142)
-        ax2.hist(dict_data['df_t_train']['error_m'], label = 'True', color = 'red', alpha = 0.5 , bins = 50)
-        ax2.hist(dict_data['df_f_train']['error_m'],label = 'False',color = 'green', alpha = 0.5,bins = 50)
-        plt.legend()
-        plt.title('Train set: '+str(round(dict_data['AUC'],3)))
-        plt.xlabel('error')
-        plt.ylabel('frequency')
-
-        ax3 = plt.subplot(143)
-        ax3.hist(dict_data['df_t_val']['error_m'], label = 'True', color = 'red', alpha = 0.5 , bins = 50)
-        ax3.hist(dict_data['df_f_val']['error_m'],label = 'False',color = 'green', alpha = 0.5,bins = 50)
-        plt.title('Val set: '+str(round(dict_data['AUC_v'],3)))
-        plt.xlabel('error')
-        plt.ylabel('frequency')
-        plt.legend()
-
-        ax4 = plt.subplot(144)
-        ax4.hist(dict_data['df_t_test']['error_m'], label = 'True', color = 'red', alpha = 0.5 , bins = 50)
-        ax4.hist(dict_data['df_f_test']['error_m'],label = 'False',color = 'green', alpha = 0.5,bins = 50)
-        plt.legend()
-        plt.title('test set: '+str(round(dict_data['AUC_t'],3)))
-        plt.xlabel('error')
-        plt.ylabel('frequency')
-
-        plt.savefig(path_b+'AUC_best_no_CMA_val.png')
-
-
 
     def _get_data_no_cma(self,dict_data):
         i          = dict_data['epoch']
@@ -126,27 +44,33 @@ class OPS_LSTM(AUC):
 
         array_t                        = zip(list(df_t_train['data_y']),list(df_t_train['data_y_p']))
         df_t_train['error_e']          = list(map(self._get_error_cma,array_t))
-        df_t_train['error_m']          = list(map(self._get_error_m,df_t_train['error_e']))
+        df_t_train['error_v']          = list(map(self.get_error_vis,df_t_train['error_e']))
+        df_t_train['error_m']          = list(map(self._get_error_m,df_t_train['error_v']))
 
         array_t                        = zip(list(df_t_val['data_y']),list(df_t_val['data_y_p']))
         df_t_val['error_e']            = list(map(self._get_error_cma,array_t))
-        df_t_val['error_m']            = list(map(self._get_error_m,df_t_val['error_e']))
+        df_t_val['error_v']            = list(map(self.get_error_vis,df_t_val['error_e']))
+        df_t_val['error_m']            = list(map(self._get_error_m,df_t_val['error_v']))
 
         array_t                        = zip(list(df_t_test['data_y']),list(df_t_test['data_y_p']))
         df_t_test['error_e']           = list(map(self._get_error_cma,array_t))
-        df_t_test['error_m']           = list(map(self._get_error_m,df_t_test['error_e']))
+        df_t_test['error_v']           = list(map(self.get_error_vis,df_t_test['error_e']))
+        df_t_test['error_m']           = list(map(self._get_error_m,df_t_test['error_v']))
 
         array_f                        = zip(list(df_f_train['data_y']),list(df_f_train['data_y_p']))
         df_f_train['error_e']          = list(map(self._get_error_cma,array_f))
-        df_f_train['error_m']          = list(map(self._get_error_m,df_f_train['error_e']))
+        df_f_train['error_v']          = list(map(self.get_error_vis,df_f_train['error_e']))
+        df_f_train['error_m']          = list(map(self._get_error_m,df_f_train['error_v']))
 
         array_f                        = zip(list(df_f_val['data_y']),list(df_f_val['data_y_p']))
         df_f_val['error_e']            = list(map(self._get_error_cma,array_f))
-        df_f_val['error_m']            = list(map(self._get_error_m, df_f_val['error_e']))
+        df_f_val['error_v']          = list(map(self.get_error_vis,df_f_val['error_e']))
+        df_f_val['error_m']            = list(map(self._get_error_m, df_f_val['error_v']))
 
         array_f                        = zip(list(df_f_test['data_y']), list(df_f_test['data_y_p']))
         df_f_test['error_e']           = list(map(self._get_error_cma, array_f))
-        df_f_test['error_m']           = list(map(self._get_error_m, df_f_test['error_e']))
+        df_f_test['error_v']          = list(map(self.get_error_vis,df_f_test['error_e']))
+        df_f_test['error_m']           = list(map(self._get_error_m, df_f_test['error_v']))
 
         df_t_train_val= pd.concat([df_t_train,df_t_val])
 
@@ -187,10 +111,13 @@ class OPS_LSTM(AUC):
                         'df_t_train'     : df_t_train,
                         'df_t_val'       : df_t_val,
                         'df_t_test'      : df_t_test,
+                        'df_t_val_train' : df_t_train_val,
 
                         'df_f_train'     : df_f_train,
                         'df_f_val'       : df_f_val,
                         'df_f_test'      : df_f_test,
+
+
                         }
 
         path = dict_data['path_o'] + 'hist.p'
@@ -202,6 +129,7 @@ class OPS_LSTM(AUC):
 
         if('hist.p' not in os.listdir(dict_data['path_o'])):
             pickle_save(path,df)
+            df_saved = df
         else:
 
             df_saved = pickle_load(path,None)
@@ -216,27 +144,29 @@ class OPS_LSTM(AUC):
             os.mkdir(path_b)
 
 
-        if (dict_data['AUC_v'] >= max(list(df['AUC_v']))):
-            dict_data['df_t_train'] = dict_data['df_t_train'][['error_e', 'error_m', 'location', 'segmentation']]
-            dict_data['df_t_val'] = dict_data['df_t_val'][['error_e', 'error_m', 'location', 'segmentation']]
-            dict_data['df_t_test'] = dict_data['df_t_test'][['error_e', 'error_m', 'location', 'segmentation']]
+        if (dict_data['AUC_v'] >= max(list(df_saved['AUC_v']))):
+            dict_data['df_t_train'] = dict_data['df_t_train'][['error_e', 'error_m','error_v', 'location', 'segmentation','frames','label']]
+            dict_data['df_t_val'] = dict_data['df_t_val'][['error_e', 'error_m','error_v', 'location', 'segmentation','frames','label']]
+            dict_data['df_t_test'] = dict_data['df_t_test'][['error_e', 'error_m','error_v', 'location', 'segmentation','frames','label']]
+            dict_data['df_t_val_train'] = dict_data['df_t_val_train'][['error_e', 'error_m', 'error_v','location', 'segmentation','frames','label']]
 
-            dict_data['df_f_train'] = dict_data['df_f_train'][['error_e', 'error_m', 'location', 'segmentation']]
-            dict_data['df_f_val'] = dict_data['df_f_val'][['error_e', 'error_m', 'location', 'segmentation']]
-            dict_data['df_f_test'] = dict_data['df_f_test'][['error_e', 'error_m', 'location', 'segmentation']]
+            dict_data['df_f_train'] = dict_data['df_f_train'][['error_e', 'error_m','error_v', 'location', 'segmentation','frames','label']]
+            dict_data['df_f_val'] = dict_data['df_f_val'][['error_e', 'error_m','error_v', 'location', 'segmentation','frames','label']]
+            dict_data['df_f_test'] = dict_data['df_f_test'][['error_e', 'error_m','error_v', 'location', 'segmentation','frames','label']]
 
             pickle_save_(path_b+'data_best.p',dict_data)
 
 
         return dict_data
 
-
+    def get_error_vis(self,row):
+        return np.mean(row, axis = 1)
 
     def _get_error_m(self,row):
 
 
 
-        e_f = np.max(np.mean(row, axis = 1))
+        e_f = np.max(row)
         return e_f
 
     def _get_error_cma(self, row):
@@ -281,188 +211,6 @@ class OPS_LSTM(AUC):
         del f_t_y,f_t_yp,f_e_t
 
         return loss_t_tr,loss_t_v,loss_t_t,loss_f_t,loss_t_v_tr
-
-
-
-    def _get_data_segmented(self,dict_data,groupby):
-
-        df_t_train = dict_data['df_t_train']
-        df_t_val   = dict_data['df_t_val']
-        df_t_test  = dict_data['df_t_test']
-
-        df_f_train = dict_data['df_f_train']
-        df_f_val   = dict_data['df_f_val']
-        df_f_test  = dict_data['df_f_test']
-
-        dict_train = {}
-        for group in df_t_train.groupby(groupby):
-
-
-            AUC, FPR, TPR        = self.get_AUC_score(group[1]['error_m'], df_f_train['error_m'])
-            dict_train[group[0]] = [AUC,FPR,TPR]
-
-        dict_val   = {}
-        for group in df_t_val.groupby(groupby):
-            AUC, FPR, TPR        = self.get_AUC_score(group[1]['error_m'], df_f_val['error_m'])
-            dict_val[group[0]]   = [AUC,FPR,TPR]
-
-        dict_test = {}
-        for group in df_t_test.groupby(groupby):
-
-            AUC, FPR, TPR        = self.get_AUC_score(group[1]['error_m'],  df_f_test['error_m'])
-            dict_test[group[0]] = [AUC,FPR,TPR]
-
-
-        df_t  = df_t_train.append(df_t_val,ignore_index = True)
-        df_t  = df_t.append(df_t_test      ,ignore_index = True)
-
-        dict_combined = {}
-        for group in df_t.groupby(groupby):
-
-            AUC, FPR, TPR            = self.get_AUC_score(group[1]['error_m'], df_f_val['error_m'])
-            dict_combined[group[0]]  =  [AUC,FPR,TPR,len(group[0])]
-
-        dict_data['dict_train']     = dict_train
-        dict_data['dict_val']       = dict_val
-        dict_data['dict_test']      = dict_test
-        dict_data['dict_combined']  = dict_combined
-
-        return dict_data
-
-    def save_ROC_segment(self,dict_data,groupby):
-
-        path         = dict_data['path_o']
-        path_AUC_CMA = path+'hist.p'
-        df           = pickle_load(path_AUC_CMA, None)
-
-        path_save    = dict_data['path_o']+'best/'
-        if (dict_data['AUC_v'] >= max(list(df['AUC_v']))):
-            dict_data = self._get_data_segmented(dict_data,groupby)
-
-
-            fig = plt.figure(figsize=(16, 4))
-            ax1 = plt.subplot(141)
-
-            ax1.plot(dict_data['FPR'],dict_data['TPR'],color = 'k',label = 'MAIN')
-            for key in dict_data['dict_combined'].keys():
-                data =  dict_data['dict_combined'][key]
-                ax1.plot(data[1], data[2], label= key+'_'+str(round(data[0],2)))
-
-            plt.legend()
-            plt.title('ROC segmentated combined')
-            plt.xlabel('FPR')
-            plt.ylabel('TPR')
-
-            ax2 = plt.subplot(142)
-            ax2.plot(dict_data['FPR'],dict_data['TPR'],color = 'k',label = 'MAIN')
-            for key in dict_data['dict_train'].keys():
-                data =  dict_data['dict_train'][key]
-                ax2.plot(data[1], data[2], label= key+'_'+str(round(data[0],2)))
-
-            plt.legend()
-            plt.title('ROC segmentated training')
-            plt.xlabel('FPR')
-            plt.ylabel('TPR')
-
-            ax3 = plt.subplot(143)
-            ax3.plot(dict_data['FPR'], dict_data['TPR'], color='k', label='MAIN')
-            for key in dict_data['dict_val'].keys():
-                data = dict_data['dict_val'][key]
-                ax3.plot(data[1], data[2], label=key + '_' + str(round(data[0], 2)))
-
-            plt.legend()
-            plt.title('ROC segmentated val')
-            plt.xlabel('FPR')
-            plt.ylabel('TPR')
-
-            ax4 = plt.subplot(144)
-            ax4.plot(dict_data['FPR'], dict_data['TPR'], color='k', label='MAIN')
-            for key in dict_data['dict_test'].keys():
-                data = dict_data['dict_test'][key]
-                ax4.plot(data[1], data[2], label=key + '_' + str(round(data[0], 2)))
-
-            plt.legend()
-            plt.title('ROC segmentated test')
-            plt.xlabel('FPR')
-            plt.ylabel('TPR')
-            plt.savefig(path_save+'segmented_ROC'+groupby+'.png')
-            # plt.close('all')
-
-            pickle_save(path_save+'data_segment_ROC_'+groupby+'.p',dict_data)
-
-    def plot_dist(self, dict_data):
-        if (dict_data['epoch'] == 0):
-
-            df_t_train = dict_data['df_t_train']
-            df_t_val = dict_data['df_t_val']
-            df_t_test = dict_data['df_t_test']
-
-            groups = ['gooien', 'onder', 'boven', 'muren', 'sneaky', 'object']
-            array_c_tr = [0, 0, 0, 0, 0, 0]
-            array_c_v = [0, 0, 0, 0, 0, 0]
-            array_c_t = [0, 0, 0, 0, 0, 0]
-
-            for i, group in enumerate(groups):
-                array_c_tr[i] = len(df_t_train[df_t_train['segmentation'] == group])
-                array_c_v[i] = len(df_t_val[df_t_val['segmentation'] == group])
-                array_c_t[i] = len(df_t_test[df_t_test['segmentation'] == group])
-
-            dict_bar_classes = {
-                'groups': groups,
-                'train': array_c_tr,
-                'val': array_c_v,
-                'test': array_c_t
-            }
-            array_l_tr = [0, 0, 0, 0, 0, 0]
-            array_l_v = [0, 0, 0, 0, 0, 0]
-            array_l_t = [0, 0, 0, 0, 0, 0]
-
-            locations = ['bnp_1', 'bnp_2', 'first_data', 'hallway', 'robovision']
-            for i, group in enumerate(locations):
-                array_l_tr[i] = len(df_t_train[df_t_train['location'] == group])
-                array_l_v[i] = len(df_t_val[df_t_val['location'] == group])
-                array_l_t[i] = len(df_t_test[df_t_test['location'] == group])
-
-            dict_bar_location = {
-                'groups': locations,
-                'train': array_l_tr,
-                'val': array_l_v,
-                'test': array_l_t
-            }
-            fig = plt.figure(figsize=(16, 4))
-
-            ax1 = plt.subplot(121)
-
-            bottom2 = [x + y for x, y in
-                       zip(dict_bar_classes['train'], dict_bar_classes['val'])]
-
-            indexes = range(len(dict_bar_classes['train']))
-            ax1.bar(indexes, dict_bar_classes['train'], align='center', label='train')
-            ax1.bar(indexes, dict_bar_classes['val'], align="center",
-                    bottom=dict_bar_classes['train'], label='val')
-            ax1.bar(indexes, dict_bar_classes['test'], align="center", bottom=bottom2, label='test')
-            plt.xticks(range(len(dict_bar_classes['groups'])), dict_bar_classes['groups'])
-            plt.legend()
-            plt.xlabel('Groups')
-            plt.ylabel('Frequency')
-            plt.title('Distribution classes')
-
-            ax2 = plt.subplot(122)
-
-            bottom2 = [x + y for x, y in
-                       zip(dict_bar_location['train'], dict_bar_location['val'])]
-
-            indexes = range(len(dict_bar_location['train']))
-            ax2.bar(indexes, dict_bar_location['train'], align='center', label='train')
-            ax2.bar(indexes, dict_bar_location['val'], align="center",
-                    bottom=dict_bar_location['train'], label='val')
-            ax2.bar(indexes, dict_bar_location['test'], align="center", bottom=bottom2, label='test')
-            plt.xticks(range(len(dict_bar_location['groups'])), dict_bar_location['groups'])
-            plt.legend()
-            plt.xlabel('Groups')
-            plt.ylabel('Frequency')
-            plt.title('Distribution location')
-            plt.savefig(dict_data['path_o'] + 'dist_classes_segmentation.png')
 
 
     def save_output(self,dict_data,i):

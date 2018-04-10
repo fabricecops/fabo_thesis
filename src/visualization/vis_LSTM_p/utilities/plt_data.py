@@ -69,9 +69,8 @@ class plot_Tool():
 
     def get_plot_error_con(self,i,j,df):
         fig = plt.figure(figsize=(16, 4))
-
-        plt.plot(np.array(df['error_e'].iloc[i]), label='prediction', color='blue', linewidth=3.3)
-        plt.plot([j],np.array(df['error_e'].iloc[i])[j], marker='o', markersize=6, color="black")
+        plt.plot(np.array(df['error_v'].iloc[i]), label='prediction', color='blue', linewidth=3.3)
+        plt.plot([j],np.array(df['error_v'].iloc[i])[j], marker='o', markersize=6, color="black")
 
         fig.canvas.draw()
         image = np.array(fig.canvas.renderer._renderer)
