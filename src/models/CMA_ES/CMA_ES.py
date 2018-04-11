@@ -3,7 +3,9 @@ import numpy as np
 import functools
 import cma
 from src.models.CMA_ES.data_manager_CMA import data_manager
-
+from src.dst.outputhandler.pickle import pickle_save,pickle_load
+import os
+import pandas as pd
 
 class CMA_ES(AUC):
 
@@ -18,13 +20,81 @@ class CMA_ES(AUC):
         self.evals     = dict_c['evals']
         self.bounds    = dict_c['bounds']
         self.sigma     = dict_c['sigma']
+        self.popsize   = dict_c['popsize']
 
-        self.AUC_max  = -5
-        self.AUC_min  = 10
-        self.FPR      = None
-        self.TPR      = None
+        self.AUC_tr_max  = -5
+        self.FPR_tr      = None
+        self.TPR_tr      = None
 
-        self.data    = data_manager(dict_c).configure_data(dict_c)
+        self.AUC_v_max   = -5
+        self.FPR_v       = None
+        self.TPR_v       = None
+
+        self.AUC_t_maxv  = -5
+        self.FPR_t       = None
+        self.TPR_t       = None
+
+
+
+        self.counter       = 1
+        self.epoch         = 0
+
+        self.dict_df        = {
+
+                            'population_tr': np.zeros(21),
+                            'population_v' : np.zeros(21),
+                            'population_t' : np.zeros(21),
+
+                            'epoch'        : None
+
+                                }
+        self.array_v_x       = []
+        self.array_df        = []
+
+        self.best_x_v        = None
+        self.best_x_tr       = None
+
+    def main(self):
+        data_a, path_a,dict_config_LSTM_a    = data_manager(self.dict_c).load_data(self.dict_c['path_i'])
+
+        for data,path,dict_config_LSTM in zip(data_a, path_a,dict_config_LSTM_a):
+            try:
+                self.epoch = 0
+                self._configure_dir(path)
+                self.dict_c['path_save'] = path
+                self.dict_config_LSTM    = dict_config_LSTM
+                pickle_save(self.dict_c['path_save']+'/dict.p',dict_config_LSTM)
+
+
+                self.df_f_train = data['df_f_train']
+                self.df_f_val   = data['df_f_val']
+                self.df_f_test  = data['df_f_test']
+
+                self.df_t_train = data['df_t_train']
+                self.df_t_val   = data['df_t_val']
+                self.df_t_test  = data['df_t_test']
+
+                dimension = self.df_f_train['error_e'].iloc[0].shape[1]
+
+                es = cma.fmin(self._opt_function, dimension * [1], self.sigma,{'bounds'  : self.bounds,
+                                                                               'maxfevals': self.evals,
+                                                                               'verb_disp': self.verbose,
+                                                                               'verb_log' : self.verbose_log})
+
+            except:
+                pass
+
+
+
+
+
+
+    def main_CMA_ES(self):
+
+        self.data, self.dict_c['path_save'],self.dict_config_LSTM    = data_manager(dict_c).configure_data(dict_c)
+
+        self._configure_dir(self.dict_c['path_save'])
+
 
 
         self.df_f_train = self.data['df_f_train']
@@ -35,54 +105,121 @@ class CMA_ES(AUC):
         self.df_t_val   = self.data['df_t_val']
         self.df_t_test  = self.data['df_t_test']
 
-        print(self.df_f_train.columns)
-
-
-
-    def main_CMA_ES(self):
-
         dimension = self.df_f_train['error_e'].iloc[0].shape[1]
-        array = np.zeros(dimension)
 
-        es = cma.CMAEvolutionStrategy(dimension* [0.5], self.sigma,  {'bounds': self.bounds,
+        es = cma.fmin(self._opt_function, dimension * [1], self.sigma,{'bounds'  : self.bounds,
                                                                        'maxfevals': self.evals,
                                                                        'verb_disp': self.verbose,
-                                                                       'verb_log': self.verbose_log})
-        es.optimize(self._opt_function)
-
-        while True:
-            sol = es.ask_and_eval(self._opt_function)
-            print(sol[1])
+                                                                       'verb_log' : self.verbose_log})
 
 
-        AUC, FPR, TPR       = self.AUC_max, self.FPR, self.TPR
-        AUC_v, FPR_v, TPR_v = self._opt_function_(es[0], self.df_f_val['error_m'], self.df_t_val['error_m'])
-        AUC_t, FPR_t, TPR_t = self._opt_function_(es[0], self.df_f_test['error_m'], self.df_t_test['error_m'])
 
 
-        self.df_f_train['error_e'] =  list(map(functools.partial(self._get_error_ensemble, x=es[0]), np.array(self.df_f_train['error_m'])))
-        self.df_f_val['error_e']   =  list(map(functools.partial(self._get_error_ensemble, x=es[0]), np.array(self.df_f_val['error_m'])))
-        self.df_f_test['error_e']  =  list(map(functools.partial(self._get_error_ensemble, x=es[0]), np.array(self.df_f_test['error_m'])))
-
-        self.df_t_train['error_e'] =  list(map(functools.partial(self._get_error_ensemble, x=es[0]), np.array(self.df_t_train['error_m'])))
-        self.df_t_val['error_e']   =  list(map(functools.partial(self._get_error_ensemble, x=es[0]), np.array(self.df_t_val['error_m'])))
-        self.df_t_test['error_e']  =  list(map(functools.partial(self._get_error_ensemble, x=es[0]), np.array(self.df_t_test['error_m'])))
 
 
-        self.df_f_train['error_m'] =  list(map(functools.partial(self._get_error_max, x=es[0]), np.array(self.df_f_train['error_m'])))
-        self.df_f_val['error_m']   =  list(map(functools.partial(self._get_error_max, x=es[0]), np.array(self.df_f_val['error_m'])))
-        self.df_f_test['error_m']  =  list(map(functools.partial(self._get_error_max, x=es[0]), np.array(self.df_f_test['error_m'])))
 
-        self.df_t_train['error_m'] =  list(map(functools.partial(self._get_error_max, x=es[0]), np.array(self.df_t_train['error_m'])))
-        self.df_t_val['error_m']   =  list(map(functools.partial(self._get_error_max, x=es[0]), np.array(self.df_t_val['error_m'])))
-        self.df_t_test['error_m']  =  list(map(functools.partial(self._get_error_max, x=es[0]), np.array(self.df_t_test['error_m'])))
+
+
+    def _opt_function(self, x):
+
+        eval_true_tr  = np.array(list(map(functools.partial(self._get_error_max, x=x), np.array(self.df_t_train['error_e']))))
+        eval_false_tr = np.array(list(map(functools.partial(self._get_error_max, x=x), np.array(self.df_f_train['error_e']))))
+
+        eval_true_v   = np.array(list(map(functools.partial(self._get_error_max, x=x), np.array(self.df_t_val['error_e']))))
+        eval_false_v  = np.array(list(map(functools.partial(self._get_error_max, x=x), np.array(self.df_f_val['error_e']))))
+
+        eval_true_t   = np.array(list(map(functools.partial(self._get_error_max, x=x), np.array(self.df_t_test['error_e']))))
+        eval_false_t  = np.array(list(map(functools.partial(self._get_error_max, x=x), np.array(self.df_f_test['error_e']))))
+
+
+        AUC_tr, FPR_tr, TPR_tr = self.get_AUC_score(eval_true_tr, eval_false_tr)
+        AUC_v, FPR_v, TPR_v    = self.get_AUC_score(eval_true_v, eval_false_v)
+        AUC_t, FPR_t, TPR_t    = self.get_AUC_score(eval_true_t, eval_false_t)
+
+        if (AUC_tr > self.AUC_tr_max):
+            self.AUC_tr_max = AUC_tr
+            self.FPR_tr     = FPR_tr
+            self.TPR_tr     = TPR_tr
+            self.best_x_tr  = x
+
+        if (AUC_v > self.AUC_v_max):
+            self.AUC_v_max  = AUC_v
+            self.FPR_v      = FPR_v
+            self.TPR_v      = TPR_v
+            self.best_x_v   = x
+
+            self.AUC_t_maxv = AUC_t
+            self.FPR_t      = FPR_t
+            self.TPR_t      = TPR_t
+
+        self.dict_df['population_tr'] = AUC_tr
+        self.dict_df['population_v']  = AUC_v
+        self.dict_df['population_t']  = AUC_t
+        self.dict_df['epoch']         = self.epoch
+
+        self.array_v_x.append(x)
+
+
+        if(self.epoch%100 == 0):
+            self.save_data()
+
+        if(self.counter%self.popsize == 0):
+            self.counter             = 1
+            self.epoch              += 1
+            self.array_df.append(self.dict_df)
+            self.dict_df              = {}
+
+            df = pd.DataFrame(self.array_df,columns=['population_tr', 'population_v', 'population_t', 'best_x_v', 'epoch'])
+
+
+            pickle_save(self.dict_c['path_save'] + '/best/df.p', df)
+
+
+
+        else:
+            self.counter += 1
+            self.array_df.append(self.dict_df)
+            self.dict_df              = {}
+
+
+
+
+
+
+
+        return -AUC_tr
+
+    def save_data(self):
+
+        AUC, FPR, TPR       = self.AUC_tr_max, self.FPR_tr, self.TPR_tr
+        AUC_v, FPR_v, TPR_v = self._opt_function_(self.best_x_v, self.df_f_val['error_e'], self.df_t_val['error_e'])
+        AUC_t, FPR_t, TPR_t = self._opt_function_(self.best_x_v, self.df_f_test['error_e'], self.df_t_test['error_e'])
+
+
+        self.df_f_train['error_v'] =  list(map(functools.partial(self._get_error_ensemble, x=self.best_x_v), np.array(self.df_f_train['error_e'])))
+        self.df_f_val['error_v']   =  list(map(functools.partial(self._get_error_ensemble, x=self.best_x_v), np.array(self.df_f_val['error_e'])))
+        self.df_f_test['error_v']  =  list(map(functools.partial(self._get_error_ensemble, x=self.best_x_v), np.array(self.df_f_test['error_e'])))
+
+        self.df_t_train['error_v'] =  list(map(functools.partial(self._get_error_ensemble, x=self.best_x_v), np.array(self.df_t_train['error_e'])))
+        self.df_t_val['error_v']   =  list(map(functools.partial(self._get_error_ensemble, x=self.best_x_v), np.array(self.df_t_val['error_e'])))
+        self.df_t_test['error_v']  =  list(map(functools.partial(self._get_error_ensemble, x=self.best_x_v), np.array(self.df_t_test['error_e'])))
+
+
+        self.df_f_train['error_m'] =  list(map(functools.partial(self._get_error_max, x=self.best_x_v), np.array(self.df_f_train['error_e'])))
+        self.df_f_val['error_m']   =  list(map(functools.partial(self._get_error_max, x=self.best_x_v), np.array(self.df_f_val['error_e'])))
+        self.df_f_test['error_m']  =  list(map(functools.partial(self._get_error_max, x=self.best_x_v), np.array(self.df_f_test['error_e'])))
+
+        self.df_t_train['error_m'] =  list(map(functools.partial(self._get_error_max, x=self.best_x_v), np.array(self.df_t_train['error_e'])))
+        self.df_t_val['error_m']   =  list(map(functools.partial(self._get_error_max, x=self.best_x_v), np.array(self.df_t_val['error_e'])))
+        self.df_t_test['error_m']  =  list(map(functools.partial(self._get_error_max, x=self.best_x_v), np.array(self.df_t_test['error_e'])))
 
 
         dict_ = {
-            'x'      : es[0],
-            'AUC'    : -es[1],
-            'AUC_v'  : AUC_v,
-            'AUC_t'  : AUC_t,
+            'x_v'      : self.best_x_v,
+            'x_tr'     : self.best_x_tr,
+            'AUC_tr'   : self.AUC_tr_max,
+            'AUC_v'    : AUC_v,
+            'AUC_t'    : AUC_t,
 
             'FPR'    : FPR,
             'TPR'    : TPR,
@@ -99,32 +236,12 @@ class CMA_ES(AUC):
             'df_t_val'   : self.df_t_val,
             'df_t_test'  : self.df_t_test,
 
-            'path_o'     : dict_data['path_o'],
-            'epoch'      : dict_data['epoch']
-
+            'dict_config': self.dict_config_LSTM
         }
 
 
+        pickle_save(self.dict_c['path_save']+'/best/data_best.p',dict_)
 
-        return dict_
-
-
-
-    def _opt_function(self, x):
-
-        eval_true = np.array(list(map(functools.partial(self._get_error_max, x=x), np.array(self.df_t_train['error_m']))))
-        eval_false = np.array(list(map(functools.partial(self._get_error_max, x=x), np.array(self.df_f_train['error_m']))))
-
-        AUC, FPR, TPR = self.get_AUC_score(eval_true, eval_false)
-        if (AUC > self.AUC_max):
-            self.AUC_max = AUC
-            self.FPR = FPR
-            self.TPR = TPR
-
-        if (AUC < self.AUC_min):
-            self.AUC_min = AUC
-
-        return -AUC
 
     def _opt_function_(self, x, f, t):
 
@@ -134,9 +251,6 @@ class CMA_ES(AUC):
         AUC, FPR, TPR = self.get_AUC_score(eval_true, eval_false)
 
         return AUC, FPR, TPR
-
-
-
 
 
     def _get_error_max(self,e,x):
@@ -155,13 +269,23 @@ class CMA_ES(AUC):
 
 
 
+    def _configure_dir(self,path):
+        path = path+'/best'
+        string_a = path.split('/')
+        path = ''
 
+        for string in string_a:
+            if string != '':
+                path += string+'/'
+
+                if (os.path.exists(path) == False):
+                    os.mkdir(path)
 
 if __name__ == '__main__':
     def return_dict():
         dict_c = {
-            'path_i': './models/bayes_opt/DEEP1/',
-            'path_o': './models/ensemble/ensemble/',
+            'path_i': './models/bayes_opt/DEEP2/',
+            'path_save': './models/CMA_ES/DEEP2/',
 
             'resolution_AUC': 1000,
 
@@ -169,10 +293,11 @@ if __name__ == '__main__':
             'CMA_ES': True,
             'verbose_CMA': 1,
             'verbose_CMA_log': 0,
-            'evals': 10000,
-            'bounds': [-100, 100.],
+            'evals': 21*1,
+            'bounds': [-100., 100.],
             'sigma': 0.4222222222222225,
             'progress_ST': 0.3,
+            'popsize'    : 21,
 
             'epoch': 0
 
@@ -181,4 +306,15 @@ if __name__ == '__main__':
         return dict_c
 
     dict_c = return_dict()
-    CMA_ES(dict_c).main_CMA_ES()
+
+    # dict_c['path_i'] = './models/bayes_opt/DEEP1/'
+    # dict_c['path_save'] = './models/CMA_ES/DEEP1/'
+    # CMA_ES(dict_c).main()
+
+    dict_c['path_i'] = './models/bayes_opt/DEEP2/'
+    dict_c['path_save'] = './models/CMA_ES/DEEP2/'
+    CMA_ES(dict_c).main()
+
+    dict_c['path_i'] = './models/bayes_opt/DEEP3/'
+    dict_c['path_save'] = './models/CMA_ES/DEEP3/'
+    CMA_ES(dict_c).main()
