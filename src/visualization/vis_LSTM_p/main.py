@@ -4,7 +4,9 @@ import time
 from src.data.dimensionality_reduction.HCF.preprocessing import path_Generation as Path_gen
 from src.visualization.vis_LSTM_p.utilities.conf_data import *
 from src.visualization.vis_LSTM_p.utilities.plt_data import *
+from PIL import Image
 
+import imageio
 
 class main_visualize(conf_data,plot_Tool,Path_gen):
 
@@ -33,9 +35,14 @@ class main_visualize(conf_data,plot_Tool,Path_gen):
         self.track_threshold = None
         self.plot_mode   = dict_c['plot_mode']
 
+
+        self.array_gif   = []
+
+
     def play_videos(self):
         i     = 0
         j     = 0
+        counter = 0
         while (1):
 
             i,j          = self._control_ij(i,j)
@@ -46,6 +53,12 @@ class main_visualize(conf_data,plot_Tool,Path_gen):
 
             frame_pd     = self.configure_frame(self.df,i,j, self.height)
             frame_fin    = np.concatenate((frame_pd,img),axis = 0)
+
+
+            if(counter < 36):
+                self.array_gif.append(frame_fin)
+            if(counter ==36):
+                imageio.mimsave('./plots/pic/movie.gif', self.array_gif)
 
             # self._write_auc( frame_fin,i)
 
@@ -60,6 +73,8 @@ class main_visualize(conf_data,plot_Tool,Path_gen):
                 break
 
             i,j =self._control_videos(key, i, j)
+
+            counter += 1
         cv2.destroyAllWindows()
 
     def _write_auc(self,frame,i):

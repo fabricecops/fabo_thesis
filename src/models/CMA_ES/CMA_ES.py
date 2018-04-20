@@ -6,7 +6,8 @@ from src.models.CMA_ES.data_manager_CMA import data_manager
 from src.dst.outputhandler.pickle import pickle_save,pickle_load
 import os
 import pandas as pd
-
+import multiprocessing as mp
+import time
 class CMA_ES(AUC):
 
 
@@ -54,35 +55,55 @@ class CMA_ES(AUC):
         self.best_x_v        = None
         self.best_x_tr       = None
 
-    def main(self):
+
+
+    def main_SB(self):
+
+
         data_a, path_a,dict_config_LSTM_a    = data_manager(self.dict_c).load_data(self.dict_c['path_i'])
 
         for data,path,dict_config_LSTM in zip(data_a, path_a,dict_config_LSTM_a):
-            try:
-                self.epoch = 0
-                self._configure_dir(path)
-                self.dict_c['path_save'] = path
-                self.dict_config_LSTM    = dict_config_LSTM
-                pickle_save(self.dict_c['path_save']+'/dict.p',dict_config_LSTM)
+
+            p = mp.Process(target=self.main, args=(data,path,dict_config_LSTM))
+            p.daemon = True
+            p.start()
+
+            while True:
+                if p.is_alive():
+                    time.sleep(1)
+                else:
+                    p.terminate()
+                    break
 
 
-                self.df_f_train = data['df_f_train']
-                self.df_f_val   = data['df_f_val']
-                self.df_f_test  = data['df_f_test']
+    def main(self,data,path,dict_config_LSTM):
 
-                self.df_t_train = data['df_t_train']
-                self.df_t_val   = data['df_t_val']
-                self.df_t_test  = data['df_t_test']
+        try:
+            self.array_df = []
+            self.epoch    = 0
+            self._configure_dir(path)
+            self.dict_c['path_save'] = path
+            self.dict_config_LSTM    = dict_config_LSTM
+            pickle_save(self.dict_c['path_save']+'/dict.p',dict_config_LSTM)
 
-                dimension = self.df_f_train['error_e'].iloc[0].shape[1]
 
-                es = cma.fmin(self._opt_function, dimension * [1], self.sigma,{'bounds'  : self.bounds,
-                                                                               'maxfevals': self.evals,
-                                                                               'verb_disp': self.verbose,
-                                                                               'verb_log' : self.verbose_log})
+            self.df_f_train = data['df_f_train']
+            self.df_f_val   = data['df_f_val']
+            self.df_f_test  = data['df_f_test']
 
-            except:
-                pass
+            self.df_t_train = data['df_t_train']
+            self.df_t_val   = data['df_t_val']
+            self.df_t_test  = data['df_t_test']
+
+            dimension = self.df_f_train['error_e'].iloc[0].shape[1]
+
+            es = cma.fmin(self._opt_function, dimension * [1], self.sigma,{'bounds'  : self.bounds,
+                                                                           'maxfevals': self.evals,
+                                                                           'verb_disp': self.verbose,
+                                                                           'verb_log' : self.verbose_log})
+
+        except:
+            pass
 
 
 
@@ -160,7 +181,7 @@ class CMA_ES(AUC):
         self.array_v_x.append(x)
 
 
-        if(self.epoch%100 == 0):
+        if(self.epoch%50 == 0):
             self.save_data()
 
         if(self.counter%self.popsize == 0):
@@ -293,7 +314,7 @@ if __name__ == '__main__':
             'CMA_ES': True,
             'verbose_CMA': 1,
             'verbose_CMA_log': 0,
-            'evals': 21*1,
+            'evals': 21*300,
             'bounds': [-100., 100.],
             'sigma': 0.4222222222222225,
             'progress_ST': 0.3,
@@ -313,8 +334,8 @@ if __name__ == '__main__':
 
     dict_c['path_i'] = './models/bayes_opt/DEEP2/'
     dict_c['path_save'] = './models/CMA_ES/DEEP2/'
-    CMA_ES(dict_c).main()
+    CMA_ES(dict_c).main_SB()
 
-    dict_c['path_i'] = './models/bayes_opt/DEEP3/'
-    dict_c['path_save'] = './models/CMA_ES/DEEP3/'
-    CMA_ES(dict_c).main()
+    # dict_c['path_i'] = './models/bayes_opt/DEEP3/'
+    # dict_c['path_save'] = './models/CMA_ES/DEEP3/'
+    # CMA_ES(dict_c).main()

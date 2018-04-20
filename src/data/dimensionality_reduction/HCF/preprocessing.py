@@ -296,7 +296,7 @@ class path_Generation():
         self._draw_circle(self.frame_path, data_normal)
         frame_con = np.concatenate((frame, frame_proc, self.frame_path), axis=1)
         self._write_text(frame_con, i,j,heigth)
-        self._write_data(frame_con,data_pos)
+        # self._write_data(frame_con,data_pos)
 
         frame_con = cv2.cvtColor(frame_con, cv2.COLOR_GRAY2RGB)
 

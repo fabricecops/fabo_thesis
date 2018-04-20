@@ -1,60 +1,70 @@
 import os
-from src.dst.outputhandler.pickle import pickle_save_,pickle_load
+from src.dst.outputhandler.pickle import pickle_load
 import numpy as np
 import pandas as pd
 from sklearn.manifold import TSNE
-import seaborn as sns
-import matplotlib.pyplot as plt
-plt.style.use('ggplot')
 from sklearn.cluster import KMeans
 from sklearn import mixture
-
+import matplotlib.pyplot as plt
 class model_selection():
-
-
 
     def __init__(self,dict_c):
 
         self.dict_c = dict_c
 
-
     def main(self):
         self._configure_dir(self.dict_c['path_save'])
-        df       = pickle_load(self.dict_c['path_save']+self.dict_c['mode'],self.configure_data)
-        df       = df[df['AUC_v']> 0.6]
+        df       = pickle_load(self.dict_c['path_save']+'/'+self.dict_c['mode'],self.configure_data)
+        df       = df[df['AUC_v']> self.dict_c['threshold']].reset_index()
         df,coeff,tsne_results = self.calculate_correlation(df)
-        # df     = self.calculate_Kmeans(df,coeff,tsne_results)
-        df       = self.calculate_GMM(df,coeff,tsne_results)
-        df       = df.apply(self.apply_P_AUC_V,axis = 1)
+        # df       = self.calculate_GMM(df,coeff,tsne_results)
+
+        df_groups, coef = self.pick_lowest_corr(df,coeff,self.dict_c['clusters'])
+        df_random       = df.sample(self.dict_c['clusters'])
+
+        return df,df_groups,df_random,coef
+
+    def plot_matrix(self):
+
+        df,df_groups,df_random, coef = self.main()
+
+        fig = plt.figure(figsize=(16, 4))
+
+        plt.matshow(coef,vmin= 0.,vmax= 1.)
+        plt.title('Correlation matrix')
+        plt.colorbar()
+        plt.savefig('./plots/pic/matrix_'+str(self.dict_c['clusters'])+str(self.dict_c['threshold'])+'.png')
+
+        plt.show()
+
+    def pick_lowest_corr(self,df,coeff,clusters):
+        ids     = [df['AUC_v'].idxmax()]
+        array  = coeff[ids[0]].reshape(1,-1)
+
+        for i in range(1,clusters):
+            tmp   = np.sum(array,axis=0)
+
+            for id in ids:
+                tmp[id] += 100
+            id    = np.argmin(tmp)
+            ids.append(id)
+            array = np.vstack((coeff[id],array))
 
         df_groups = pd.DataFrame(columns = df.columns)
-        for group in df.groupby('clusters'):
-            x   = np.argmax(np.array(group[1]['Score']))
-            row = group[1].iloc[x]
+        for group in ids:
+            row = df.iloc[group]
             df_groups = df_groups.append(row)
 
-        df_groups,coeff,tsne_results = self.calculate_correlation(df_groups)
+        for i in range(len(df_groups)):
+            if (i == 0):
+                data = df['error_m'].iloc[i]
+            else:
+                data = np.vstack((data, df['error_m'].iloc[i]))
+
+        coef = np.corrcoef(data)
 
 
-        fig = plt.figure(figsize=(16, 4))
-
-        plt.matshow(coeff)
-        plt.title('Confusion matrix')
-        plt.colorbar()
-        plt.ylabel('True label')
-        plt.xlabel('Predicted label')
-
-        plt.show()
-
-        fig = plt.figure(figsize=(16, 4))
-        ax1 = plt.subplot(121)
-        ax1 = sns.swarmplot(x='x-tsne', y='y-tsne', hue='clusters', data=df)
-
-        ax2 = plt.subplot(122)
-        df['clusters'].value_counts().plot(kind = 'bar')
-        plt.show()
-
-
+        return df_groups,coef
 
     def calculate_GMM(self,df,coeff,tsne_results):
 
@@ -72,8 +82,15 @@ class model_selection():
             df['probas'].iloc[i] = probas[i]
 
 
+        df       = df.apply(self.apply_P_AUC_V,axis = 1)
 
+        df_groups = pd.DataFrame(columns = df.columns)
+        for group in df.groupby('clusters'):
+            x   = np.argmax(np.array(group[1]['Score']))
+            row = group[1].iloc[x]
+            df_groups = df_groups.append(row)
 
+        df_groups,coeff,tsne_results = self.calculate_correlation(df_groups)
         return df
 
     def apply_P_AUC_V(self,row):
@@ -117,6 +134,7 @@ class model_selection():
 
 
         coef         = np.corrcoef(data)
+
         tsne         = TSNE(n_components=3, verbose=0, perplexity=40, n_iter=300)
         tsne_results = tsne.fit_transform(coef)
 
@@ -179,8 +197,9 @@ if __name__ == '__main__':
                 'path_save': './models/ensemble/',
                 'mode'     : 'no_cma.p',
                 'path_a'   : ['./models/bayes_opt/DEEP2/'],
-                'clusters' : 10,
+                'clusters' : 2,
                 'KM_n_init': 10,
+                'threshold': 0.6,
     }
 
     MS = model_selection(dict_c).main()
