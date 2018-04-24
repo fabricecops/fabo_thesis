@@ -1,5 +1,7 @@
 
-from src.models.LSTM.data_manager_LSTM import data_manager
+from src.models.spatio_temporal.data_manager_ST import data_manager_ST
+from src.models.spatio_temporal.conf_ST import return_dict
+
 from src.dst.keras_model.model import model
 from tqdm import tqdm
 import shutil
@@ -10,13 +12,14 @@ from keras.layers.normalization import BatchNormalization
 from keras.layers.wrappers import TimeDistributed
 from keras.layers.core import Activation
 from keras.layers import Input
-
-class LSTM_(model, data_manager):
+from keras.models import Sequential
+import numpy as np
+class spatio_temporal(model, data_manager_ST):
 
     def __init__(self, dict_c=None, path=None):
 
         model.__init__(self, dict_c=dict_c,path=path)
-        data_manager.__init__(self,dict_c)
+        data_manager_ST.__init__(self,dict_c)
 
 
 
@@ -32,7 +35,6 @@ class LSTM_(model, data_manager):
 
 
 
-        self._configure_model()
         self.model            = self._create_model()
 
         self.print_summary()
@@ -40,19 +42,18 @@ class LSTM_(model, data_manager):
 
     def fit(self):
 
-
         history = self.model.fit_generator(
-            train_generator,
-            steps_per_epoch       =self.dict_c['train_steps'],
-            epochs                =self.dict_c['epochs'],
-            validation_data       =validation_generator,
-            validation_steps      =self.dict_c['val_steps'],
+            self.generator_train(),
+            steps_per_epoch       =self.dict_c['steps_per_epoch'],
+            epochs                =1.,
+            validation_data       =self.generator_val(),
+            validation_steps      =self.dict_c['steps_per_epoch_val'],
             verbose               =self.dict_c['verbose']
         )
 
-        count = self.model.count_params()
 
-        return history.history, count
+        return history.history['loss'],history.history['val_loss']
+
     def predict(self):
         df_t_train     = self.df_t_train.apply(self._predict, axis=1)
         df_t_val       = self.df_t_val.apply(self._predict, axis=1)
@@ -83,54 +84,86 @@ class LSTM_(model, data_manager):
 
     def _create_model(self):
 
-        input_tensor = Input(shape=(t, 224, 224, 1))
+        input_shape = (self.dict_c['time_dim'], self.dict_c['width'], self.dict_c['heigth'],1)
+        model = Sequential()
 
-        conv1 = TimeDistributed(Conv2D(128, kernel_size=(11, 11), padding='same', strides=(4, 4), name='conv1'),
-                                input_shape=(t, 224, 224, 1))(input_tensor)
-        conv1 = TimeDistributed(BatchNormalization())(conv1)
-        conv1 = TimeDistributed(Activation('relu'))(conv1)
+        model.add(TimeDistributed(Conv2D(self.dict_c['conv_encoder'][0][0],
+                                         kernel_size =  (self.dict_c['conv_encoder'][0][1], self.dict_c['conv_encoder'][0][2]),
+                                         padding     =  'same',
+                                         strides     =  (self.dict_c['conv_encoder'][0][2], self.dict_c['conv_encoder'][0][2]),
+                                         name        = 'conv1'),input_shape = input_shape))
+        model.add(TimeDistributed(BatchNormalization()))
+        model.add(TimeDistributed(Activation('relu')))
 
-        conv2 = TimeDistributed(Conv2D(64, kernel_size=(5, 5), padding='same', strides=(2, 2), name='conv2'))(conv1)
-        conv2 = TimeDistributed(BatchNormalization())(conv2)
-        conv2 = TimeDistributed(Activation('relu'))(conv2)
-
-        convlstm1 = ConvLSTM2D(64, kernel_size=(3, 3), padding='same', return_sequences=True, name='convlstm1')(conv2)
-        convlstm2 = ConvLSTM2D(32, kernel_size=(3, 3), padding='same', return_sequences=True, name='convlstm2')(
-            convlstm1)
-        convlstm3 = ConvLSTM2D(64, kernel_size=(3, 3), padding='same', return_sequences=True, name='convlstm3')(
-            convlstm2)
-
-        deconv1 = TimeDistributed(
-            Conv2DTranspose(128, kernel_size=(5, 5), padding='same', strides=(2, 2), name='deconv1'))(convlstm3)
-        deconv1 = TimeDistributed(BatchNormalization())(deconv1)
-        deconv1 = TimeDistributed(Activation('relu'))(deconv1)
-
-        decoded = TimeDistributed(
-            Conv2DTranspose(1, kernel_size=(11, 11), padding='same', strides=(4, 4), name='deconv2'))(
-            deconv1)
-
-        return Model(inputs=input_tensor, outputs=decoded)
+        for i in range(1,len(self.dict_c['conv_encoder'])):
+            model.add(TimeDistributed(Conv2D(self.dict_c['conv_encoder'][i][0],
+                                             kernel_size    = ( self.dict_c['conv_encoder'][i][1], self.dict_c['conv_encoder'][i][2]),
+                                             padding        = 'same',
+                                             strides        = (self.dict_c['conv_encoder'][i][2], self.dict_c['conv_encoder'][i][2]))
+                                             ,input_shape  = input_shape))
+            model.add(TimeDistributed(BatchNormalization()))
+            model.add(TimeDistributed(Activation('relu')))
 
 
 
+        for i in range(0,len(self.dict_c['conv_LSTM'])):
 
-    def _configure_model(self):
-        self.sample_size = self.dict_c['batch_size']
-        self.time_dim    = self.dict_c['time_dim']
-        self.dimension   = self.df_f_train.iloc[0]['data_X'].shape[2]
+            model.add(ConvLSTM2D(self.dict_c['conv_LSTM'][i][0],
+                                 kernel_size      =(self.dict_c['conv_LSTM'][i][1],self.dict_c['conv_LSTM'][i][1]),
+                                 padding          ='same',
+                                 return_sequences =True))
+
+        model.add(ConvLSTM2D(self.dict_c['middel_LSTM'][0],
+                             kernel_size=(self.dict_c['middel_LSTM'][1], self.dict_c['middel_LSTM'][1]),
+                             padding='same',
+                             return_sequences=True))
+
+        for i in range(len(self.dict_c['conv_LSTM'])-1,-1,-1):
+
+            model.add(ConvLSTM2D(self.dict_c['conv_LSTM'][i][0],
+                                 kernel_size      =(self.dict_c['conv_LSTM'][i][1],self.dict_c['conv_LSTM'][i][1]),
+                                 padding          ='same',
+                                 return_sequences =True))
+        for i in range(len(self.dict_c['conv_encoder'])-1,-1,-1):
+            if(i != 0):
+                model.add(TimeDistributed(Conv2DTranspose(self.dict_c['conv_encoder'][i][0],
+                                                 kernel_size=(
+                                                 self.dict_c['conv_encoder'][i][1], self.dict_c['conv_encoder'][i][2]),
+                                                 padding='same',
+                                                 strides=(
+                                                 self.dict_c['conv_encoder'][i][2], self.dict_c['conv_encoder'][i][2]))
+                                          , input_shape=input_shape))
+            else:
+                model.add(TimeDistributed(Conv2DTranspose(1,
+                                                 kernel_size=(
+                                                 self.dict_c['conv_encoder'][i][1], self.dict_c['conv_encoder'][i][2]),
+                                                 padding='same',
+                                                 strides=(
+                                                 self.dict_c['conv_encoder'][i][2], self.dict_c['conv_encoder'][i][2]))
+                                          , input_shape=input_shape))
+            model.add(TimeDistributed(BatchNormalization()))
+            model.add(TimeDistributed(Activation('relu')))
 
 
 
+        optimizer = self.conf_optimizer()
+        model.compile(optimizer, 'mse')
+
+        return model
 
 
     def _predict(self, row):
 
-        X = row['data_X']
+        X      = (self._configure_movie(row['images'])-self.mean_)/self.std
+
         y_pred = self.model.predict(X, batch_size=self.dict_c['batch_size'],
                                     verbose=0)
-        self.model.reset_states()
-        row['data_y_p'] = y_pred
 
+        y_pred = np.mean(y_pred, axis =(1,2,3,4))
+
+
+        row['error_e'] = y_pred
+        row['error_m'] = np.max(y_pred)
         return row
 
 
@@ -141,3 +174,7 @@ class LSTM_(model, data_manager):
 
         shutil.copytree(src,dst)
 
+if __name__ == '__main__':
+
+    d   = return_dict()
+    spatio_temporal(d).fit()

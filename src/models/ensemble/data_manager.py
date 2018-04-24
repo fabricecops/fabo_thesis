@@ -2,7 +2,6 @@ import os
 from src.dst.outputhandler.pickle import pickle_save_,pickle_load
 import pandas as pd
 import numpy as np
-from src.models.ensemble.model_selection import model_selection
 
 class data_manager():
 
@@ -10,7 +9,8 @@ class data_manager():
     def __init__(self,dict_c):
 
         self.dict_c = dict_c
-        self.df,self.df_groups,self.df_random,self.coeff = model_selection(dict_c).main()
+
+        path        = './data/processed/ensemble/df_'+str(self.dict_c['clusters'])
 
 
 

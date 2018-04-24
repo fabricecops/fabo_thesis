@@ -6,23 +6,25 @@ from sklearn.manifold import TSNE
 from sklearn.cluster import KMeans
 from sklearn import mixture
 import matplotlib.pyplot as plt
+
 class model_selection():
 
     def __init__(self,dict_c):
 
         self.dict_c = dict_c
 
-    def main(self):
+    def main(self,*args):
         self._configure_dir(self.dict_c['path_save'])
-        df       = pickle_load(self.dict_c['path_save']+'/'+self.dict_c['mode'],self.configure_data)
-        df       = df[df['AUC_v']> self.dict_c['threshold']].reset_index()
+        df                    = self.configure_data()
+        df                    = df[df['AUC_v']> self.dict_c['threshold']].reset_index()
         df,coeff,tsne_results = self.calculate_correlation(df)
-        # df       = self.calculate_GMM(df,coeff,tsne_results)
+        df                    = self.calculate_Kmeans(df,coeff,tsne_results)
 
-        df_groups, coef = self.pick_lowest_corr(df,coeff,self.dict_c['clusters'])
-        df_random       = df.sample(self.dict_c['clusters'])
 
-        return df,df_groups,df_random,coef
+        # df_groups, coef = self.pick_lowest_corr(df,coeff,self.dict_c['clusters'])
+        # df_random       = df.sample(self.dict_c['clusters'])
+
+        return df
 
     def plot_matrix(self):
 
@@ -116,12 +118,6 @@ class model_selection():
         df['clusters_tsne'] = clusters
 
 
-        sns.swarmplot(x='x-tsne', y='y-tsne', hue='clusters', data=df)
-        plt.show()
-
-        sns.swarmplot(x='x-tsne', y='y-tsne', hue='clusters_tsne', data=df)
-        plt.show()
-
         return df
 
     def calculate_correlation(self,df):
@@ -159,6 +155,7 @@ class model_selection():
             list_names = os.listdir(path)
 
             for name in list_names:
+                print(name)
                 try:
                     path_best = path+name+'/best/data_best.p'
                     data      = pickle_load(path_best,None)
@@ -196,7 +193,7 @@ if __name__ == '__main__':
     dict_c = {
                 'path_save': './models/ensemble/',
                 'mode'     : 'no_cma.p',
-                'path_a'   : ['./models/bayes_opt/DEEP2/'],
+                'path_a'   : ['./models/bayes_opt/DEEP2/','./models/bayes_opt/DEEP3/'],
                 'clusters' : 2,
                 'KM_n_init': 10,
                 'threshold': 0.6,

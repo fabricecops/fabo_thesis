@@ -1,7 +1,7 @@
 
-from src.models.LSTM.model_a.s2s import LSTM_
-from src.models.LSTM.OPS_LSTM import OPS_LSTM
-from src.models.LSTM.conf_LSTM import return_dict_bounds
+from src.models.spatio_temporal.model_a.s2s import spatio_temporal
+from src.models.spatio_temporal.OPS_ST import OPS_ST
+from src.models.spatio_temporal.conf_ST import return_dict
 from keras import backend as K
 import matplotlib.pyplot as plt
 import psutil
@@ -10,6 +10,7 @@ import numpy as np
 import gc
 from src.dst.outputhandler.pickle import pickle_save_,pickle_load
 import time
+import multiprocessing as mp
 
 def tic():
     global time_
@@ -22,6 +23,7 @@ def toc():
     elapsed = tmp - time_
 
     print('the elapsed time is: ', elapsed)
+    
 
     return elapsed
 
@@ -44,7 +46,7 @@ class model_mng():
 
 
         self.dict_c      = dict_c
-        self.model       = LSTM_(dict_c)
+        self.model       = spatio_temporal(dict_c)
 
         self.dict_data   = None
 
@@ -84,6 +86,7 @@ class model_mng():
         }
 
         self.time_stop    = time.time()
+
     def main(self,queue_opt):
 
         for i in range(self.dict_c['epochs']):
@@ -117,10 +120,9 @@ class model_mng():
 
         queue_opt.put(self.AUC_no_cma)
 
-
-
     def process_before_TH(self,i):
         loss, val_loss = self.model.fit()
+
         self.dict_loss['loss'].append(loss[0])
         self.dict_loss['val_loss'].append(val_loss[0])
         self.plot(self.dict_loss)
@@ -140,7 +142,6 @@ class model_mng():
 
         return loss,val_loss
 
-
     def process_LSTM(self,i,loss,val_loss):
         self.memory.append(psutil.virtual_memory()[3] / 1000000000.)
 
@@ -150,15 +151,10 @@ class model_mng():
         dict_data['loss_f_v']    = val_loss[0]
         dict_data['epoch']       = i
 
-
-        OPS_LSTM_                = OPS_LSTM(self.dict_c)
-        dict_data                = OPS_LSTM_.main(dict_data)
+        OPS_ST_                  = OPS_ST(self.dict_c)
+        dict_data                = OPS_ST_.main(dict_data)
         self.update_states(dict_data)
         self.memory.append(psutil.virtual_memory()[3] / 1000000000.)
-
-
-
-
 
     def update_states(self,dict_data):
         self.print_stats(dict_data)
@@ -180,8 +176,8 @@ class model_mng():
         print()
 
     def plot_output(self,best_dict):
-        OPS_LSTM_                = OPS_LSTM(self.dict_c)
-        OPS_LSTM_.save_plots_no_cma(best_dict)
+        OPS_ST_                = OPS_ST(self.dict_c)
+        OPS_ST_.save_plots_no_cma(best_dict)
 
     def save_memory(self):
         fig = plt.figure(figsize=(16, 4))
@@ -256,7 +252,9 @@ class model_mng():
 
 if __name__ == '__main__':
 
-    dict_c, bounds = return_dict_bounds()
+    dict_c  = return_dict()
     mm    = model_mng(dict_c)
-    mm.main()
+    queue_opt = mp.Queue()
+
+    mm.main(queue_opt)
 

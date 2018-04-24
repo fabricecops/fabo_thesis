@@ -5,10 +5,12 @@ from sklearn.utils import shuffle
 import os
 
 import src.data.dimensionality_reduction.HCF.preprocessing as pp
-from src.models.spatio_temporal.conf_ST import return_dict_bounds
+from src.models.spatio_temporal.conf_ST import return_dict
 import cv2
+import time
 
-class data_manager():
+
+class data_manager_ST():
 
     def __init__(self,dict_c):
 
@@ -16,7 +18,12 @@ class data_manager():
         self.len_df       = None
         self.count_t      = None
 
+        self.min_final  = 1000.
+        self.max_final  = 0.
         self.Series     = pickle_load('./data/processed/ST/df_img.p',self.main_data_conf)
+
+        self.mean_      = self.Series['mean']
+        self.std        = self.Series['std']
 
         self.df_f_val   = None
         self.df_f_test  = None
@@ -32,6 +39,40 @@ class data_manager():
         print(len(self.df_f_train),len(self.df_f_val),len(self.df_f_test))
         print(len(self.df_t_train),len(self.df_t_val),len(self.df_t_test))
 
+    def generator_train(self):
+        self.df_f_train = shuffle(self.df_f_train)
+        len_df_f        = len(self.df_f_train)
+
+
+        batch_size      = len_df_f//self.dict_c['steps_per_epoch']
+
+        for i in range(self.dict_c['steps_per_epoch']):
+            array = []
+            for j in range(batch_size):
+
+                imgs_TS = (self._configure_movie(self.df_f_train['images'].iloc[i*batch_size+j])-self.mean_)/self.std
+
+                array.append(imgs_TS)
+
+            data = np.vstack(array)
+            data = shuffle(data)[:self.dict_c['max_batch_size']]
+
+            yield (data, data)
+
+    def generator_val(self):
+        self.df_f_val = shuffle(self.df_f_val)
+        len_df_f = len(self.df_f_val)
+        batch_size = len_df_f // self.dict_c['steps_per_epoch_val']
+
+        for i in range(self.dict_c['steps_per_epoch_val']):
+            array = []
+            for j in range(batch_size):
+                imgs_TS = (self._configure_movie(self.df_f_val['images'].iloc[i * batch_size + j])-self.mean_)/self.std
+                array.append(imgs_TS)
+
+            data = np.vstack(array)
+            yield (data, data)
+
     def main_data_conf(self,*args):
         self.path       = './data/raw/configured_raw/'
         self.list_names = os.listdir(self.path)
@@ -40,64 +81,80 @@ class data_manager():
         GD = pp.get_df(self.path)
         path_o = './data/processed/df/df_1.p'
 
-        df = pickle_load(path_o, GD.get_df_data, *self.list_names)
+        df                       = pickle_load(path_o, GD.get_df_data, *self.list_names)
+        df['images']             = list(map(self.add_frames_df,df['frames']))
+
+        tmp                      = np.vstack(df['images'])
+
 
         df_f = df[df['label'] == False]
         df_t = df[df['label'] == True]
         dict_ = {
                  'df_f' :    df_f,
-                 'df_t'    : df_t
+                 'df_t'    : df_t,
+                 'max'  : np.max(tmp),
+                 'min'  : np.max(tmp),
+                 'mean' : np.mean(tmp),
+                 'std'  : np.std(tmp)
 
         }
+
 
         Series = pd.Series(dict_)
 
         return Series
 
-    def main_data_conf_stateless(self,mode):
-
-        if (mode == 'val'):
-            df = self.df_f_val
-        else:
-            df = self.df_f_train
-
-        X = np.concatenate(np.array(df['data_X']), axis = 0)
-        y = np.concatenate(np.array(df['data_y']), axis = 0)
-
-
-        return X,y
-
-    def _configure_frames(self,row):
-
+    def add_frames_df(self,row):
 
         path_ = './data/interim/BGS/bit_8/'
 
-        imgs  = np.zeros((len(row['frames']),240,320))
+        imgs = np.zeros((len(row),self.dict_c['width'],self.dict_c['heigth'],1))
+
+        min_final = 100
+        max_final = 0
+        for i, frame in enumerate(row):
+            path_image = path_ + frame
+            img        = cv2.imread(path_image)
+
+            img         = cv2.resize(img, (self.dict_c['heigth'],self.dict_c['width']))
+            img         = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY).reshape(self.dict_c['width'],self.dict_c['heigth'],1)
+
+            # cv2.imshow('frame', img)
+            # time.sleep(0.05)
+            # if (np.nan in img):
+            #     print('lol')
+            # key = cv2.waitKey(1) & 0xFF
+            # if key == ord('q'):
+            #     break
+
+            imgs[i]    = img
+
+            df_max = np.max(img)
+            df_min = np.min(img)
+
+            if(df_max > max_final):
+                self.max_final = df_max
+            if(df_min < min_final):
+                self.min_final = df_min
 
 
-        for i,frame in enumerate(row['frames']):
-            path_image = path_+frame
-            imgs[i]    = cv2.imread(path_image,-1)
 
-        imgs_TS = self._configure_movie(imgs)
-        print(imgs_TS.shape)
-
-        return row
+        return imgs
 
     def _configure_movie(self,movie):
 
         time_dim  = self.dict_c['time_dim']
         window    = self.dict_c['window']
 
-        width     = movie.shape(1)
-        heigth    = movie.shape(2)
+        width     = movie.shape[1]
+        heigth    = movie.shape[2]
 
 
         samples = len(movie) - window + 1
 
         if (samples > 0):
 
-            X = np.zeros((samples, time_dim, width, heigth))
+            X = np.zeros((samples, time_dim, width, heigth,1))
 
             for i in range(1, samples):
                 if (i < time_dim):
@@ -118,49 +175,6 @@ class data_manager():
                 'Ratio of movies parced : ' + str(self.count_t) + '/' + str(self.len_df) + '. with seq2seq is: ' + str(
                     self.dict_c['pred_seq']) + '. Statefull: ' + str(self.dict_c['stateful']))
 
-    def _return_path_dict_data(self,dict_c):
-
-        df = 'df'
-
-        TH = '_T_' + str(dict_c['threshold'])
-        A = '_A_' + str(dict_c['area'])
-        C = '_C_' + str(dict_c['nr_contours'])
-        R = '_R_' + str(dict_c['resolution'])
-        PCA = '_PCA_'+str(dict_c['PCA_components'])
-
-        df = df + TH + A + C + R +PCA
-        path = './data/processed/df/df_r/'
-
-        path_dir = path+df
-        if (os.path.exists(path_dir)==False):
-            os.mkdir(path_dir)
-
-
-        string = ''
-        for mode in dict_c['mode_data']:
-            string += mode
-
-        window   = str(dict_c['window'])
-
-        if(dict_c['pred_seq'] == True):
-            pred_seq = 'T'
-        else:
-            pred_seq = 'F'
-        time_dim = str(dict_c['time_dim'])
-
-        val_split = str(dict_c['val_split_t'])
-
-        path = path_dir  + '/W_'+window + '_T_'+ time_dim + '_PS_' + pred_seq +'_V_'+val_split+ '_M_'+string
-
-        if (os.path.exists(path)==False):
-            os.mkdir(path)
-
-        path_df    = path + '/df.p'
-        path_ut_tr = path + '/train.p'
-        path_ut_va = path + '/val.p'
-
-        return path_df,path_ut_tr,path_ut_va
-
     def return_df(self):
         return self.df_f,self.df_t
 
@@ -171,12 +185,9 @@ class data_manager():
 
     def configure_shuffle(self):
 
-        path,_,_          = self._return_path_dict_data(self.dict_c)
 
-        self.Series_data  = self.main_data_conf()
-
-        self.df_f = self.Series_data['df_f']
-        self.df_t = self.Series_data['df_t']
+        self.df_f = self.Series['df_f']
+        self.df_t = self.Series['df_t']
 
         self.df_t = shuffle(self.df_t,random_state = self.dict_c['random_state'])
         self.df_f = shuffle(self.df_f,random_state = self.dict_c['random_state'])
@@ -255,5 +266,12 @@ class data_manager():
         self.df_t_test  = self.df_t_test.reset_index()
 
 if __name__ =='__main__':
-    d,b = return_dict_bounds('DEEP1')
-    data_manager(d).main_data_conf()
+    d = return_dict()
+    DM = data_manager_ST(d)
+
+
+    print(next(DM.generator_val())[0].shape)
+    print(next(DM.generator_val())[0].shape)
+    print(next(DM.generator_val())[0].shape)
+    print(next(DM.generator_val())[0].shape)
+

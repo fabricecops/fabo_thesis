@@ -1,5 +1,5 @@
 
-def return_dict_bounds(bounds = 'DEEP1'):
+def return_dict():
     dict_c = {
         #### prints             ####
         'print_nr_mov'    : True,
@@ -9,24 +9,17 @@ def return_dict_bounds(bounds = 'DEEP1'):
 
         ##### Filesystem manager ####
         'path_data'        : './data/raw/configured_raw/',
-        'path_save'        : './models/bayes_opt/',
+        'path_save'        : './models/spatio_temporal/',
         'name'             : None,
 
         #### Preprocessing ############
         ## background subtractions ####
-        'threshold'        : 200,
-        'nr_contours'      : 4,
+        'width'   : 64,
+        'heigth'  : 64,
+        'resolution_AUC' : 1000,
 
-        ## Peak derivation #############
-        'resolution'       : 6,
-        'area'             : 200,
-        'min_h'            : 20,
-        'max_h'            : 200,
-        ## PCA componentes #########
-        'PCA_components'   : 50,
 
         #### Data manager  #########
-        'mode_data'        : ['p'],
         'shuffle_style'    : 'segmentated',
 
         ###### Bayes opt ######
@@ -42,15 +35,15 @@ def return_dict_bounds(bounds = 'DEEP1'):
 
         ##### model definition  #####
         'window'           : 0,
-        'time_dim'         : 25,
+        'time_dim'         : 3,
         'pred_seq'         : True,
         'stateful'         : False,
 
-        'encoder'          : [400,350],
-        'vector'           : 300,
-        'decoder'          : [400],
+        'conv_encoder'     : [('filters','ks','strides')],
+        'LSTM_encoder'     : [('filters', 'ks')],
 
-
+        'middel_LSTM'      : ('filters', 'ks'),
+        'conv_decoder'     : [('filters', 'ks', 'strides')],
 
         ##### fit                    #####
         'random_state'       : 2,
@@ -60,124 +53,48 @@ def return_dict_bounds(bounds = 'DEEP1'):
         'val_split_t'        : 0.25,
         'test_split_t'       : 0.25,
 
-        'verbose'          : 0.,
+        'steps_per_epoch'    : 100,
+        'steps_per_epoch_val': 30,
+        'verbose'          : 1,
         'epochs'           : 10000,
         'batch_size'       : 1024,
 
-        'SI_no_cma'        : 25,
-        'SI_no_cma_AUC'    : 40,
-        'TH_val_loss'      : 0.01,
+        'SI_no_cma'        : 20,
+        'SI_no_cma_AUC'    : 20,
+        'TH_val_loss'      : 0.5,
         'time_stop'        : 5000,
 
-        'mod_data'         : 5,
+        'mod_data'         : 10,
 
-
-
-        #### data gathering statefull ####
-
-        ##### callbacks   #########
-        ## Early stopping
-        'ES'                    : False,
-        'ES_patience'           : 5,
-
-        ## LRonplateau
-        'LR_P'                  : False,
-        'LR_factor'             : 0.3,
-        'LR_patience'           : 8,
-
-        ## Ratio ES
-        'ESR'                   : False,
-        'early_ratio_val'       : 100,
-
-        ## TB
-        'TB'                    : False,
-        'hist_freq'             : True,
-        'w_graphs'              : True,
-        'w_images'              : True,
-        'w_grads'               : True,
-
-        ## Monitor callback
-        'MT'                    : False,
-
-        ## model checkpoint
-        'MC'                    : False,
-        'mode_MC'               : 'min',
-        'save_best_only'        : False,
-        'verbose_MC'            : 0,
-
-        ## history
-        'hist'                  : False,
-
-        ##CSV append
-        'CSV'                   : False,
-        'CSV_append'            : False,
-
-        ##Calc AUC
-        'AUC'                   : True,
-        'resolution_AUC'        : 1000,
-        'epoch_mod_AUC'         : 1,
-        'verbose_AUC'           : 1,
-
-        ##TH stopper
-        'TH_stopper'            : False
+        'max_batch_size'   : 512,
 
     }
+    return dict_c
+
+def return_bounds():
+    bounds = [
+        {'name': 'lr', 'type': 'continuous', 'domain': (0.0001, 0.1)},
+        {'name': 'time_dim', 'type': 'continuous', 'domain': (5, 20)},
+
+        {'name': 'conv1_f',  'type': 'discrete', 'domain': [8,16,32,64]},
+        {'name': 'conv1_ks', 'type': 'discrete', 'domain': [2, 4,8]},
+        {'name': 'conv1_st', 'type': 'discrete', 'domain': [2,4,8]},
+
+        {'name': 'conv2_f', 'type': 'discrete', 'domain': [8,16,32,64]},
+        {'name': 'conv2_ks', 'type': 'discrete', 'domain': [2, 4,8]},
+        {'name': 'conv2_st', 'type': 'discrete', 'domain': [2,4]},
+
+        {'name': 'conv_lstm_1_f', 'type': 'discrete', 'domain':  [8,16,32,64]},
+        {'name': 'conv_lstm_1_ks', 'type': 'discrete', 'domain':[1, 2,4]},
+
+        {'name': 'conv_lstm_2_f', 'type': 'discrete', 'domain': [8,16,32,64]},
+        {'name': 'conv_lstm_2_ks', 'type': 'discrete', 'domain': [1, 2,4]}]
 
 
-    bounds_DEEP1 = [
-                {'name': 'lr',           'type': 'continuous', 'domain': (0.0001, 0.1)},
-                {'name': 'time_dim',     'type': 'continuous', 'domain': (5, 17)},
-
-                {'name': 'vector', 'type': 'continuous', 'domain': (200, 800)},
-
-                {'name': 'hidden_e_1', 'type': 'continuous', 'domain': (100, 500)}]
-
-
-
-    bounds_DEEP2 = [
-                 {'name': 'time_dim', 'type': 'continuous', 'domain': (15, 25)},
-
-                 {'name': 'lr',           'type': 'continuous', 'domain': (0.00001, 0.01)},
-
-                {'name': 'vector', 'type': 'continuous', 'domain': (200, 800)},
-
-                {'name': 'hidden_e_1', 'type': 'continuous', 'domain': (100, 500)},
-                {'name': 'hidden_e_2', 'type': 'continuous', 'domain': (100, 500)},
-
-
-                {'name': 'hidden_d_1', 'type': 'continuous', 'domain': (100, 500)},
-
-                {'name': 'p', 'type': 'discrete', 'domain': [0, 1,2]},
-                {'name': 'v', 'type': 'discrete', 'domain': [0, 1]}
-
-                  ]
-
-
-    bounds_DEEP3 = [
-                {'name': 'time_dim',     'type': 'continuous', 'domain': (15, 25)},
-                {'name': 'lr',           'type': 'continuous', 'domain': (0.0001, 0.1)},
-                {'name': 'vector',       'type': 'continuous', 'domain': (50, 800)},
-
-                {'name': 'hidden_e_1', 'type': 'continuous', 'domain': (100, 500)},
-                {'name': 'hidden_e_2', 'type': 'continuous', 'domain': (100, 500)},
-                {'name': 'hidden_e_3', 'type': 'continuous', 'domain': (100, 500)},
-
-
-                {'name': 'hidden_d_1', 'type': 'continuous', 'domain': (100, 500)},
-                {'name': 'hidden_d_2', 'type': 'continuous', 'domain': (100, 500)},
-                {'name': 'p', 'type': 'discrete', 'domain': [0, 1,2]},
-                {'name': 'v', 'type': 'discrete', 'domain': [0, 1]}]
+    return bounds
 
 
 
-    if(bounds == 'DEEP1'):
-        return dict_c,bounds_DEEP1
-
-    if(bounds == 'DEEP2'):
-        return dict_c,bounds_DEEP2
-
-    if(bounds == 'DEEP3'):
-        return dict_c,bounds_DEEP3
 
 
 

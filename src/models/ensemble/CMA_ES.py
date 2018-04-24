@@ -53,9 +53,6 @@ class CMA_ES(AUC):
         self.best_x_v        = None
         self.best_x_tr       = None
 
-
-
-
     def main_CMA_ES(self,data):
 
 
@@ -261,7 +258,6 @@ class CMA_ES(AUC):
 
         return AUC, FPR, TPR
 
-
     def _get_error_max(self,e,x):
 
         eval_ = np.max(np.dot(e, x))
@@ -276,8 +272,6 @@ class CMA_ES(AUC):
 
         return eval_
 
-
-
     def _configure_dir(self,path):
         path = path+'/best'
         string_a = path.split('/')
@@ -290,40 +284,3 @@ class CMA_ES(AUC):
                 if (os.path.exists(path) == False):
                     os.mkdir(path)
 
-if __name__ == '__main__':
-    def return_dict():
-        dict_c = {
-            'path_i': './models/bayes_opt/DEEP2/',
-            'path_save': './models/CMA_ES/DEEP2/',
-
-            'resolution_AUC': 1000,
-
-            ###### CMA_ES    ######
-            'CMA_ES': True,
-            'verbose_CMA': 1,
-            'verbose_CMA_log': 0,
-            'evals': 21*1,
-            'bounds': [-100., 100.],
-            'sigma': 0.4222222222222225,
-            'progress_ST': 0.3,
-            'popsize'    : 21,
-
-            'epoch': 0
-
-        }
-
-        return dict_c
-
-    dict_c = return_dict()
-
-    # dict_c['path_i'] = './models/bayes_opt/DEEP1/'
-    # dict_c['path_save'] = './models/CMA_ES/DEEP1/'
-    # CMA_ES(dict_c).main()
-
-    dict_c['path_i'] = './models/bayes_opt/DEEP2/'
-    dict_c['path_save'] = './models/CMA_ES/DEEP2/'
-    CMA_ES(dict_c).main()
-
-    dict_c['path_i'] = './models/bayes_opt/DEEP3/'
-    dict_c['path_save'] = './models/CMA_ES/DEEP3/'
-    CMA_ES(dict_c).main()
