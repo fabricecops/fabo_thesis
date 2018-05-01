@@ -84,8 +84,32 @@ class get_df():
         df_data = df_data.apply(self.apply_countFrames, axis=1)
         df_data = df_data[df_data['countFrames']>6]
         df_data = df_data[df_data['label'] != 'und']
-
+        df_data = df_data.apply(self.seg_english, axis = 1)
         return df_data
+
+    def seg_english(self,row):
+
+
+        if row['segmentation'] == 'gooien':
+            row['segmentation'] = 'throwing'
+
+        if row['segmentation'] == 'sneaky':
+            row['segmentation'] = 'sneaky'
+
+        if row['segmentation'] == 'onder':
+            row['segmentation'] = 'under'
+
+        if row['segmentation'] == 'boven':
+            row['segmentation'] = 'above'
+
+        if row['segmentation'] == 'muren':
+            row['segmentation'] = 'walls'
+
+        if row['segmentation'] == 'object':
+            row['segmentation'] = 'object'
+
+        return row
+
 
     def apply_countFrames(self,row):
         row['countFrames'] = len(row['frames'])
