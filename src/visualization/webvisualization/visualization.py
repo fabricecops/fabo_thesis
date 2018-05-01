@@ -263,7 +263,7 @@ class path_gen_vs():
                 i = 0
             if (j >= len(self.df.iloc[i]['frames'])):
                 j = 0
-                heigth += 30
+
 
             # Load in image
             name = self.df.iloc[ i]['name']
@@ -276,6 +276,13 @@ class path_gen_vs():
 
             path = 'data/interim/BGS/bit_8/' + self.df.iloc[i]['frames'][j]
             frame = cv2.imread(path, -1)
+
+            path = 'data/interim/no_PP/bit_8/' + self.df.iloc[i]['frames'][j]
+            frame_N = cv2.cvtColor(cv2.imread(path, -1), cv2.COLOR_RGB2GRAY)
+
+
+
+
             frame_proc, data = self.slice_frame(frame, heigth)
 
             if (j == 0):
@@ -288,10 +295,15 @@ class path_gen_vs():
             frame_2 = np.concatenate((frame_proc, frame_path),axis=0)
 
             frame_con = np.concatenate((frame_1,frame_2), axis = 1)
-            self.write_text(frame_con, i, heigth)
+            # self.write_text(frame_con, i, heigth)
             images.append(frame_con)
             # show image
-            cv2.imshow('frame', frame_con)
+
+
+
+            frame_vis = np.concatenate([frame_N,BGI,frame,frame_proc],axis = 1)
+
+            cv2.imshow('frame', frame_vis)
             time.sleep(0.03)
 
             # Controls GUI
