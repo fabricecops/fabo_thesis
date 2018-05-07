@@ -9,7 +9,7 @@ def return_dict_bounds(bounds = 'DEEP1'):
 
         ##### Filesystem manager ####
         'path_data'        : './data/raw/configured_raw/',
-        'path_save'        : './models/bayes_opt/',
+        'path_save'        : './models/test_shuffle/sneaky/',
         'name'             : None,
 
         #### Preprocessing ############
@@ -27,7 +27,8 @@ def return_dict_bounds(bounds = 'DEEP1'):
 
         #### Data manager  #########
         'mode_data'        : ['p'],
-        'shuffle_style'    : 'segmentated',
+        'shuffle_style'    : 'test_class',
+        'test_class'       : ['sneaky'],
 
         ###### Bayes opt ######
         'max_iter'         : 200,
@@ -60,13 +61,13 @@ def return_dict_bounds(bounds = 'DEEP1'):
         'val_split_t'        : 0.25,
         'test_split_t'       : 0.25,
 
-        'verbose'          : 0.,
+        'verbose'          : 1.,
         'epochs'           : 10000,
         'batch_size'       : 1024,
 
         'SI_no_cma'        : 25,
         'SI_no_cma_AUC'    : 40,
-        'TH_val_loss'      : 0.01,
+        'TH_val_loss'      : 1,
         'time_stop'        : 5000,
 
         'mod_data'         : 5,
@@ -139,7 +140,7 @@ def return_dict_bounds(bounds = 'DEEP1'):
 
                  {'name': 'lr',           'type': 'continuous', 'domain': (0.00001, 0.01)},
 
-                {'name': 'vector', 'type': 'continuous', 'domain': (200, 800)},
+                {'name': 'vector', 'type': 'continuous', 'domain': (100, 800)},
 
                 {'name': 'hidden_e_1', 'type': 'continuous', 'domain': (100, 500)},
                 {'name': 'hidden_e_2', 'type': 'continuous', 'domain': (100, 500)},

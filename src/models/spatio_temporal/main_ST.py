@@ -104,7 +104,10 @@ class model_mng():
             gc.collect()
             toc()
 
-            time_stop = self.time_stop-time.time()
+            time_stop = time.time()-self.time_stop
+
+
+
             if (self.count_no_cma > self.dict_c['SI_no_cma'] or self.count_no_cma_AUC > self.dict_c['SI_no_cma_AUC'] or time_stop> self.dict_c['time_stop'] ):
                 epoch = i
                 break

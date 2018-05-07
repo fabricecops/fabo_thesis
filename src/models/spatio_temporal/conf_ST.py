@@ -9,7 +9,7 @@ def return_dict():
 
         ##### Filesystem manager ####
         'path_data'        : './data/raw/configured_raw/',
-        'path_save'        : './models/spatio_temporal/',
+        'path_save'        : './models/test_shuffle/sneaky/ST',
         'name'             : None,
 
         #### Preprocessing ############
@@ -20,7 +20,8 @@ def return_dict():
 
 
         #### Data manager  #########
-        'shuffle_style'    : 'segmentated',
+        'shuffle_style'    : 'test_class',
+        'test_class'       : ['sneaky'],
 
         ###### Bayes opt ######
         'max_iter'         : 200,
@@ -46,7 +47,7 @@ def return_dict():
         'conv_decoder'     : [('filters', 'ks', 'strides')],
 
         ##### fit                    #####
-        'random_state'       : 2,
+        'random_state'       : 1,
         'val_split_f'        : 0.2,
         'test_split_f'       : 0.2,
 
@@ -61,8 +62,8 @@ def return_dict():
 
         'SI_no_cma'        : 20,
         'SI_no_cma_AUC'    : 20,
-        'TH_val_loss'      : 0.5,
-        'time_stop'        : 5000,
+        'TH_val_loss'      : 0.1,
+        'time_stop'        : 12000,
 
         'mod_data'         : 10,
 

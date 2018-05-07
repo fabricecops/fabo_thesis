@@ -297,10 +297,52 @@ class data_manager(pipe_line_data):
                     self.df_t_test  = self.df_t_test.append(group[1].iloc[val_samples_t:val_samples_t + test_samples_t],ignore_index=True)
 
 
-        self.df_f_train = self.df_f_train.reset_index()
-        self.df_f_val   = self.df_f_val.reset_index()
-        self.df_f_test  = self.df_f_test.reset_index()
 
-        self.df_t_train = self.df_t_train.reset_index()
-        self.df_t_val   = self.df_t_val.reset_index()
-        self.df_t_test  = self.df_t_test.reset_index()
+        elif (self.dict_c['shuffle_style'] == 'test_class'):
+            print('test_class!!!!')
+
+
+
+            self.df_t_train = pd.DataFrame()
+            self.df_t_val   = pd.DataFrame()
+            self.df_t_test  = pd.DataFrame()
+
+            df_t            = self.df_t
+            print(df_t['segmentation'].unique())
+            for class_ in self.dict_c['test_class']:
+                self.df_t_test = self.df_t_test.append(self.df_t[self.df_t['segmentation'] ==  class_ ])
+                df_t           = df_t[df_t['segmentation'] != class_]
+
+
+            state_var       = True
+            for i,group in enumerate(df_t.groupby(['segmentation','location'])):
+
+
+                val_samples_t  = round(len(group[1]) * self.dict_c['val_split_t'])
+                test_samples_t = round(len(group[1]) * self.dict_c['test_split_t'])
+
+                if(val_samples_t == 0 and test_samples_t == 0 and group[0][1] == 'bnp_1' ):
+                    if(state_var == True):
+                        val_samples_t = 1
+                        state_var     = False
+                    else:
+                        state_var      = True
+
+
+
+                if(i==0):
+                    self.df_t_train = group[1].iloc[val_samples_t:len(group[1])]
+                    self.df_t_val   = group[1].iloc[0:val_samples_t]
+
+                else:
+                    self.df_t_train = self.df_t_train.append(group[1].iloc[val_samples_t:len(group[1])],ignore_index=True)
+                    self.df_t_val   = self.df_t_val.append(group[1].iloc[0:val_samples_t],ignore_index=True)
+
+
+            self.df_f_train = self.df_f_train.reset_index()
+            self.df_f_val   = self.df_f_val.reset_index()
+            self.df_f_test  = self.df_f_test.reset_index()
+
+            self.df_t_train = self.df_t_train.reset_index()
+            self.df_t_val   = self.df_t_val.reset_index()
+            self.df_t_test  = self.df_t_test.reset_index()

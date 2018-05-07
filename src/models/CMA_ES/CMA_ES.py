@@ -78,7 +78,7 @@ class CMA_ES(AUC):
 
     def main(self,data,path,dict_config_LSTM):
 
-        try:
+        # try:
             self.array_df = []
             self.epoch    = 0
             self._configure_dir(path)
@@ -97,13 +97,16 @@ class CMA_ES(AUC):
 
             dimension = self.df_f_train['error_e'].iloc[0].shape[1]
 
+            if(self.dict_c['mode'] == 'leaky_relu_C' or  self.dict_c['mode'] == 'leaky_relu_C_sigmoid' ):
+                dimension = dimension + 2
+
             es = cma.fmin(self._opt_function, dimension * [1], self.sigma,{'bounds'  : self.bounds,
                                                                            'maxfevals': self.evals,
                                                                            'verb_disp': self.verbose,
                                                                            'verb_log' : self.verbose_log})
 
-        except:
-            pass
+        # except:
+        #     pass
 
 
 
@@ -176,12 +179,13 @@ class CMA_ES(AUC):
         self.dict_df['population_tr'] = AUC_tr
         self.dict_df['population_v']  = AUC_v
         self.dict_df['population_t']  = AUC_t
+        self.dict_df['abs_diff_tv']   = np.absolute(AUC_t- AUC_v)
         self.dict_df['epoch']         = self.epoch
 
         self.array_v_x.append(x)
 
 
-        if(self.epoch%50 == 0):
+        if(self.epoch%10 == 0):
             self.save_data()
 
         if(self.counter%self.popsize == 0):
@@ -190,7 +194,7 @@ class CMA_ES(AUC):
             self.array_df.append(self.dict_df)
             self.dict_df              = {}
 
-            df = pd.DataFrame(self.array_df,columns=['population_tr', 'population_v', 'population_t', 'best_x_v', 'epoch'])
+            df = pd.DataFrame(self.array_df,columns=['population_tr', 'population_v', 'population_t', 'best_x_v', 'epoch','abs_diff_tv'])
 
 
             pickle_save(self.dict_c['path_save'] + '/best/df.p', df)
@@ -276,15 +280,74 @@ class CMA_ES(AUC):
 
     def _get_error_max(self,e,x):
 
-        eval_ = np.max(np.dot(e, x))
+        if (self.dict_c['mode'] == 'linear'):
+            eval_ = np.max(np.dot(e, x))
 
+        if (self.dict_c['mode'] == 'sigmoid'):
+            tmp   = np.dot(e, x)
+            sig   = 1 / (1 + np.exp(-tmp))
+            eval_ = np.max(sig)
+
+        if (self.dict_c['mode'] == 'sigmoid_FL'):
+            tmp   = np.multiply(e, x)
+            sig   = 1 / (1 + np.exp(-tmp))
+            sig   = np.mean(sig,axis = 1)
+            eval_ = np.max(sig)
+
+        if (self.dict_c['mode'] == 'relu'):
+            tmp   = np.dot(e, x)
+            sig   = np.maximum(tmp,0)
+            eval_ = np.max(sig)
+
+        if (self.dict_c['mode'] == 'leaky_relu'):
+            tmp   = np.dot(e, x)
+            sig   = np.maximum(tmp,0.001*tmp)
+            eval_ = np.max(sig)
+
+        if (self.dict_c['mode'] == 'leaky_relu_C'):
+            tmp   = np.dot(e, x[2:])
+            sig   = np.maximum(x[1]*tmp,x[0]*tmp)
+            sig   = 1 / (1 + np.exp(-sig))
+
+            eval_ = np.max(sig)
+
+        if (self.dict_c['mode'] == 'leaky_relu_C_sigmoid'):
+            tmp = np.multiply(e, x[2:])
+            sig = np.maximum(x[1] * tmp, x[0] * tmp)
+            sig = np.mean(sig, axis = 1)
+            tmp   = 1 / (1 + np.exp(-sig))
+            eval_ = np.max(tmp)
 
         return eval_
 
     def _get_error_ensemble(self,e,x):
 
-        eval_ = np.dot(e, x)
+        if (self.dict_c['mode'] == 'linear'):
+            eval_ = np.dot(e, x)
+        if (self.dict_c['mode'] == 'sigmoid'):
+            tmp   = np.dot(e, x)
+            eval_ = 1 / (1 + np.exp(-tmp))
 
+        if (self.dict_c['mode'] == 'sigmoid_FL'):
+            tmp   = np.multiply(e, x)
+            sig     = 1 / (1 + np.exp(-tmp))
+            eval_   = np.mean(sig,axis = 1)
+
+        if (self.dict_c['mode'] == 'relu'):
+            tmp   = np.dot(e, x)
+            eval_ = np.maximum(tmp, 0)
+        if (self.dict_c['mode'] == 'leaky_relu'):
+            tmp = np.dot(e, x)
+            eval_ = np.maximum(tmp, 0.001*tmp)
+        if (self.dict_c['mode'] == 'leaky_relu_C'):
+            tmp   = np.dot(e, x[2:])
+            eval_   = np.maximum(x[1]*tmp,x[0]*tmp)
+
+        if (self.dict_c['mode'] == 'leaky_relu_C_sigmoid'):
+            tmp   = np.multiply(e, x[2:])
+            sig   = np.maximum(x[1] * tmp, x[0] * tmp)
+            sig   = np.mean(sig, axis=1)
+            eval_ = 1 / (1 + np.exp(-sig))
 
         return eval_
 
