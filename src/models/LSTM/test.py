@@ -134,8 +134,12 @@ class BayesionOpt():
         for i in range(1):
             array_decoder.append(int(x[:,5]))
 
+
+        dict_c['encoder']   = array_encoder
+        dict_c['decoder']   = array_decoder
+
         array_features = []
-        if(int(x[:,-1]) == 1):
+        if (int(x[:, -1]) == 1):
             array_features.append('PCA')
 
         if (int(x[:, -2]) == 1):
@@ -143,13 +147,11 @@ class BayesionOpt():
         if (int(x[:, -2]) == 2):
             array_features.append('v')
 
-        if(array_features == []):
+        if (array_features == []):
             array_features.append('p')
         array_features = list(set(array_features))
 
         dict_c['mode_data'] = array_features
-        dict_c['encoder']   = array_encoder
-        dict_c['decoder']   = array_decoder
 
         return dict_c
 
@@ -267,25 +269,30 @@ if __name__ == '__main__':
     # bo = BayesionOpt(dict_c,bounds,mode)
     # bo.main()
 
-
-
-
     # mode = 'DEEP3'
     # dict_c,bounds = return_dict_bounds(bounds = mode)
     # dict_c['path_save'] = './models/bayes_opt/DEEP3/'
     # bo = BayesionOpt(dict_c,bounds,mode)
     # bo.main()
-
+    #
     # mode = 'DEEP2'
     # dict_c, bounds = return_dict_bounds(bounds=mode)
     # dict_c['test_class'] = ['object']
-    # dict_c['path_save'] = './models/test_shuffle/object/DEEP2/'
+    # dict_c['path_save'] = './models/test_shuffle/object/DEEP2/bayes_opt2/'
+    # bo = BayesionOpt(dict_c, bounds, mode)
+    # bo.main()
+
+    # mode = 'DEEP2'
+    # dict_c, bounds = return_dict_bounds(bounds=mode)
+    # dict_c['test_class'] = ['boven']
+    # dict_c['path_save'] = './models/test_shuffle/above/DEEP2/'
     # bo = BayesionOpt(dict_c, bounds, mode)
     # bo.main()
 
     mode = 'DEEP2'
     dict_c, bounds = return_dict_bounds(bounds=mode)
-    dict_c['test_class'] = ['boven']
-    dict_c['path_save'] = './models/test_shuffle/above/DEEP2/'
+    dict_c['shuffle_style'] = 'test_class_location'
+    dict_c['test_class']    = ['first_data']
+    dict_c['path_save'] = './models/test_shuffle/first_data/DEEP2/bayes_opt/'
     bo = BayesionOpt(dict_c, bounds, mode)
     bo.main()

@@ -95,12 +95,12 @@ class CMA_ES(AUC):
             self.df_t_val   = data['df_t_val']
             self.df_t_test  = data['df_t_test']
 
-            dimension = self.df_f_train['error_e'].iloc[0].shape[1]
+            self.dimension = self.df_f_train['error_e'].iloc[0].shape[1]
 
-            if(self.dict_c['mode'] == 'leaky_relu_C' or  self.dict_c['mode'] == 'leaky_relu_C_sigmoid' ):
-                dimension = dimension + 2
+            self.bias  = np.median(np.concatenate(data['df_f_train']['error_e'],axis = 0),axis = 0)
 
-            es = cma.fmin(self._opt_function, dimension * [1], self.sigma,{'bounds'  : self.bounds,
+
+            es = cma.fmin(self._opt_function, self.dimension * [1], self.sigma,{'bounds'  : self.bounds,
                                                                            'maxfevals': self.evals,
                                                                            'verb_disp': self.verbose,
                                                                            'verb_log' : self.verbose_log})
@@ -129,18 +129,14 @@ class CMA_ES(AUC):
         self.df_t_val   = self.data['df_t_val']
         self.df_t_test  = self.data['df_t_test']
 
+
+
         dimension = self.df_f_train['error_e'].iloc[0].shape[1]
 
         es = cma.fmin(self._opt_function, dimension * [1], self.sigma,{'bounds'  : self.bounds,
                                                                        'maxfevals': self.evals,
                                                                        'verb_disp': self.verbose,
                                                                        'verb_log' : self.verbose_log})
-
-
-
-
-
-
 
 
 
@@ -281,75 +277,39 @@ class CMA_ES(AUC):
     def _get_error_max(self,e,x):
 
         if (self.dict_c['mode'] == 'linear'):
-            eval_ = np.max(np.dot(e, x))
+            eval_ = np.max(np.dot(e-self.bias, x))
 
         if (self.dict_c['mode'] == 'sigmoid'):
-            tmp   = np.dot(e, x)
+            tmp   = np.dot(e-self.bias, x)
             sig   = 1 / (1 + np.exp(-tmp))
-            eval_ = np.max(sig)
-
-        if (self.dict_c['mode'] == 'sigmoid_FL'):
-            tmp   = np.multiply(e, x)
-            sig   = 1 / (1 + np.exp(-tmp))
-            sig   = np.mean(sig,axis = 1)
-            eval_ = np.max(sig)
-
-        if (self.dict_c['mode'] == 'relu'):
-            tmp   = np.dot(e, x)
-            sig   = np.maximum(tmp,0)
             eval_ = np.max(sig)
 
         if (self.dict_c['mode'] == 'leaky_relu'):
-            tmp   = np.dot(e, x)
-            sig   = np.maximum(tmp,0.001*tmp)
+            e     = e - self.bias
+            sig   = np.maximum(e,0.001*e)
+            sig   = 1/(1+np.exp(-np.dot(sig, x)))
             eval_ = np.max(sig)
-
-        if (self.dict_c['mode'] == 'leaky_relu_C'):
-            tmp   = np.dot(e, x[2:])
-            sig   = np.maximum(x[1]*tmp,x[0]*tmp)
-            sig   = 1 / (1 + np.exp(-sig))
-
-            eval_ = np.max(sig)
-
-        if (self.dict_c['mode'] == 'leaky_relu_C_sigmoid'):
-            tmp = np.multiply(e, x[2:])
-            sig = np.maximum(x[1] * tmp, x[0] * tmp)
-            sig = np.mean(sig, axis = 1)
-            tmp   = 1 / (1 + np.exp(-sig))
-            eval_ = np.max(tmp)
 
         return eval_
 
     def _get_error_ensemble(self,e,x):
 
         if (self.dict_c['mode'] == 'linear'):
-            eval_ = np.dot(e, x)
+            eval_ = np.dot(e-self.bias, x)
         if (self.dict_c['mode'] == 'sigmoid'):
-            tmp   = np.dot(e, x)
+            tmp   = np.dot(e - self.bias, x)
             eval_ = 1 / (1 + np.exp(-tmp))
 
-        if (self.dict_c['mode'] == 'sigmoid_FL'):
-            tmp   = np.multiply(e, x)
-            sig     = 1 / (1 + np.exp(-tmp))
-            eval_   = np.mean(sig,axis = 1)
-
-        if (self.dict_c['mode'] == 'relu'):
-            tmp   = np.dot(e, x)
-            eval_ = np.maximum(tmp, 0)
         if (self.dict_c['mode'] == 'leaky_relu'):
-            tmp = np.dot(e, x)
-            eval_ = np.maximum(tmp, 0.001*tmp)
-        if (self.dict_c['mode'] == 'leaky_relu_C'):
-            tmp   = np.dot(e, x[2:])
-            eval_   = np.maximum(x[1]*tmp,x[0]*tmp)
-
-        if (self.dict_c['mode'] == 'leaky_relu_C_sigmoid'):
-            tmp   = np.multiply(e, x[2:])
-            sig   = np.maximum(x[1] * tmp, x[0] * tmp)
-            sig   = np.mean(sig, axis=1)
-            eval_ = 1 / (1 + np.exp(-sig))
+            e = e - self.bias
+            sig = np.maximum(e, 0.001 * e)
+            sig = 1 / (1 + np.exp(-np.dot(sig, x)))
+            eval_ = np.max(sig)
 
         return eval_
+
+
+
 
 
 
