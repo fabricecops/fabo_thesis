@@ -292,7 +292,7 @@ if __name__ == '__main__':
     mode = 'DEEP2'
     dict_c, bounds = return_dict_bounds(bounds=mode)
     dict_c['shuffle_style'] = 'test_class_location'
-    dict_c['test_class']    = ['first_data']
-    dict_c['path_save'] = './models/test_shuffle/first_data/DEEP2/bayes_opt/'
+    dict_c['test_class']    = ['hallway']
+    dict_c['path_save'] = './models/test_shuffle/hallway/DEEP2/bayes_opt/'
     bo = BayesionOpt(dict_c, bounds, mode)
     bo.main()

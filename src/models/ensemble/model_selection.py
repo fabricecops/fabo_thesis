@@ -10,13 +10,9 @@ import matplotlib.pyplot as plt
 class model_selection():
 
     def __init__(self,dict_c):
-
-
         self.dict_c = dict_c
 
-    def main(self,*args):
-        self._configure_dir(self.dict_c['path_save'])
-        df                    = self.configure_data()
+    def main(self,df):
         df                    = df[df['AUC_v']> self.dict_c['threshold']].reset_index()
         df,coeff,tsne_results = self.calculate_correlation(df)
         df                    = self.calculate_Kmeans(df,coeff,tsne_results)
@@ -148,45 +144,6 @@ class model_selection():
 
         return df,coef,tsne_results
 
-    def configure_data(self,*args):
-
-        array = []
-        for path in self.dict_c['path_a']:
-
-            list_names = os.listdir(path)
-
-            for name in list_names:
-                print(name)
-                try:
-                    path_best = path+name+'/best/data_best.p'
-                    data      = pickle_load(path_best,None)
-
-                    error_    = list(data['df_f_train']['error_m'])
-                    error_.extend(list(data['df_t_train']['error_m']))
-                    error_    = np.array(error_)
-                    dict_     = {
-                                 'error_m': error_,
-                                 'path'   : path+name+'/',
-                                 'AUC_v'  : data['AUC_v']
-                    }
-                    array.append(dict_)
-                except Exception as e:
-                    pass
-
-        df = pd.DataFrame(array, columns = ['error_m','path','AUC_v'])
-        return df
-
-    def _configure_dir(self,path):
-        path = path
-        string_a = path.split('/')
-        path = ''
-
-        for string in string_a:
-            if string != '':
-                path += string+'/'
-
-                if (os.path.exists(path) == False):
-                    os.mkdir(path)
 
 
 if __name__ == '__main__':

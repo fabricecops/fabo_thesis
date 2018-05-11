@@ -277,10 +277,10 @@ class CMA_ES(AUC):
     def _get_error_max(self,e,x):
 
         if (self.dict_c['mode'] == 'linear'):
-            eval_ = np.max(np.dot(e-self.bias, x))
+            eval_ = np.max(np.dot(e, x))
 
         if (self.dict_c['mode'] == 'sigmoid'):
-            tmp   = np.dot(e-self.bias, x)
+            tmp   = np.dot(e, x)
             sig   = 1 / (1 + np.exp(-tmp))
             eval_ = np.max(sig)
 
@@ -295,9 +295,9 @@ class CMA_ES(AUC):
     def _get_error_ensemble(self,e,x):
 
         if (self.dict_c['mode'] == 'linear'):
-            eval_ = np.dot(e-self.bias, x)
+            eval_ = np.dot(e, x)
         if (self.dict_c['mode'] == 'sigmoid'):
-            tmp   = np.dot(e - self.bias, x)
+            tmp   = np.dot(e, x)
             eval_ = 1 / (1 + np.exp(-tmp))
 
         if (self.dict_c['mode'] == 'leaky_relu'):
