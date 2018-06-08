@@ -11,7 +11,7 @@ import imageio
 class main_visualize(conf_data,plot_Tool,Path_gen):
 
     def __init__(self,dict_c):
-        self.height          = 50
+        self.height          = 60
 
         conf_data.__init__(self,dict_c)
         plot_Tool.__init__(self)
@@ -34,13 +34,13 @@ class main_visualize(conf_data,plot_Tool,Path_gen):
         self.threshold       = 0.
         self.track_threshold = None
         self.plot_mode   = dict_c['plot_mode']
-
+        self.save = False
 
         self.array_gif   = []
 
 
     def play_videos(self):
-        i     = 0
+        i     = 11
         j     = 0
         counter = 0
         while (1):
@@ -53,14 +53,22 @@ class main_visualize(conf_data,plot_Tool,Path_gen):
 
             frame_pd     = self.configure_frame(self.df,i,j, self.height)
             frame_fin    = np.concatenate((frame_pd,img),axis = 0)
-
+            self._write_auc(frame_fin,i)
 
             if(counter < 36):
                 self.array_gif.append(frame_fin)
             if(counter ==36):
                 imageio.mimsave('./plots/pic/movie.gif', self.array_gif)
 
-            # self._write_auc( frame_fin,i)
+
+            if(self.save == True):
+                print('lol')
+                output_A, pred_A, error_A = self.conf_pred_feat(i, self.feature)
+                output_y, pred_y, error_y = self.conf_pred_feat(i, self.feature + 1)
+                output_x, pred_x, error_x = self.conf_pred_feat(i, self.feature + 2)
+
+                img = self.save_image(j,self.feature, output_A, pred_A, error_A,output_y, pred_y, error_y,output_x, pred_x, error_x,self.dict_c['tracker'])
+
 
             cv2.imshow('frame', frame_fin)
             time.sleep(0.1)
@@ -78,28 +86,11 @@ class main_visualize(conf_data,plot_Tool,Path_gen):
         cv2.destroyAllWindows()
 
     def _write_auc(self,frame,i):
-        AUC = self.AUC
 
 
-        string_TP            = str(len(self.df_true[self.df_true['error_tm']>self.threshold]))+'/'+str(len(self.df_true))
-        string_TN            = str(len(self.df_false[self.df_false['error_tm']<=self.threshold]))+'/'+str(len(self.df_false))
 
 
-        error = self.df.iloc[i]['error_tm']
-
-
-        if (error > self.threshold):
-            p = 'Anomaly'
-        else:
-            p = 'Normal'
-
-        string = 'AUC: '+str(round(np.abs(AUC),2))+\
-                 ' TH: '+str(round(self.threshold,3))+\
-                 ' TF: '+str(string_TN)+\
-                 ' TP: '+  str(string_TP)+\
-                 ' Prediction: '+p+\
-                 ' E: '+str(error)
-
+        string =      'T: ' + str(self.dict_c['tracker'])
 
         cv2.putText(frame,
                     string,
@@ -204,6 +195,7 @@ class main_visualize(conf_data,plot_Tool,Path_gen):
 
             img = self.plot_3(j,feature, output_A, pred_A, error_A,output_y, pred_y, error_y,output_x, pred_x, error_x)
 
+
         elif self.plot_mode == 'dist':
             img = self.get_plot_error(self.df_true,self.df_false)
 
@@ -289,6 +281,11 @@ class main_visualize(conf_data,plot_Tool,Path_gen):
         if key == ord('l'):
             j += 1
 
+        if key == ord('1'):
+            self.save = True
+        if key == ord('2'):
+            self.save = False
+
         return i,j
 
     def _control_ij(self,i,j):
@@ -299,14 +296,15 @@ class main_visualize(conf_data,plot_Tool,Path_gen):
         return i,j
 
 if __name__ == '__main__':
-    path_best = './models/bayes_opt/DEEP2/21/'
+    path_best = './models/AFE/no_tracker/2/'
     dict_c = {
         'path': path_best,
         'mode': 'df_t_train',
 
         'path_dict': path_best + 'dict.p',
 
-        'plot_mode': 'error'
+        'plot_mode': 'feature',
+        'tracker'  : False
 
     }
     vis = main_visualize(dict_c)

@@ -42,7 +42,7 @@ class data_manager(pipe_line_data):
         self.df =  self.df[self.df['data_X'] != '']
         self.df =  self.df[self.df['data_y'] != '']
         self.count_t = len(self.df)
-        self.df =  self.df[['name','label','frames','data_X','data_y','segmentation','location']]
+        self.df =  self.df[['name','label','frames','data_X','data_y','segmentation','location','movieID']]
         self._print_data()
 
         df_f     = self.df[self.df['label'] == False]

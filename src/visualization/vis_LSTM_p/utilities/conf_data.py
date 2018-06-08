@@ -10,6 +10,8 @@ class conf_data():
         self.path           = dict_c['path']
         self.dict_c         = pickle_load(dict_c['path_dict'],None)
         self.dict_c['mode'] = dict_c['mode']
+        self.dict_c['plot_mode'] = dict_c['plot_mode']
+
 
 
         self.AUC_max     = None
@@ -83,11 +85,18 @@ class conf_data():
         #
         # print(np.array(self.df_false['error_tm']))
 
-        path = self.path + 'best/data_best.p'
-        data = pickle_load(path,None)
+
+        if(self.dict_c['plot_mode'] == 'error'):
+            path = self.path + 'best/data_best.p'
+            data = pickle_load(path, None)['mode']
+
+        else:
+            path = self.path + 'best/df_val.p'
+            data = pickle_load(path,None)
 
 
-        data = data[self.dict_c['mode']]
+
+        data = data
         self.df = data
 
 

@@ -1,2 +1,2 @@
 import matplotlib
-matplotlib.use('agg')
+# matplotlib.use('agg')

@@ -143,6 +143,8 @@ class OPS_LSTM(plotting_tool):
         if (os.path.exists(path_b) == False):
             os.mkdir(path_b)
 
+        if (dict_data['AUC_v'] >= max(list(df_saved['AUC_v']))):
+            pickle_save_(path_b+'df_val.p',dict_data['df_t_val'])
 
         if (dict_data['AUC_v'] >= max(list(df_saved['AUC_v']))):
             dict_data['df_t_train'] = dict_data['df_t_train'][['error_e', 'error_m','error_v', 'location', 'segmentation','frames','label']]
@@ -155,6 +157,9 @@ class OPS_LSTM(plotting_tool):
             dict_data['df_f_test'] = dict_data['df_f_test'][['error_e', 'error_m','error_v', 'location', 'segmentation','frames','label']]
 
             pickle_save_(path_b+'data_best.p',dict_data)
+
+
+
 
 
         return dict_data

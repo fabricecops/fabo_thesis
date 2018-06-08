@@ -166,8 +166,13 @@ if __name__ == '__main__':
 
     dict_c = return_dict()
     bounds = return_bounds()
-    dict_c['path_save'] = './models/test_shuffle/sneaky/SP/'
+    dict_c['shuffle_style'] = 'test_class_location'
+    dict_c['path_save'] = './models/test_shuffle/first_data/SP/'
+    dict_c['test_class'] = ['first_data']
+
     bo = BayesionOpt(dict_c,bounds)
     bo.main()
+
+
 
 

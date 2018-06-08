@@ -2,9 +2,13 @@ from src.dst.metrics.AUC import AUC
 import numpy as np
 import functools
 import cma
-from src.dst.outputhandler.pickle import pickle_save
+from src.dst.outputhandler.pickle import pickle_save,pickle_load,pickle_save_
 import os
 import pandas as pd
+import time
+import multiprocessing as mp
+import matplotlib.pyplot as plt
+plt.style.use('ggplot')
 
 class CMA_ES(AUC):
 
@@ -53,11 +57,29 @@ class CMA_ES(AUC):
         self.best_x_v        = None
         self.best_x_tr       = None
 
-    def main_CMA_ES(self,data):
+
+    def main_SB(self,dict_):
+        Queue = mp.Queue()
+
+        p = mp.Process(target=self.main_CMA_ES, args=(dict_,Queue))
+        p.daemon = True
+        p.start()
+
+        while True:
+            if p.is_alive():
+                time.sleep(1)
+            else:
+                p.terminate()
+                break
+
+        AUC_v = Queue.get()
+        return AUC_v
+
+    def main_CMA_ES(self,*args):
 
 
-        self._configure_dir(self.dict_c['path_save'])
-
+        data = args[0]
+        Queue= args[1]
 
 
         self.df_f_train = data['df_f_train']
@@ -77,21 +99,28 @@ class CMA_ES(AUC):
                                                                        'verb_log' : self.verbose_log})
 
 
-    def main_MEAN(self,data):
 
+        data = (self.AUC_tr_max,self.AUC_v_max,self.AUC_t_maxv)
 
+        Queue.put(self.AUC_v_max)
 
-        self.df_f_train = data['df_f_train']
-        self.df_f_val   = data['df_f_val']
-        self.df_f_test  = data['df_f_test']
+        print('Solution CMA')
+        print(es[0])
+        print(self.AUC_tr_max,self.AUC_v_max,self.AUC_t_maxv)
+        print()
 
-        self.df_t_train = data['df_t_train']
-        self.df_t_val   = data['df_t_val']
-        self.df_t_test  = data['df_t_test']
-
-        self.save_data_MEAN()
-
-
+        df       = pd.DataFrame([{'AUC':self.AUC_tr_max,'AUC_v':self.AUC_v_max,'AUC_t':self.AUC_t_maxv}])[['AUC', 'AUC_v', 'AUC_t']]
+        path     = self.dict_c['path_save']+ 'hist.p'
+        df_saved = pickle_load(path, None)
+        df_saved = df_saved.append(df, ignore_index=False)
+        pickle_save_(path, df_saved)
+        self.plot(df_saved)
+    def plot(self,df):
+        fig = plt.figure(figsize=(16, 4))
+        plt.plot(list(df['AUC']), label ='train')
+        plt.plot(list(df['AUC_v']), label = 'val')
+        plt.plot(list(df['AUC_t']), label = 'test')
+        plt.savefig(self.dict_c['path_save']+'plots.png')
 
 
 
@@ -112,11 +141,7 @@ class CMA_ES(AUC):
         AUC_v, FPR_v, TPR_v    = self.get_AUC_score(eval_true_v, eval_false_v)
         AUC_t, FPR_t, TPR_t    = self.get_AUC_score(eval_true_t, eval_false_t)
 
-        if (AUC_tr > self.AUC_tr_max):
-            self.AUC_tr_max = AUC_tr
-            self.FPR_tr     = FPR_tr
-            self.TPR_tr     = TPR_tr
-            self.best_x_tr  = x
+
 
         if (AUC_v > self.AUC_v_max):
             self.AUC_v_max  = AUC_v
@@ -127,6 +152,10 @@ class CMA_ES(AUC):
             self.AUC_t_maxv = AUC_t
             self.FPR_t      = FPR_t
             self.TPR_t      = TPR_t
+
+            self.AUC_tr_max = AUC_tr
+            self.FPR_tr     = FPR_tr
+            self.TPR_tr     = TPR_tr
 
         self.dict_df['population_tr'] = AUC_tr
         self.dict_df['population_v']  = AUC_v
@@ -172,82 +201,53 @@ class CMA_ES(AUC):
         AUC_t, FPR_t, TPR_t = self._opt_function_(self.best_x_v, self.df_f_test['error_e'], self.df_t_test['error_e'])
 
 
-        self.df_f_train['error_v'] =  list(map(functools.partial(self._get_error_ensemble, x=self.best_x_v), np.array(self.df_f_train['error_e'])))
-        self.df_f_val['error_v']   =  list(map(functools.partial(self._get_error_ensemble, x=self.best_x_v), np.array(self.df_f_val['error_e'])))
-        self.df_f_test['error_v']  =  list(map(functools.partial(self._get_error_ensemble, x=self.best_x_v), np.array(self.df_f_test['error_e'])))
+        path = self.dict_c['path_save'] + 'hist.p'
+        df_saved = pickle_load(path, None)
+        if(AUC_v > max(df_saved['AUC_v']) ):
+            self.df_f_train['error_v'] =  list(map(functools.partial(self._get_error_ensemble, x=self.best_x_v), np.array(self.df_f_train['error_e'])))
+            self.df_f_val['error_v']   =  list(map(functools.partial(self._get_error_ensemble, x=self.best_x_v), np.array(self.df_f_val['error_e'])))
+            self.df_f_test['error_v']  =  list(map(functools.partial(self._get_error_ensemble, x=self.best_x_v), np.array(self.df_f_test['error_e'])))
 
-        self.df_t_train['error_v'] =  list(map(functools.partial(self._get_error_ensemble, x=self.best_x_v), np.array(self.df_t_train['error_e'])))
-        self.df_t_val['error_v']   =  list(map(functools.partial(self._get_error_ensemble, x=self.best_x_v), np.array(self.df_t_val['error_e'])))
-        self.df_t_test['error_v']  =  list(map(functools.partial(self._get_error_ensemble, x=self.best_x_v), np.array(self.df_t_test['error_e'])))
-
-
-        self.df_f_train['error_m'] =  list(map(functools.partial(self._get_error_max, x=self.best_x_v), np.array(self.df_f_train['error_e'])))
-        self.df_f_val['error_m']   =  list(map(functools.partial(self._get_error_max, x=self.best_x_v), np.array(self.df_f_val['error_e'])))
-        self.df_f_test['error_m']  =  list(map(functools.partial(self._get_error_max, x=self.best_x_v), np.array(self.df_f_test['error_e'])))
-
-        self.df_t_train['error_m'] =  list(map(functools.partial(self._get_error_max, x=self.best_x_v), np.array(self.df_t_train['error_e'])))
-        self.df_t_val['error_m']   =  list(map(functools.partial(self._get_error_max, x=self.best_x_v), np.array(self.df_t_val['error_e'])))
-        self.df_t_test['error_m']  =  list(map(functools.partial(self._get_error_max, x=self.best_x_v), np.array(self.df_t_test['error_e'])))
+            self.df_t_train['error_v'] =  list(map(functools.partial(self._get_error_ensemble, x=self.best_x_v), np.array(self.df_t_train['error_e'])))
+            self.df_t_val['error_v']   =  list(map(functools.partial(self._get_error_ensemble, x=self.best_x_v), np.array(self.df_t_val['error_e'])))
+            self.df_t_test['error_v']  =  list(map(functools.partial(self._get_error_ensemble, x=self.best_x_v), np.array(self.df_t_test['error_e'])))
 
 
-        dict_ = {
-            'x_v'      : self.best_x_v,
-            'x_tr'     : self.best_x_tr,
-            'AUC_tr'   : self.AUC_tr_max,
-            'AUC_v'    : AUC_v,
-            'AUC_t'    : AUC_t,
+            self.df_f_train['error_m'] =  list(map(functools.partial(self._get_error_max, x=self.best_x_v), np.array(self.df_f_train['error_e'])))
+            self.df_f_val['error_m']   =  list(map(functools.partial(self._get_error_max, x=self.best_x_v), np.array(self.df_f_val['error_e'])))
+            self.df_f_test['error_m']  =  list(map(functools.partial(self._get_error_max, x=self.best_x_v), np.array(self.df_f_test['error_e'])))
 
-            'FPR'    : FPR,
-            'TPR'    : TPR,
-            'FPR_v'  : FPR_v,
-            'TPR_v'  : TPR_v,
-            'FPR_t'  : FPR_t,
-            'TPR_t'  : TPR_t,
-
-            'df_f_train': self.df_f_train,
-            'df_f_val'  : self.df_f_val,
-            'df_f_test' : self.df_f_test,
-
-            'df_t_train' : self.df_t_train,
-            'df_t_val'   : self.df_t_val,
-            'df_t_test'  : self.df_t_test,
-
-        }
+            self.df_t_train['error_m'] =  list(map(functools.partial(self._get_error_max, x=self.best_x_v), np.array(self.df_t_train['error_e'])))
+            self.df_t_val['error_m']   =  list(map(functools.partial(self._get_error_max, x=self.best_x_v), np.array(self.df_t_val['error_e'])))
+            self.df_t_test['error_m']  =  list(map(functools.partial(self._get_error_max, x=self.best_x_v), np.array(self.df_t_test['error_e'])))
 
 
-        pickle_save(self.dict_c['path_save']+'/best/data_best.p',dict_)
+            dict_ = {
+                'x_v'      : self.best_x_v,
+                'x_tr'     : self.best_x_tr,
+                'AUC_tr'   : self.AUC_tr_max,
+                'AUC_v'    : AUC_v,
+                'AUC_t'    : AUC_t,
 
-    def save_data_MEAN(self):
+                'FPR'    : FPR,
+                'TPR'    : TPR,
+                'FPR_v'  : FPR_v,
+                'TPR_v'  : TPR_v,
+                'FPR_t'  : FPR_t,
+                'TPR_t'  : TPR_t,
 
-        AUC, FPR, TPR       = self.get_AUC_score(self.df_t_train['error_m'], self.df_f_train['error_m'])
-        AUC_v, FPR_v, TPR_v = self.get_AUC_score(self.df_t_val['error_m'], self.df_f_val['error_m'])
-        AUC_t, FPR_t, TPR_t = self.get_AUC_score(self.df_t_test['error_m'], self.df_f_test['error_m'])
+                'df_f_train': self.df_f_train,
+                'df_f_val'  : self.df_f_val,
+                'df_f_test' : self.df_f_test,
 
+                'df_t_train' : self.df_t_train,
+                'df_t_val'   : self.df_t_val,
+                'df_t_test'  : self.df_t_test,
 
+            }
 
-        dict_ = {
-            'AUC_tr': self.AUC_tr_max,
-            'AUC_v': AUC_v,
-            'AUC_t': AUC_t,
-
-            'FPR': FPR,
-            'TPR': TPR,
-            'FPR_v': FPR_v,
-            'TPR_v': TPR_v,
-            'FPR_t': FPR_t,
-            'TPR_t': TPR_t,
-
-            'df_f_train': self.df_f_train,
-            'df_f_val': self.df_f_val,
-            'df_f_test': self.df_f_test,
-
-            'df_t_train': self.df_t_train,
-            'df_t_val': self.df_t_val,
-            'df_t_test': self.df_t_test,
-
-        }
-
-        pickle_save(self.dict_c['path_save'] + '/best/data_best.p', dict_)
+            self._configure_dir(self.dict_c['path_save']+'best')
+            pickle_save(self.dict_c['path_save']+'best/data_best.p',dict_)
 
     def _opt_function_(self, x, f, t):
 
@@ -268,7 +268,6 @@ class CMA_ES(AUC):
     def _get_error_ensemble(self,e,x):
 
         eval_ = np.dot(e, x)
-
 
         return eval_
 

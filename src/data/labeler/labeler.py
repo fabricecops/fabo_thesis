@@ -12,6 +12,7 @@ import cv2
 import time
 import pandas as pd
 from src.data.dimensionality_reduction.HCF.preprocessing import get_df
+import matplotlib.pyplot as plt
 class restructure_FS():
 
     def __init__(self):
@@ -138,182 +139,6 @@ class restructure_FS():
                 path_r = path+name
                 shutil.rmtree(path_r)
 
-class labeler():
-
-    def __init__(self,path,list_names):
-        self.path       = path
-        self.list_names = list_names
-        self.pause      = False
-
-        self.label      = None
-        self.df         = None
-        self.len_df     = None
-
-        self.track_k    = None
-        self.track_i    = None
-        self.track_rmt  = None
-
-    def play_videos(self):
-        i = 0
-        j = 0
-        k = 0
-        while (1):
-            try:
-                i, j,k  = self._control_ijk(i, j,k)
-
-                dict_ ,passages  = self.get_json(i,k)
-                path    = self.path+self.list_names[k]+ '/visualized/' +  dict_['frames'][j]
-
-                img     = cv2.imread(path, -1)
-                img     = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
-                img     = cv2.resize(img,(600,800))
-                self.write_data(img,i,j,k,dict_)
-                self.save_json(i,k,self.label,passages)
-
-
-                cv2.imshow('frame', img)
-                time.sleep(0.05)
-
-            except Exception as e:
-
-                print(e)
-                if(self.pause == True and self.track_rmt == False):
-                    shutil.rmtree(self.path+self.list_names[k])
-                    self.track_rmt = True
-
-            # Controls GUI
-            if (self.pause == False):
-                j += 1
-            key = cv2.waitKey(1) & 0xFF
-            if key == ord('q'):
-                break
-
-            i, j,k = self._control_videos(key, i, j,k)
-        cv2.destroyAllWindows()
-
-    def save_json(self,i,k,label,passages):
-        if(label != None):
-            passages['passages'][i]['label']['anomaly'] = label
-            path = self.path +self.list_names[k]+ '/passages.json'
-
-            df   = pd.DataFrame(passages)
-            df.to_json(path)
-
-    def get_json(self,i,k):
-        path        = self.path +self.list_names[k]+ '/passages.json'
-        passages    = pd.read_json(path)
-
-        try:
-            dict_ = {'label': passages['passages'][i]['label']['anomaly'],
-                     'frames': passages['passages'][i]['frames'],
-                     'name' :  self.list_names[k]}
-
-        except Exception as e:
-
-            passages['passages'][i]['label']['anomaly'] = None
-            passages['passages'][i]['label']['personCountDelta'] = None
-
-            print('lol' +str(e))
-            dict_ = {'label': 'und',
-                     'frames': passages['passages'][i]['frames'],
-                     'name':  self.list_names[k]}
-
-
-        return dict_,passages
-
-    def write_data(self,frame,i,j,k,dict_):
-        scenario = self.list_names[k]
-        label    = dict_['label']
-
-        string   = ' scenerio: '+str(scenario)
-        cv2.putText(frame,
-                    string,
-                    (20, 40),
-                    cv2.FONT_HERSHEY_SIMPLEX,
-                    0.5,
-                    (255, 255, 255), 1,
-                    cv2.LINE_AA)
-
-        string = str(k)+'/'+str(len(self.list_names))+' movie id: '+str(i)+'/'+str(len(self.df))+' Frame: '+str(j)+'/'+str(len(dict_['frames']))+' Label: '+str(label)
-        cv2.putText(frame,
-                    string,
-                    (20, 60),
-                    cv2.FONT_HERSHEY_SIMPLEX,
-                    0.5,
-                    (255, 255, 255), 1,
-                    cv2.LINE_AA)
-
-    def _control_videos(self,key,i,j,k):
-
-            if key == ord('r'):
-                if(i< self.len_df-1):
-                    i += 1
-                else:
-                    i  = 0
-
-                j  = 0
-
-            if key == ord('e'):
-                if i == 0:
-                    i = self.len_df - 1
-                else:
-                    i -= 1
-
-                j = 0
-
-            if key == ord('d'):
-                k += 1
-                j  = 0
-
-            if key == ord('s'):
-                if k == 0:
-                    k = len(self.list_names) - 1
-                else:
-                    k -= 1
-
-                j = 0
-
-            if key == ord('p'):
-                self.pause = True
-
-            if key == ord('o'):
-                self.pause = False
-
-            if key == ord('t'):
-                self.label = True
-
-            if key == ord('f'):
-                self.label = False
-
-            if key == ord('k'):
-                j -= 1
-
-            if key == ord('l'):
-                j += 1
-
-            return i,j,k
-
-    def _control_ijk(self,i,j,k):
-        if(k != self.track_k):
-            self.df        = pd.read_json(self.path+self.list_names[k]+'/passages.json')
-            self.len_df    = len(self.df)
-            self.track_k   = k
-            self.track_rmt = False
-            self.label     = None
-            i              = 0
-
-
-        if(i != self.track_i):
-            self.label   = None
-            self.track_i = i
-
-        if (i >= self.len_df):
-            i = 0
-        if (j >= len(self.df['passages'][i]['frames'])):
-            j = 0
-
-
-        return i,j,k
 
 
 class add_segmentation():
@@ -358,6 +183,8 @@ class anomaly_segmenter():
         self.track_rmt    = None
         self.segmentation = None
         self.label        = None
+
+        self.save_b       = False
     def play_videos(self):
 
         i = 0
@@ -369,14 +196,22 @@ class anomaly_segmenter():
 
             path    = self.path+self.df_anom['name'].iloc[i]+ '/visualized/' +  self.df_anom['frames'].iloc[i][j]
             img     = cv2.imread(path, -1)
+            img_c   = img.copy()
             img     = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
             img     = cv2.resize(img,(600,800))
 
 
             path_p           = self.path + self.df_anom['name'].iloc[i] + '/passages.json'
             dict_ ,passages  = self.get_json(i,path_p)
+            print(img_c.shape)
+            print(dict_['segment'])
+            print(self.save_b)
+            if (self.save_b == True):
+                cv2.imwrite('picture_' + dict_['segment'] + '.PNG', img_c)
+
+
             self.write_data(img,i,j,dict_)
-            self.save_json(i,self.label,self.segmentation,dict_,passages,path_p)
+            # self.save_json(i,self.label,self.segmentation,dict_,passages,path_p)
 
 
             cv2.imshow('frame', img)
@@ -504,7 +339,7 @@ class anomaly_segmenter():
                 self.segmentation = 'boven'
 
             if key == ord('c'):
-                self.segmentation = 'onder'
+                self.segmentation = 'e'
 
             if key == ord('v'):
                 self.segmentation = 'object'
@@ -521,6 +356,11 @@ class anomaly_segmenter():
             if key == ord('m'):
                 self.segmentation = 'None'
 
+            if key == ord('1'):
+                self.save_b = True
+
+            if key == ord('2'):
+                self.save_b = False
  
             return i,j
 

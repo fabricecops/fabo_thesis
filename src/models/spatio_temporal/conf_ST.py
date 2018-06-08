@@ -21,7 +21,7 @@ def return_dict():
 
         #### Data manager  #########
         'shuffle_style'    : 'test_class',
-        'test_class'       : ['sneaky'],
+        'test_class'       : ['above'],
 
         ###### Bayes opt ######
         'max_iter'         : 200,
@@ -63,11 +63,11 @@ def return_dict():
         'SI_no_cma'        : 20,
         'SI_no_cma_AUC'    : 20,
         'TH_val_loss'      : 0.1,
-        'time_stop'        : 12000,
+        'time_stop'        : 6000,
 
         'mod_data'         : 10,
 
-        'max_batch_size'   : 512,
+        'max_batch_size'   : 256,
 
     }
     return dict_c

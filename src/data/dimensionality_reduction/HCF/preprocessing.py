@@ -288,7 +288,7 @@ class path_Generation():
         self.nr_features = 3
         self.nr_contours = dict_c['nr_contours']
         self.area        = dict_c['area']
-
+        print(self.dict_c['tracker'])
 
         self.sum_        = 1000
 
@@ -310,26 +310,32 @@ class path_Generation():
         # Load in image
         path = 'data/interim/BGS/bit_8/' + df.iloc[i]['frames'][j]
         frame = cv2.imread(path, -1)
-        data_normal,frame_proc = self._slice_frame(frame, heigth,j)
-        data_pos, data_v       = self.track_points.main_tracker(j, heigth, data_normal)
+        data_pos,frame_proc = self._slice_frame(frame, heigth,j)
+        data = data_pos.copy()
+
+        if(self.dict_c['tracker'] == True):
+            data_pos, data_v       = self.track_points.main_tracker(j, heigth, data_pos)
+
 
         if (j == 0):
             self.frame_path = np.zeros(frame_proc.shape).astype('uint8')
 
         # draw on image and concatenate
-        self._draw_circle(self.frame_path, data_normal)
+        self._draw_circle(self.frame_path, data_pos)
         frame_con = np.concatenate((frame, frame_proc, self.frame_path), axis=1)
         self._write_text(frame_con, i,j,heigth)
-        # self._write_data(frame_con,data_pos)
+        self._write_data(frame_con,data_pos)
 
         frame_con = cv2.cvtColor(frame_con, cv2.COLOR_GRAY2RGB)
 
         return frame_con
 
     def _get_points_movie(self, row):
-
         data_movie_p  = np.zeros((len(row['frames']), len(self.resolution) * self.nr_contours* self.nr_features))
         data_movie_v  = np.zeros((len(row['frames']), len(self.resolution) * self.nr_contours *( self.nr_features-1)))
+
+        data_movie    = data_movie_p.copy()
+
 
 
 
@@ -342,17 +348,37 @@ class path_Generation():
 
             for i, heigth in enumerate(self.resolution):
 
-                data,sliced_frame = self._slice_frame(image, heigth,j)
-                data_pos,data_v   = self.track_points.main_tracker(j,heigth,data)
+                data_pos,sliced_frame = self._slice_frame(image, heigth,j)
+                data                  = data_pos.copy()
 
+                if(self.dict_c['tracker'] == True):
+                    data_pos, data_v = self.track_points.main_tracker(j, heigth, data_pos)
+                x =  data==data_pos
 
-                if (len(data) != 0):
+                # if(False in x):
+                #     print(row['movieID'])
+                #     print(heigth)
+                #     print('x'*50)
+
+                if (len(data_pos) != 0):
                     frame_pt[self.nr_features * self.nr_contours* i:self.nr_features * self.nr_contours * i + self.nr_features * self.nr_contours] = data_pos
-                    frame_vt[(self.nr_features-1) * self.nr_contours* i:(self.nr_features-1) * self.nr_contours * i + (self.nr_features-1)* self.nr_contours] = data_v
+                    if (self.dict_c['tracker'] == True):
+                        frame_vt[(self.nr_features-1) * self.nr_contours* i:(self.nr_features-1) * self.nr_contours * i + (self.nr_features-1)* self.nr_contours] = data_v
+
+
 
 
             data_movie_p[j, :] = frame_pt
             data_movie_v[j, :] = frame_vt
+
+
+        # print('x'*50)
+        #
+        # t = (data_movie == data_movie_p)
+        # if(False in data_movie == data_movie_p):
+        #
+        #     print(row['movieID'])
+
 
         row['data_p']    = data_movie_p
         row['data_v']      = data_movie_v
@@ -578,10 +604,14 @@ class tracker():
                     self.state[heigth][3 * i + 1] = y
                     self.state[heigth][3 * i + 2] = 0
 
-            if (X != 0 and y != 0):
+            if (X != 0 and y != 0 and self.dict_c['state'] == True):
                 data[3 * i] = data[3 * i] - self.state[heigth][3 * i] + 0.1
                 data[3 * i + 1] = data[3 * i + 1] - self.state[heigth][3 * i + 1] + 0.1
                 data[3 * i + 2] = data[3 * i + 2] - self.state[heigth][3 * i + 2]
+            if (X != 0 and y != 0 and self.dict_c['state'] == False):
+                data[3 * i] = data[3 * i]
+                data[3 * i + 1] = data[3 * i + 1]
+                data[3 * i + 2] = data[3 * i + 2]
 
         index = [i + 2 for i in range(0, len(data) - 1, 3)]
         data_v = np.copy(data)

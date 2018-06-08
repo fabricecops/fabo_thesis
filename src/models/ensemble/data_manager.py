@@ -19,7 +19,7 @@ class data_manager(AUC):
         array = []
         for path in self.dict_c['path_a']:
 
-            list_names = os.listdir(path)[:20]
+            list_names = os.listdir(path)[:10]
 
             for name in list_names:
                 try:
@@ -55,7 +55,7 @@ class data_manager(AUC):
 
 
     ###### ensemble data collection #######
-    def load_data(self,df,nr):
+    def load_data(self,df):
 
         dict_ = {
 
@@ -65,9 +65,6 @@ class data_manager(AUC):
 
         array_data   = []
         keys         = [ 'df_t_train', 'df_t_val', 'df_t_test', 'df_f_train', 'df_f_val', 'df_f_test']
-        print('x'*50)
-        print(len(df))
-        print('x'*50)
         for i in range(len(df)):
             path_best = df['path'].iloc[i]+'best/data_best.p'
             data = pickle_load(path_best,None)
@@ -84,7 +81,7 @@ class data_manager(AUC):
                     else:
                         data = np.vstack((data,  array_data[model_id][key]['error_v'].iloc[data_point]))
 
-                data          = data.reshape(-1,nr)
+                data          = data.reshape(-1,self.dict_c['clusters'])
 
 
                 dict_DP['error_e']     = data
@@ -184,8 +181,8 @@ class data_manager(AUC):
 
 
             pickle_save_(path,df_saved)
-            if(epoch % 10 == 0):
-                self.plot(df_saved)
+        if(epoch % 10 == 0):
+            self.plot(df_saved)
 
         path_b = self.dict_c['path_save'] +'best/'
 
@@ -210,9 +207,9 @@ class data_manager(AUC):
 
     def plot(self,df):
         fig = plt.figure(figsize=(16, 4))
-        plt.plot(df['AUC'])
-        plt.plot(df['AUC_v'])
-        plt.plot(df['AUC_t'])
+        plt.plot(list(df['AUC']))
+        plt.plot(list(df['AUC_v']))
+        plt.plot(list(df['AUC_t']))
         plt.savefig(self.dict_c['path_save']+'plots.png')
 
 

@@ -22,12 +22,16 @@ def return_dict_bounds(bounds = 'DEEP1'):
         'area'             : 200,
         'min_h'            : 20,
         'max_h'            : 200,
+        'tracker'          : False,
+        'state'            : False,
+
+
         ## PCA componentes #########
         'PCA_components'   : 50,
 
         #### Data manager  #########
         'mode_data'        : ['p'],
-        'shuffle_style'    : 'test_class',
+        'shuffle_style'    : 'segmentated',
         'test_class'       : ['sneaky'],
 
         ###### Bayes opt ######
@@ -39,17 +43,17 @@ def return_dict_bounds(bounds = 'DEEP1'):
 
         #### optimizer         #####
         'optimizer'        : 'adam',
-        'lr'               : 0.0001,
+        'lr'               : 0.001267345303142497,
 
         ##### model definition  #####
         'window'           : 0,
-        'time_dim'         : 25,
+        'time_dim'         : 20,
         'pred_seq'         : True,
         'stateful'         : False,
 
-        'encoder'          : [400,350],
-        'vector'           : 300,
-        'decoder'          : [400],
+        'encoder'          : [240, 443],
+        'vector'           : 240,
+        'decoder'          : [470],
 
 
 
@@ -65,12 +69,12 @@ def return_dict_bounds(bounds = 'DEEP1'):
         'epochs'           : 10000,
         'batch_size'       : 1024,
 
-        'SI_no_cma'        : 25,
-        'SI_no_cma_AUC'    : 40,
+        'SI_no_cma'        : 50,
+        'SI_no_cma_AUC'    : 50,
         'TH_val_loss'      : 1,
-        'time_stop'        : 5000,
+        'time_stop'        : 10000000000,
 
-        'mod_data'         : 5,
+        'mod_data'         : 1,
 
 
 

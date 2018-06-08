@@ -10,6 +10,7 @@ import numpy as np
 import gc
 from src.dst.outputhandler.pickle import pickle_save_,pickle_load
 import time
+import multiprocessing as mp
 
 def tic():
     global time_
@@ -101,7 +102,7 @@ class model_mng():
             gc.collect()
             toc()
 
-            time_stop = self.time_stop-time.time()
+            time_stop = time.time()-self.time_stop
             if (self.count_no_cma > self.dict_c['SI_no_cma'] or self.count_no_cma_AUC > self.dict_c['SI_no_cma_AUC'] or time_stop> self.dict_c['time_stop'] ):
                 epoch = i
                 break
@@ -116,8 +117,6 @@ class model_mng():
         gc.collect()
 
         queue_opt.put(self.AUC_no_cma)
-
-
 
     def process_before_TH(self,i):
         loss, val_loss = self.model.fit()
@@ -140,7 +139,6 @@ class model_mng():
 
         return loss,val_loss
 
-
     def process_LSTM(self,i,loss,val_loss):
         self.memory.append(psutil.virtual_memory()[3] / 1000000000.)
 
@@ -155,10 +153,6 @@ class model_mng():
         dict_data                = OPS_LSTM_.main(dict_data)
         self.update_states(dict_data)
         self.memory.append(psutil.virtual_memory()[3] / 1000000000.)
-
-
-
-
 
     def update_states(self,dict_data):
         self.print_stats(dict_data)
@@ -256,7 +250,25 @@ class model_mng():
 
 if __name__ == '__main__':
 
+    # dict_c, bounds = return_dict_bounds()
+    # queue_opt = mp.Queue()
+    # dict_c['path_save'] = './models/AFE/with_tracker/'
+    # dict_c['tracker'] = True
+    # dict_c['resolution'] = 20
+    # dict_c['area'] = 199
+
+    # dict_c, bounds = return_dict_bounds()
+    # queue_opt = mp.Queue()
+    # dict_c['path_save'] = './models/AFE/no_tracker/'
+    # dict_c['tracker'] = 'False'
+    # dict_c['resolution'] = 20
+
     dict_c, bounds = return_dict_bounds()
+    queue_opt = mp.Queue()
+    dict_c['path_save'] = './models/AFE/learning_curve/'
+    dict_c['tracker']   = 'True'
+
+
     mm    = model_mng(dict_c)
-    mm.main()
+    mm.main(queue_opt)
 

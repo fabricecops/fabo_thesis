@@ -32,7 +32,7 @@ class get_df_vs():
         df_data['label'].value_counts().plot(kind='bar',
                                              color='r')
         print(df_data['label'].value_counts())
-        plt.ylabel('Nr samples')
+        plt.ylabel('Amount')
         plt.savefig('./plots/introduction/distribution_data.png')
 
     def plot_count_frames(self, df_data):
